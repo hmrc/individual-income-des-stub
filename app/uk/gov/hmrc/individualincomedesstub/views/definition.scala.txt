@@ -1,0 +1,21 @@
+@import play.api.libs.json.Json
+@(whitelistedApplicationIds: Seq[String])
+{
+  "scopes" : [
+  ],
+  "api" : {
+    "name" : "Individuals Income Test Support",
+    "description" : "Test Support for the Individuals API",
+    "context" : "individuals-income-test-support",
+    "versions" : [
+      {
+        "version" : "1.0",
+        "status" : "PROTOTYPED",
+        "access" : {
+          "type" : "PRIVATE",
+          "whitelistedApplicationIds" : @Json.toJson(whitelistedApplicationIds)
+        }
+      }
+    ]
+  }
+}
