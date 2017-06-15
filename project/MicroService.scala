@@ -23,6 +23,9 @@ trait MicroService {
   lazy val plugins : Seq[Plugins] = Seq.empty
   lazy val playSettings : Seq[Setting[_]] = Seq.empty
 
+  def intTestFilter(name: String): Boolean = name startsWith "it"
+  def unitFilter(name: String): Boolean = name startsWith "unit"
+  def componentFilter(name: String): Boolean = name startsWith "component"
 
   lazy val microservice = Project(appName, file("."))
     .enablePlugins(Seq(play.sbt.PlayScala,SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin) ++ plugins : _*)
@@ -32,6 +35,7 @@ trait MicroService {
     .settings(defaultSettings(): _*)
     .settings(
       libraryDependencies ++= appDependencies,
+      testOptions in Test := Seq(Tests.Filter(unitFilter)),
       retrieveManaged := true,
       evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
       routesGenerator := StaticRoutesGenerator
@@ -41,17 +45,27 @@ trait MicroService {
     .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
     .settings(
       Keys.fork in IntegrationTest := false,
-      unmanagedSourceDirectories in IntegrationTest <<= (baseDirectory in IntegrationTest)(base => Seq(base / "it")),
+      unmanagedSourceDirectories in IntegrationTest <<= (baseDirectory in IntegrationTest)(base => Seq(base / "test")),
+      testOptions in IntegrationTest := Seq(Tests.Filter(intTestFilter)),
       addTestReportOption(IntegrationTest, "int-test-reports"),
       testGrouping in IntegrationTest := oneForkedJvmPerTest((definedTests in IntegrationTest).value),
       parallelExecution in IntegrationTest := false)
-      .settings(resolvers ++= Seq(
-        Resolver.bintrayRepo("hmrc", "releases"),
-        Resolver.jcenterRepo
-      ))
+    .configs(ComponentTest)
+    .settings(inConfig(ComponentTest)(Defaults.testSettings): _*)
+    .settings(
+      testOptions in ComponentTest := Seq(Tests.Filter(componentFilter)),
+      unmanagedSourceDirectories   in ComponentTest <<= (baseDirectory in ComponentTest)(base => Seq(base / "test")),
+      testGrouping in ComponentTest := oneForkedJvmPerTest((definedTests in ComponentTest).value),
+      parallelExecution in ComponentTest := false
+    )
+    .settings(resolvers ++= Seq(
+      Resolver.bintrayRepo("hmrc", "releases"),
+      Resolver.jcenterRepo
+    ))
 }
 
 private object TestPhases {
+  lazy val ComponentTest = config("component") extend Test
 
   def oneForkedJvmPerTest(tests: Seq[TestDefinition]) =
     tests map {
