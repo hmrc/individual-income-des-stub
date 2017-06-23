@@ -27,9 +27,12 @@ object MicroServiceBuild extends Build with MicroService {
     "uk.gov.hmrc" %% "reactivemongo-test" % "2.0.0" % scope,
     "uk.gov.hmrc" %% "hmrctest" % "2.3.0" % scope,
     "org.scalatest" %% "scalatest" % "2.2.6" % scope,
+    "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" %  scope,
     "org.pegdown" % "pegdown" % "1.6.0" % scope,
     "org.mockito" % "mockito-core" % "1.10.19" % scope,
-    "com.typesafe.play" %% "play-test" % PlayVersion.current % scope
+    "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
+    "org.scalaj" %% "scalaj-http" % "1.1.6" % scope,
+    "com.github.tomakehurst" % "wiremock" % "2.6.0" % scope
   )
 
 }

@@ -16,8 +16,6 @@
 
 package it.uk.gov.hmrc.individualincomedesstub.service
 
-import java.util.regex.Pattern
-
 import uk.gov.hmrc.individualincomedesstub.domain.Address
 import uk.gov.hmrc.individualincomedesstub.service.Randomiser
 import uk.gov.hmrc.play.test.UnitSpec
