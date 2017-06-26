@@ -30,9 +30,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class EmploymentController @Inject()(employmentService: EmploymentService) extends CommonController {
 
-  def create(empRef: EmployerReference, nino: Nino) = Action.async(BodyParsers.parse.json) { implicit request =>
+  def create(employerReference: EmployerReference, nino: Nino) = Action.async(BodyParsers.parse.json) { implicit request =>
     withJsonBody[CreateEmploymentRequest] { createEmployment =>
-      employmentService.create(empRef.value, nino, createEmployment) map (e => Created(Json.toJson(e)))
+      employmentService.create(employerReference.value, nino, createEmployment) map (e => Created(Json.toJson(e)))
     } recover recovery
   }
 }

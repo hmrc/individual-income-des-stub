@@ -28,7 +28,8 @@ import scalaj.http.Http
 
 class EmploymentSpec extends BaseSpec {
 
-  val empRef = "123DI45678"
+  val employerReference = "123/DI45678"
+  val employerReferenceEncoded = "123%2FDI45678"
   val validNino = "NA000799C"
 
   feature("Create employment") {
@@ -49,7 +50,7 @@ class EmploymentSpec extends BaseSpec {
 
       And("The employment is stored in mongo")
       val employment = Json.parse(response.body).as[Employment]
-      val storedEmployment = result(employmentRepository.findByReferenceAndNino(empRef, Nino(validNino)), timeout)
+      val storedEmployment = result(employmentRepository.findByReferenceAndNino(employerReference, Nino(validNino)), timeout)
       storedEmployment shouldBe Seq(employment)
     }
 
@@ -58,18 +59,29 @@ class EmploymentSpec extends BaseSpec {
       val request = createRequest
 
       When("I request to create an employment for an invalid NINO")
-      val result = requestCreateEmployment(request, "A12345C")
+      val result = requestCreateEmployment(request, nino = "A12345C")
 
       Then("The response code should be 400 (Bad Request)")
       result.code shouldBe 400
       result.body shouldBe """{"code":"INVALID_REQUEST","message":"Malformed nino submitted"}"""
+    }
+
+    scenario("Request fails for unencoded employer reference") {
+      Given("A valid create employment request")
+      val request = createRequest
+
+      When("I request to create an employment for an unencoded employer reference")
+      val result = requestCreateEmployment(request, reference = employerReference)
+
+      Then("The response code should be 404 (Not Found)")
+      result.code shouldBe 404
     }
   }
 
   private def createResponse = {
     s"""
        |{
-       |"employerPayeReference":"$empRef",
+       |"employerPayeReference":"$employerReference",
        |"nino":"$validNino",
        |"startDate": "2016-01-01",
        |"endDate": "2017-03-01",
@@ -109,8 +121,8 @@ class EmploymentSpec extends BaseSpec {
      """.stripMargin.replaceAll("\n", "")
   }
 
-  private def requestCreateEmployment(request: String, nino: String = validNino) = {
-    Http(s"$serviceUrl/employer/$empRef/employment/$nino")
+  private def requestCreateEmployment(request: String, reference: String = employerReferenceEncoded, nino: String = validNino) = {
+    Http(s"$serviceUrl/employer/$reference/employment/$nino")
       .postData(Json.parse(request).toString())
       .headers(HeaderNames.CONTENT_TYPE -> "application/json"
       ).asString
