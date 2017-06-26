@@ -1,0 +1,18 @@
+{
+  "employerPayeReference": "904/UZ00057",
+  "nino": "AA123456D",
+  "startDate": "2016-01-01",
+  "endDate": "2017-03-01",
+  "payments": [
+    {
+      "paymentDate": "2016-01-28",
+      "taxablePayment": 1000.55,
+      "nonTaxablePayment": 0
+    },
+    {
+      "paymentDate": "2016-02-28",
+      "taxablePayment": 950.55,
+      "nonTaxablePayment": 0
+    }
+  ]
+}

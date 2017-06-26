@@ -18,9 +18,12 @@ package uk.gov.hmrc.individualincomedesstub
 
 import com.typesafe.config.Config
 import net.ceedubs.ficus.Ficus._
+import play.api.libs.json.Json
+import play.api.mvc.{RequestHeader, Result}
 import play.api.{Application, Configuration, Play}
 import uk.gov.hmrc.api.config.{ServiceLocatorConfig, ServiceLocatorRegistration}
 import uk.gov.hmrc.api.connector.ServiceLocatorConnector
+import uk.gov.hmrc.individualincomedesstub.domain.{ErrorInvalidPathParameter, ErrorInvalidRequestPayload, InvalidNinoException}
 import uk.gov.hmrc.play.audit.filters.AuditFilter
 import uk.gov.hmrc.play.auth.controllers.AuthParamsControllerConfig
 import uk.gov.hmrc.play.auth.microservice.filters.AuthorisationFilter
@@ -29,6 +32,11 @@ import uk.gov.hmrc.play.filters.MicroserviceFilterSupport
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.http.logging.filters.LoggingFilter
 import uk.gov.hmrc.play.microservice.bootstrap.DefaultMicroserviceGlobal
+import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.errorInvalidRequestParameterFormat
+
+import scala.concurrent.Future
+import scala.concurrent.Future.successful
+import scala.util.Try
 
 object ControllerConfiguration extends ControllerConfig {
   lazy val controllerConfigs = Play.current.configuration.underlying.as[Config]("controllers")
@@ -69,4 +77,14 @@ object MicroserviceGlobal extends DefaultMicroserviceGlobal with ServiceLocatorR
   override val slConnector = ServiceLocatorConnector(WSHttp)
 
   override lazy val registrationEnabled = Play.current.configuration.getBoolean("microservice.services.service-locator.enabled").getOrElse(false)
+
+  override def onBadRequest(request: RequestHeader, error: String): Future[Result] = {
+
+    val maybeInvalidRequest = Try(Json.parse(error).as[ErrorInvalidPathParameter]).toOption
+
+    maybeInvalidRequest match {
+      case Some(errorResponse) => successful(errorResponse.toHttpResponse)
+      case _ => successful(ErrorInvalidRequestPayload("Invalid Request").toHttpResponse)
+    }
+  }
 }
