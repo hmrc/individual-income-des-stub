@@ -1,3 +1,3 @@
 # microservice specific routes
 
-GET        /hello-world             uk.gov.hmrc.individualincomedesstub.controllers.MicroserviceHelloWorld.hello
+POST       /employer                @uk.gov.hmrc.individualincomedesstub.controller.EmployerController.createEmployer

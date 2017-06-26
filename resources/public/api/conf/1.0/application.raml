@@ -23,13 +23,20 @@ uses:
   types: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/types.raml
 
 /individuals-income-test-support:
-  /hello-world:
-    get:
-      displayName: Hello world endpoint display name
-      description: Hello world endpoint description
+  /employer:
+    post:
+      displayName: Create an employer
+      description: !include docs/employer-description.md
+      is: [headers.acceptHeader]
+      securedBy: [ sec.x-application ]
+      body:
+        application/json:
+          schema: !include schemas/employer-request.json
+          example: !include examples/employer-request.json
       responses:
-        200:
-          description: Hello world endpoint 200 response description
+        201:
+          description: The generated employer
           body:
-            text/plain:
-              example: Hello world
+            application/json:
+              example: !include examples/employer-response.json
+              type: !include schemas/employer-response.json

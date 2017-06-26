@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualincomedesstub.controllers
+package uk.gov.hmrc.individualincomedesstub.service
 
-import play.api.mvc._
-import uk.gov.hmrc.play.microservice.controller.BaseController
+import javax.inject.{Inject, Singleton}
+
+import uk.gov.hmrc.individualincomedesstub.domain.Employer
+import uk.gov.hmrc.individualincomedesstub.repository.EmployerRepository
 
 import scala.concurrent.Future
 
-object MicroserviceHelloWorld extends MicroserviceHelloWorld
+@Singleton
+class EmployerService @Inject()(repository: EmployerRepository) {
 
-trait MicroserviceHelloWorld extends BaseController {
-
-	def hello() = Action.async { implicit request =>
-		Future.successful(Ok("Hello world"))
-	}
+  def createEmployer(): Future[Employer] = {
+    repository.createEmployer(Employer())
+  }
 }
