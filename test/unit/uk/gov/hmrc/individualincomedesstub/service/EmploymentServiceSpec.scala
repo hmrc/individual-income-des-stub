@@ -18,15 +18,14 @@ package unit.uk.gov.hmrc.individualincomedesstub.service
 
 import org.joda.time.LocalDate._
 import org.mockito.Mockito._
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, Payment}
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentService
 import uk.gov.hmrc.play.test.UnitSpec
 
-class EmploymentServiceSpec extends UnitSpec with MockitoSugar with ScalaFutures {
+class EmploymentServiceSpec extends UnitSpec with MockitoSugar {
 
   trait Setup {
     val employerReference = "123/DI45678"

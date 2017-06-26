@@ -27,17 +27,17 @@ object JsonFormatters {
 
   implicit val createEmploymentRequestFormat = Json.format[CreateEmploymentRequest]
 
-  implicit val errorInvalidRequestParameterFormat = new Format[ErrorInvalidPathParameter] {
-    def reads(json: JsValue): JsResult[ErrorInvalidPathParameter] = JsSuccess(
-      ErrorInvalidPathParameter((json \ "message").as[String])
+  implicit val errorInvalidRequestFormat = new Format[ErrorInvalidRequest] {
+    def reads(json: JsValue): JsResult[ErrorInvalidRequest] = JsSuccess(
+      ErrorInvalidRequest((json \ "message").as[String])
     )
 
-    def writes(error: ErrorInvalidPathParameter): JsValue =
+    def writes(error: ErrorInvalidRequest): JsValue =
       Json.obj("code" -> error.errorCode, "message" -> error.message)
   }
 
-  implicit val employerReferenceWrite: Writes[EmployerReference] = new SimpleObjectWrites[EmployerReference](_.value)
-  implicit val employerReferenceRead: Reads[EmployerReference] = new SimpleObjectReads[EmployerReference]("empRef", EmployerReference.apply)
+  implicit val employerReferenceWrite = new SimpleObjectWrites[EmployerReference](_.value)
+  implicit val employerReferenceRead = new SimpleObjectReads[EmployerReference]("empRef", EmployerReference.apply)
 
   implicit val errorResponseWrites = new Writes[ErrorResponse] {
     def writes(e: ErrorResponse): JsValue = Json.obj("code" -> e.errorCode, "message" -> e.message)

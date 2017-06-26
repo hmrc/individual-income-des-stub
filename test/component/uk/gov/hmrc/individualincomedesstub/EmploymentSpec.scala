@@ -16,7 +16,8 @@
 
 package component.uk.gov.hmrc.individualincomedesstub
 
-import play.api.http.HeaderNames
+import play.api.http.HeaderNames._
+import play.api.http.MimeTypes._
 import play.api.libs.json.Json
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.individualincomedesstub.domain.Employment
@@ -100,7 +101,7 @@ class EmploymentSpec extends BaseSpec {
        |}""".stripMargin.replaceAll("\n", "")
   }
 
-  private def createRequest = {
+  private val createRequest = {
     s"""
        |{
        |"startDate": "2016-01-01",
@@ -124,7 +125,7 @@ class EmploymentSpec extends BaseSpec {
   private def requestCreateEmployment(request: String, reference: String = employerReferenceEncoded, nino: String = validNino) = {
     Http(s"$serviceUrl/employer/$reference/employment/$nino")
       .postData(Json.parse(request).toString())
-      .headers(HeaderNames.CONTENT_TYPE -> "application/json"
+      .headers(CONTENT_TYPE -> JSON
       ).asString
   }
 }

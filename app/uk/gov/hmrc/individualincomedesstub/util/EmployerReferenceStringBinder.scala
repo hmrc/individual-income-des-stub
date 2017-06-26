@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualincomedesstub
+package uk.gov.hmrc.individualincomedesstub.util
 
-import uk.gov.hmrc.individualincomedesstub.util.{EmployerReferenceStringBinder, NinoPathStringBinder}
+import java.net.URLDecoder
 
-package object Binders {
+import uk.gov.hmrc.individualincomedesstub.domain.EmployerReference
 
-  implicit def ninoBinder = new NinoPathStringBinder
-  implicit def employerReferenceBinder = new EmployerReferenceStringBinder
+class EmployerReferenceStringBinder extends AbstractPathStringBindable[EmployerReference] {
+
+  override def bind(key: String, value: String): Either[String, EmployerReference] = try {
+    Right(EmployerReference(URLDecoder.decode(value, "UTF-8")))
+  } catch {
+    case _: Throwable => Left(errorResponse("Invalid employer reference submitted"))
+  }
+
+  override def unbind(key: String, value: EmployerReference): String = value.value
+
 }

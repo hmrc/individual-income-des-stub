@@ -32,11 +32,11 @@ trait CommonController extends BaseController {
     Try(request.body.validate[T]) match {
       case Success(JsSuccess(payload, _)) => f(payload)
       case Success(JsError(errs)) =>
-        Future.successful(ErrorInvalidRequestPayload(s"${fieldName(errs)} is required").toHttpResponse)
+        Future.successful(ErrorInvalidRequest(s"${fieldName(errs)} is required").toHttpResponse)
       case Failure(e) if e.isInstanceOf[ValidationException] =>
-        Future.successful(ErrorInvalidRequestPayload(e.getMessage).toHttpResponse)
+        Future.successful(ErrorInvalidRequest(e.getMessage).toHttpResponse)
       case Failure(_) =>
-        Future.successful(ErrorInvalidRequestPayload("Unable to process request").toHttpResponse)
+        Future.successful(ErrorInvalidRequest("Unable to process request").toHttpResponse)
     }
   }
 
@@ -45,7 +45,7 @@ trait CommonController extends BaseController {
   }
 
   private[controller] def recovery: PartialFunction[Throwable, Result] = {
-    case e: IllegalArgumentException => ErrorInvalidRequestPayload(e.getMessage).toHttpResponse
+    case e: IllegalArgumentException => ErrorInvalidRequest(e.getMessage).toHttpResponse
   }
 }
 

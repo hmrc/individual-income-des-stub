@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualincomedesstub
+package uk.gov.hmrc.individualincomedesstub.util
 
-import uk.gov.hmrc.individualincomedesstub.util.{EmployerReferenceStringBinder, NinoPathStringBinder}
+import uk.gov.hmrc.domain.Nino
 
-package object Binders {
+class NinoPathStringBinder extends AbstractPathStringBindable[Nino] {
 
-  implicit def ninoBinder = new NinoPathStringBinder
-  implicit def employerReferenceBinder = new EmployerReferenceStringBinder
+  override def bind(key: String, value: String): Either[String, Nino] = try {
+    Right(Nino(value))
+  } catch {
+    case _: Throwable => Left(errorResponse("Malformed nino submitted"))
+  }
+
+  override def unbind(key: String, value: Nino): String = value.nino
 }
