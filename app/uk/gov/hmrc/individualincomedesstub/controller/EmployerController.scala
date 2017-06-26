@@ -19,15 +19,14 @@ package uk.gov.hmrc.individualincomedesstub.controller
 import javax.inject.{Singleton, Inject}
 
 import play.api.libs.json.Json
-import play.api.mvc.{Result, Action}
+import play.api.mvc.{Controller, Result, Action}
 import uk.gov.hmrc.individualincomedesstub.domain.ErrorInternalServer
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
 import uk.gov.hmrc.individualincomedesstub.service.EmployerService
-import uk.gov.hmrc.play.microservice.controller.BaseController
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class EmployerController @Inject()(employerService: EmployerService) extends BaseController {
+class EmployerController @Inject()(employerService: EmployerService) extends Controller {
 
   def createEmployer() = Action.async {
     employerService.createEmployer() map { employer =>

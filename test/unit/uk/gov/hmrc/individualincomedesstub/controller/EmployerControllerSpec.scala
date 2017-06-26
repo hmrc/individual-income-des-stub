@@ -19,7 +19,7 @@ package unit.uk.gov.hmrc.individualincomedesstub.controller
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import org.mockito.BDDMockito.given
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import play.api.inject._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json

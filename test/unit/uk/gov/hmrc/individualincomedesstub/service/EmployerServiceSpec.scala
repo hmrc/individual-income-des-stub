@@ -19,7 +19,7 @@ package unit.uk.gov.hmrc.individualincomedesstub.service
 import org.mockito.Mockito.verify
 import org.mockito.Matchers.any
 import org.mockito.invocation.InvocationOnMock
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.individualincomedesstub.repository.EmployerRepository
 import uk.gov.hmrc.individualincomedesstub.service.EmployerService
 import uk.gov.hmrc.play.test.UnitSpec
