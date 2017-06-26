@@ -16,11 +16,29 @@
 
 package uk.gov.hmrc.individualincomedesstub.domain
 
-import play.api.libs.json.{JsValue, Writes, Json}
+import play.api.libs.json._
+import uk.gov.hmrc.domain.{SimpleObjectReads, SimpleObjectWrites}
 
 object JsonFormatters {
   implicit val addressJsonFormat = Json.format[Address]
   implicit val employerJsonFormat = Json.format[Employer]
+  implicit val paymentFormat = Json.format[Payment]
+  implicit val employmentFormat = Json.format[Employment]
+
+  implicit val createEmploymentRequestFormat = Json.format[CreateEmploymentRequest]
+
+  implicit val errorInvalidRequestFormat = new Format[ErrorInvalidRequest] {
+    def reads(json: JsValue): JsResult[ErrorInvalidRequest] = JsSuccess(
+      ErrorInvalidRequest((json \ "message").as[String])
+    )
+
+    def writes(error: ErrorInvalidRequest): JsValue =
+      Json.obj("code" -> error.errorCode, "message" -> error.message)
+  }
+
+  implicit val employerReferenceWrite = new SimpleObjectWrites[EmployerReference](_.value)
+  implicit val employerReferenceRead = new SimpleObjectReads[EmployerReference]("empRef", EmployerReference.apply)
+
   implicit val errorResponseWrites = new Writes[ErrorResponse] {
     def writes(e: ErrorResponse): JsValue = Json.obj("code" -> e.errorCode, "message" -> e.message)
   }

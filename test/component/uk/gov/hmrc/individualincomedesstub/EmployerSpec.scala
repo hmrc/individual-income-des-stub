@@ -16,13 +16,12 @@
 
 package component.uk.gov.hmrc.individualincomedesstub
 
-import component.uk.gov.hmrc.individualincomedesstub.stubs.BaseSpec
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.libs.json.Json.{obj, stringify}
 import play.api.test.Helpers._
-import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
 import uk.gov.hmrc.individualincomedesstub.domain.Employer
+import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
 
 import scala.concurrent.Await._
 import scalaj.http.Http
@@ -43,7 +42,7 @@ class EmployerSpec extends BaseSpec {
     val employer = Json.parse(response.body).as[Employer]
 
     And("The employer is stored in mongo")
-    val storedEmployer = result(mongoRepository.findByPayeReference(employer.payeReference), timeout)
+    val storedEmployer = result(employerRepository.findByPayeReference(employer.payeReference), timeout)
     storedEmployer shouldBe Some(employer)
   }
 }

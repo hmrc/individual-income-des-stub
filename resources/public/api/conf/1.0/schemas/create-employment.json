@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "employment",
+  "type": "object",
+  "properties": {
+    "startDate": {
+      "type": "string",
+      "format": "date",
+      "description": "The start date for the employment",
+      "example": "2016-01-01"
+    },
+    "endDate": {
+      "type": "string",
+      "format": "date",
+      "description": "The end date for the employment",
+      "example": "2017-03-01"
+    },
+    "payments": {
+      "description": "The list of employment payments",
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "paymentDate": {
+              "type": "string",
+              "format": "date",
+              "description": "The payment date"
+            },
+            "taxablePayment": {
+              "type": "number",
+              "description": "The total amount for which tax was paid"
+            },
+            "nonTaxablePayment": {
+              "type": "number",
+              "description": "The total amount exempt from taxes"
+            }
+          },
+          "required": ["paymentDate", "taxablePayment", "nonTaxablePayment"],
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "required": ["startDate", "endDate", "payments"]
+}

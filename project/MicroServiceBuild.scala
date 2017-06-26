@@ -4,9 +4,12 @@ import sbt._
 
 object MicroServiceBuild extends Build with MicroService {
 
+  import play.sbt.routes.RoutesKeys._
+
   val appName = "individual-income-des-stub"
 
   override lazy val appDependencies: Seq[ModuleID] = compile ++ test()
+  override lazy val playSettings : Seq[Setting[_]] = Seq(routesImport ++= Seq("uk.gov.hmrc.domain._", "uk.gov.hmrc.individualincomedesstub.domain._", "uk.gov.hmrc.individualincomedesstub.Binders._"))
 
   val compile = Seq(
     ws,
