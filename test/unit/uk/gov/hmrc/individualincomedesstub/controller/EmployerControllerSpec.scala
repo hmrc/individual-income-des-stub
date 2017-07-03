@@ -29,7 +29,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.domain.EmpRef
 import uk.gov.hmrc.individualincomedesstub.domain.{Address, Employer}
 import uk.gov.hmrc.individualincomedesstub.service.EmployerService
-import uk.gov.hmrc.play.test.{WithFakeApplication, UnitSpec}
+import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
 import scala.concurrent.Future.failed
 

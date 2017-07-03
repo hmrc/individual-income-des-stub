@@ -16,18 +16,15 @@
 
 package uk.gov.hmrc.individualincomedesstub.util
 
-import java.net.URLDecoder
+import uk.gov.hmrc.domain.EmpRef
 
-import uk.gov.hmrc.individualincomedesstub.domain.EmployerReference
+import scala.util.Try
 
-class EmployerReferenceStringBinder extends AbstractPathStringBindable[EmployerReference] {
+class EmployerReferenceStringBinder extends AbstractPathStringBindable[EmpRef] {
 
-  override def bind(key: String, value: String): Either[String, EmployerReference] = try {
-    Right(EmployerReference(URLDecoder.decode(value, "UTF-8")))
-  } catch {
-    case _: Throwable => Left(errorResponse("Invalid employer reference submitted"))
-  }
+  def bind(key: String, value: String) =
+    Try(Right(EmpRef.fromIdentifiers(value))) getOrElse Left(errorResponse("Invalid employer reference submitted"))
 
-  override def unbind(key: String, value: EmployerReference): String = value.value
+  def unbind(key: String, empRef: EmpRef): String = empRef.encodedValue
 
 }

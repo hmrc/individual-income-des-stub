@@ -16,10 +16,9 @@
 
 package unit.uk.gov.hmrc.individualincomedesstub.service
 
-import org.joda.time.LocalDate._
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
-import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, Payment}
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentService
@@ -28,7 +27,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 class EmploymentServiceSpec extends UnitSpec with MockitoSugar {
 
   trait Setup {
-    val employerReference = "123/DI45678"
+    val employerReference = EmpRef("123", "DI45678")
     val nino = Nino("NA000799C")
     val mockEmploymentRepository = mock[EmploymentRepository]
     val underTest = new EmploymentService(mockEmploymentRepository)
@@ -57,14 +56,14 @@ class EmploymentServiceSpec extends UnitSpec with MockitoSugar {
   }
 
   private def aCreateEmploymentRequest = CreateEmploymentRequest(
-    parse("2016-01-01"),
-    parse("2017-01-30"),
-    Seq(Payment(parse("2016-01-28"), 1000.55, 0), Payment(parse("2016-02-28"), 1200.44, 0)))
+    Some("2016-01-01"),
+    Some("2017-01-30"),
+    Seq(Payment("2016-01-28", 1000.55, 0), Payment("2016-02-28", 1200.44, 0)))
 
-  private def anEmployment(empRef: String, nino: Nino) = Employment(
+  private def anEmployment(empRef: EmpRef, nino: Nino) = Employment(
     empRef, nino,
-    parse("2016-01-01"),
-    parse("2017-01-30"),
-    Seq(Payment(parse("2016-01-28"), 1000.55, 0), Payment(parse("2016-02-28"), 1200.44, 0))
+    Some("2016-01-01"),
+    Some("2017-01-30"),
+    Seq(Payment("2016-01-28", 1000.55, 0), Payment("2016-02-28", 1200.44, 0))
   )
 }

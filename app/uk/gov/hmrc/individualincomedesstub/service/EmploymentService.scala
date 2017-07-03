@@ -18,7 +18,7 @@ package uk.gov.hmrc.individualincomedesstub.service
 
 import javax.inject.{Inject, Singleton}
 
-import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment}
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
 
@@ -26,6 +26,6 @@ import scala.concurrent.Future
 
 @Singleton
 class EmploymentService @Inject() (employmentRepository: EmploymentRepository) {
-  def create(employerPayeReference: String, nino: Nino, request: CreateEmploymentRequest): Future[Employment] =
+  def create(employerPayeReference: EmpRef, nino: Nino, request: CreateEmploymentRequest): Future[Employment] =
     employmentRepository.create(employerPayeReference, nino, request)
 }

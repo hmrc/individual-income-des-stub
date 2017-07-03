@@ -16,10 +16,9 @@
 
 package it.uk.gov.hmrc.individualincomedesstub.repository
 
-import org.joda.time.LocalDate.parse
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.guice.GuiceApplicationBuilder
-import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, Payment}
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
@@ -35,7 +34,7 @@ class EmploymentRepositorySpec  extends UnitSpec with WithFakeApplication with M
     .build()
 
   val employmentRepository = fakeApplication.injector.instanceOf[EmploymentRepository]
-  val employerReference = "123/DI45678"
+  val employerReference = EmpRef("123", "DI45678")
   val nino = Nino("NA000799C")
 
   override def beforeEach() {
@@ -67,7 +66,7 @@ class EmploymentRepositorySpec  extends UnitSpec with WithFakeApplication with M
       val employment = anEmployment(employerReference, nino)
 
       await(employmentRepository.create(employerReference, nino, aCreateEmploymentRequest))
-      await(employmentRepository.create("someReference", nino, aCreateEmploymentRequest))
+      await(employmentRepository.create(EmpRef("321", "EI45678"), nino, aCreateEmploymentRequest))
       await(employmentRepository.create(employerReference, Nino("AA123456C"), aCreateEmploymentRequest))
 
       val result = await(employmentRepository.findByReferenceAndNino(employerReference, nino))
@@ -78,21 +77,21 @@ class EmploymentRepositorySpec  extends UnitSpec with WithFakeApplication with M
     "return an empty list if no records exist for a given pay reference and nino" in {
       await(employmentRepository.create(employerReference, nino, aCreateEmploymentRequest))
 
-      val result = await(employmentRepository.findByReferenceAndNino("someReference", nino))
+      val result = await(employmentRepository.findByReferenceAndNino(EmpRef("321", "EI45678"), nino))
 
       result.isEmpty shouldBe true
     }
   }
 
   private def aCreateEmploymentRequest = CreateEmploymentRequest(
-    parse("2016-01-01"),
-    parse("2017-01-30"),
-    Seq(Payment(parse("2016-01-28"), 1000.55, 0), Payment(parse("2016-02-28"), 1200.44, 0)))
+    Some("2016-01-01"),
+    Some("2017-01-30"),
+    Seq(Payment("2016-01-28", 1000.55, 0), Payment("2016-02-28", 1200.44, 0)))
 
-  private def anEmployment(empRef: String, nino: Nino) = Employment(
+  private def anEmployment(empRef: EmpRef, nino: Nino) = Employment(
     empRef, nino,
-    parse("2016-01-01"),
-    parse("2017-01-30"),
-    Seq(Payment(parse("2016-01-28"), 1000.55, 0), Payment(parse("2016-02-28"), 1200.44, 0))
+    Some("2016-01-01"),
+    Some("2017-01-30"),
+    Seq(Payment("2016-01-28", 1000.55, 0), Payment("2016-02-28", 1200.44, 0))
   )
 }

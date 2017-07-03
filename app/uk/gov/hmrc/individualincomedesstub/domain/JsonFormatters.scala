@@ -17,7 +17,6 @@
 package uk.gov.hmrc.individualincomedesstub.domain
 
 import play.api.libs.json._
-import uk.gov.hmrc.domain.{SimpleObjectReads, SimpleObjectWrites}
 
 object JsonFormatters {
   implicit val addressJsonFormat = Json.format[Address]
@@ -35,9 +34,6 @@ object JsonFormatters {
     def writes(error: ErrorInvalidRequest): JsValue =
       Json.obj("code" -> error.errorCode, "message" -> error.message)
   }
-
-  implicit val employerReferenceWrite = new SimpleObjectWrites[EmployerReference](_.value)
-  implicit val employerReferenceRead = new SimpleObjectReads[EmployerReference]("empRef", EmployerReference.apply)
 
   implicit val errorResponseWrites = new Writes[ErrorResponse] {
     def writes(e: ErrorResponse): JsValue = Json.obj("code" -> e.errorCode, "message" -> e.message)

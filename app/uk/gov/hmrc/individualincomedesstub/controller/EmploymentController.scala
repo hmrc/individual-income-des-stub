@@ -20,8 +20,8 @@ import javax.inject.{Inject, Singleton}
 
 import play.api.libs.json.Json
 import play.api.mvc.{Action, BodyParsers}
-import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, EmployerReference}
+import uk.gov.hmrc.domain.{EmpRef, Nino}
+import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest}
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentService
 
@@ -30,9 +30,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class EmploymentController @Inject()(employmentService: EmploymentService) extends CommonController {
 
-  def create(employerReference: EmployerReference, nino: Nino) = Action.async(BodyParsers.parse.json) { implicit request =>
+  def create(employerReference: EmpRef, nino: Nino) = Action.async(BodyParsers.parse.json) { implicit request =>
     withJsonBody[CreateEmploymentRequest] { createEmployment =>
-      employmentService.create(employerReference.value, nino, createEmployment) map (e => Created(Json.toJson(e)))
+      employmentService.create(employerReference, nino, createEmployment) map (e => Created(Json.toJson(e)))
     } recover recovery
   }
 }
