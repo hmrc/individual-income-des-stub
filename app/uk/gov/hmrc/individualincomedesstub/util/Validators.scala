@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualincomedesstub.domain
+package uk.gov.hmrc.individualincomedesstub.util
 
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.{Interval, LocalDate}
+import uk.gov.hmrc.individualincomedesstub.domain.ValidationException
 
 import scala.util.Try
 

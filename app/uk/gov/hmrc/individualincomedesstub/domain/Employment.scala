@@ -17,7 +17,7 @@
 package uk.gov.hmrc.individualincomedesstub.domain
 
 import uk.gov.hmrc.domain.{EmpRef, Nino}
-import uk.gov.hmrc.individualincomedesstub.domain.Validators._
+import uk.gov.hmrc.individualincomedesstub.util.Validators._
 
 case class Payment(paymentDate: String, taxablePayment: Double, nonTaxablePayment: Double) {
   validDate("paymentDate", paymentDate)

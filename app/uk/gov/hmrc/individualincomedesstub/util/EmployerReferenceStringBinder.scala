@@ -18,14 +18,12 @@ package uk.gov.hmrc.individualincomedesstub.util
 
 import uk.gov.hmrc.domain.EmpRef
 
+import scala.util.Try
+
 class EmployerReferenceStringBinder extends AbstractPathStringBindable[EmpRef] {
 
   def bind(key: String, value: String) =
-    try {
-      Right(EmpRef.fromIdentifiers(value))
-    } catch {
-      case _: Throwable => Left(errorResponse("Invalid employer reference submitted"))
-    }
+    Try(Right(EmpRef.fromIdentifiers(value))) getOrElse Left(errorResponse("Invalid employer reference submitted"))
 
   def unbind(key: String, empRef: EmpRef): String = empRef.encodedValue
 
