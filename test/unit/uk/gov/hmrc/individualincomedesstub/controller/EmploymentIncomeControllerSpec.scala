@@ -29,8 +29,8 @@ import play.api.test.Helpers._
 import play.api.test._
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.controller.EmploymentIncomeController
-import uk.gov.hmrc.individualincomedesstub.domain.Employment
-import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.employmentFormat
+import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.employmentIncomeResponseFormat
+import uk.gov.hmrc.individualincomedesstub.domain.{Employment, EmploymentIncomeResponse}
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentIncomeService
 
 import scala.concurrent.Future
@@ -46,8 +46,10 @@ class EmploymentIncomeControllerSpec extends PlaySpec with Results with MockitoS
     val nino = Nino("AB123456C")
     val interval = toInterval(parse("2017-01-01"), parse("2017-06-30"))
 
-    def mockEmploymentIncomeService(eventualEmployments: Future[Seq[Employment]]) =
-      when(employmentIncomeService.employments(Matchers.eq(nino), any(classOf[Interval]))).thenReturn(eventualEmployments)
+    def mockEmploymentIncomeService(eventualEmploymentResponses: Future[Seq[EmploymentIncomeResponse]]) =
+      when(employmentIncomeService.employments(Matchers.eq(nino), any(classOf[Interval]))).thenReturn(eventualEmploymentResponses)
+
+    def asEmploymentResponse(employment: Employment) = EmploymentIncomeResponse(employment, None)
 
     "return a http 200 (Ok) response with empty employment array when service does not return any employments" in {
       mockEmploymentIncomeService(successful(Seq.empty))
@@ -61,11 +63,13 @@ class EmploymentIncomeControllerSpec extends PlaySpec with Results with MockitoS
       val employment2 = Employment(EmpRef("102", "AB10002"), nino, Option("2017-04-01"), Option("2017-06-30"), Seq.empty)
       val employment3 = Employment(EmpRef("103", "AB10003"), nino, Option("2017-07-01"), Option("2017-09-30"), Seq.empty)
 
-      mockEmploymentIncomeService(successful(Seq(employment1, employment2, employment3)))
+      val employments = Seq(employment1, employment2, employment3)
+      val employmentResponses = employments map (EmploymentIncomeResponse(_, None))
+      mockEmploymentIncomeService(successful(employmentResponses))
 
       val eventualResult = employmentIncomeController.employments(nino, interval)(FakeRequest())
       status(eventualResult) mustBe OK
-      contentAsString(eventualResult) mustBe s"""{"employments":[${toJson(employment1)},${toJson(employment2)},${toJson(employment3)}]}"""
+      contentAsString(eventualResult) mustBe s"""{"employments":[${toJson(asEmploymentResponse(employment1))},${toJson(asEmploymentResponse(employment2))},${toJson(asEmploymentResponse(employment3))}]}"""
     }
 
   }

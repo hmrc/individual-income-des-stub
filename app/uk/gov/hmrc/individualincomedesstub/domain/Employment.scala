@@ -22,7 +22,7 @@ import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.util.Dates.toInterval
 import uk.gov.hmrc.individualincomedesstub.util.Validators._
 
-case class Payment(paymentDate: String, taxablePayment: Double, nonTaxablePayment: Double) {
+case class HmrcPayment(paymentDate: String, taxablePayment: Double, nonTaxablePayment: Double) {
   validDate("paymentDate", paymentDate)
 
   def isPaidWithin(interval: Interval): Boolean =
@@ -30,7 +30,13 @@ case class Payment(paymentDate: String, taxablePayment: Double, nonTaxablePaymen
 
 }
 
-case class Employment(employerPayeReference: EmpRef, nino: Nino, startDate: Option[String], endDate: Option[String], payments: Seq[Payment]) {
+case class DesPayment(paymentDate: LocalDate, totalPayInPeriod: Double, totalNonTaxOrNICsPayments: Double)
+
+object DesPayment {
+  def apply(hmrcPayment: HmrcPayment): DesPayment = DesPayment(LocalDate.parse(hmrcPayment.paymentDate), hmrcPayment.taxablePayment, hmrcPayment.nonTaxablePayment)
+}
+
+case class Employment(employerPayeReference: EmpRef, nino: Nino, startDate: Option[String], endDate: Option[String], payments: Seq[HmrcPayment]) {
   def containsPaymentWithin(interval: Interval) =
     payments.exists(_.isPaidWithin(interval))
 }
@@ -47,7 +53,7 @@ object Employment {
 
 }
 
-case class CreateEmploymentRequest(startDate: Option[String], endDate: Option[String], payments: Seq[Payment]) {
+case class CreateEmploymentRequest(startDate: Option[String], endDate: Option[String], payments: Seq[HmrcPayment]) {
   (startDate, endDate) match {
     case (Some(start), Some(end)) =>
       validDate("startDate", start)
@@ -57,4 +63,31 @@ case class CreateEmploymentRequest(startDate: Option[String], endDate: Option[St
     case (None, Some(end)) => validDate("endDate", end)
     case _ =>
   }
+}
+
+
+case class EmploymentIncomeResponse
+(employerName: Option[String],
+ employerAddress: Option[Address],
+ employerDistrictNumber: Option[String],
+ employerSchemeReference: Option[String],
+ employmentStartDate: Option[LocalDate],
+ employmentLeavingDate: Option[LocalDate],
+ payments: Seq[DesPayment])
+
+object EmploymentIncomeResponse {
+
+  import org.joda.time.LocalDate.parse
+
+  def apply(employment: Employment, maybeEmployer: Option[Employer]): EmploymentIncomeResponse =
+    maybeEmployer match {
+      case Some(employer) => EmploymentIncomeResponse(
+        Option(employer.name), Option(employer.address), Option(employer.payeReference.taxOfficeNumber), Option(employer.payeReference.taxOfficeReference),
+        employment.startDate.map(parse), employment.endDate.map(parse), employment.payments map (DesPayment(_))
+      )
+      case _ => EmploymentIncomeResponse(
+        None, None, None, None,
+        employment.startDate.map(parse), employment.endDate.map(parse), employment.payments map (DesPayment(_))
+      )
+    }
 }

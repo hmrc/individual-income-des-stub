@@ -21,10 +21,12 @@ import play.api.libs.json._
 object JsonFormatters {
   implicit val addressJsonFormat = Json.format[Address]
   implicit val employerJsonFormat = Json.format[Employer]
-  implicit val paymentFormat = Json.format[Payment]
+  implicit val hmrcPaymentFormat = Json.format[HmrcPayment]
+  implicit val desPaymentFormat = Json.format[DesPayment]
   implicit val employmentFormat = Json.format[Employment]
 
   implicit val createEmploymentRequestFormat = Json.format[CreateEmploymentRequest]
+  implicit val employmentIncomeResponseFormat = Json.format[EmploymentIncomeResponse]
 
   implicit val errorInvalidRequestFormat = new Format[ErrorInvalidRequest] {
     def reads(json: JsValue): JsResult[ErrorInvalidRequest] = JsSuccess(

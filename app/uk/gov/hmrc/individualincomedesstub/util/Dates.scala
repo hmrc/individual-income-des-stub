@@ -23,7 +23,7 @@ object Dates {
   private def asDate(string: String) = LocalDate.parse(string)
 
   def toInterval(fromDate: String, toDate: String): Interval =
-    new Interval(asDate(fromDate).toDate.getTime, asDate(toDate).toDateTimeAtStartOfDay.plusMillis(1).toDate.getTime)
+    toInterval(asDate(fromDate), asDate(toDate))
 
   def toInterval(fromDate: LocalDate, toDate: LocalDate): Interval =
     new Interval(fromDate.toDate.getTime, toDate.toDateTimeAtStartOfDay.plusMillis(1).toDate.getTime)

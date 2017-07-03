@@ -22,7 +22,7 @@ import play.api.http.Status.{BAD_REQUEST, CREATED}
 import play.api.libs.json.Json
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
-import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, Payment}
+import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, HmrcPayment}
 
 import scala.concurrent.Await.result
 import scalaj.http.Http
@@ -288,7 +288,7 @@ class EmploymentSpec extends BaseSpec {
 
   private def aCreateEmploymentRequest(startDate: Option[String] = Some("2016-01-01"),
                                        endDate: Option[String] = Some("2017-03-01"),
-                                       payments: Seq[Payment] = Seq(Payment("2016-01-28", 1000.55, 0), Payment("2016-02-28", 950.55, 0))) = {
+                                       payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 950.55, 0))) = {
 
     CreateEmploymentRequest(startDate, endDate, payments)
   }
@@ -298,7 +298,7 @@ class EmploymentSpec extends BaseSpec {
                            nino: Nino = Nino(validNino),
                            startDate: Option[String] = Some("2016-01-01"),
                            endDate: Option[String] = Some("2017-03-01"),
-                           payments: Seq[Payment] = Seq(Payment("2016-01-28", 1000.55, 0), Payment("2016-02-28", 950.55, 0))) = {
+                           payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 950.55, 0))) = {
 
     Employment(employerPayeReference, nino, startDate, endDate, payments)
   }

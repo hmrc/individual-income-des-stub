@@ -20,17 +20,24 @@ import javax.inject.{Inject, Singleton}
 
 import org.joda.time.Interval
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.individualincomedesstub.domain.Employment
 import uk.gov.hmrc.individualincomedesstub.domain.Employment.overlap
-import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
+import uk.gov.hmrc.individualincomedesstub.domain.EmploymentIncomeResponse
+import uk.gov.hmrc.individualincomedesstub.repository.{EmployerRepository, EmploymentRepository}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class EmploymentIncomeService @Inject()(employmentRepository: EmploymentRepository) {
+class EmploymentIncomeService @Inject()(employmentRepository: EmploymentRepository, employerRepository: EmployerRepository) {
 
-  def employments(nino: Nino, interval: Interval): Future[Seq[Employment]] =
-    employmentRepository.findBy(nino) map { employments => employments filter overlap(interval) }
+  def employments(nino: Nino, interval: Interval): Future[Seq[EmploymentIncomeResponse]] =
+    for {
+      employments <- employmentRepository.findBy(nino) map (_ filter overlap(interval))
+      employerPayeReferences = employments map (employment => employment.employerPayeReference)
+      employers <- employerRepository.findBy(employerPayeReferences.toSet)
+      maybeEmployers = employments map (employment => employers find (_.payeReference == employment.employerPayeReference))
+    } yield employments zip maybeEmployers map { case (employment, employer) =>
+      EmploymentIncomeResponse(employment, employer)
+    }
 
 }

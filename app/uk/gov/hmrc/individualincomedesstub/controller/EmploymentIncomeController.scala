@@ -22,7 +22,7 @@ import org.joda.time.Interval
 import play.api.libs.json.Json.{obj, toJson}
 import play.api.mvc.Action
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.employmentFormat
+import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.employmentIncomeResponseFormat
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentIncomeService
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -31,8 +31,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class EmploymentIncomeController @Inject()(employmentIncomeService: EmploymentIncomeService) extends CommonController {
 
   def employments(nino: Nino, interval: Interval) = Action.async {
-    employmentIncomeService.employments(nino, interval) map { employments =>
-      Ok(obj("employments" -> toJson(employments)))
+    employmentIncomeService.employments(nino, interval) map { employmentIncomeResponses =>
+      Ok(obj("employments" -> toJson(employmentIncomeResponses)))
     } recover recovery
   }
 

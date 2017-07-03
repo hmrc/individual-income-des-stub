@@ -22,29 +22,36 @@ import org.scalatest.mockito.MockitoSugar
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpecLike}
 import uk.gov.hmrc.domain.{EmpRef, Nino}
-import uk.gov.hmrc.individualincomedesstub.domain.Employment
-import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
+import uk.gov.hmrc.individualincomedesstub.domain.{Employer, Employment, EmploymentIncomeResponse}
+import uk.gov.hmrc.individualincomedesstub.repository.{EmployerRepository, EmploymentRepository}
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentIncomeService
 import uk.gov.hmrc.individualincomedesstub.util.Dates.toInterval
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
+import scala.language.postfixOps
 
 class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with MockitoSugar with BeforeAndAfterEach {
 
   private val nino = Nino("AB123456C")
+  private val employerRepository = mock[EmployerRepository]
   private val employmentRepository = mock[EmploymentRepository]
-  private val employmentIncomeService = new EmploymentIncomeService(employmentRepository)
+  private val employmentIncomeService = new EmploymentIncomeService(employmentRepository, employerRepository)
 
-  override protected def beforeEach() = reset(employmentRepository)
+  override protected def beforeEach() = reset(employmentRepository, employerRepository)
 
   "Employment income service employments function" should {
 
     def mockEmploymentRepositoryFindByNino(nino: Nino, eventualEmployments: Future[Seq[Employment]]) =
       when(employmentRepository.findBy(nino)).thenReturn(eventualEmployments)
 
+    def mockEmployerRepositoryFindByEmpRefs(eventualEmployers: Future[Set[Employer]]) =
+      when(employerRepository.findBy(org.mockito.Matchers.any(classOf[Set[EmpRef]]))).thenReturn(eventualEmployers)
+
+
     "return an empty sequence when a corresponding employment does not exist" in {
       mockEmploymentRepositoryFindByNino(nino, successful(Seq.empty))
+      mockEmployerRepositoryFindByEmpRefs(successful(Set.empty))
       await(employmentIncomeService.employments(nino, toInterval(parse("2017-01-01"), parse("2017-06-30")))).isEmpty shouldBe true
     }
 
@@ -56,6 +63,7 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
       val employments = Seq(janToMarEmployment, aprToJunEmployment, julToSepEmployment, octToDecEmployment)
 
       mockEmploymentRepositoryFindByNino(nino, successful(employments))
+      mockEmployerRepositoryFindByEmpRefs(successful(Set.empty))
 
       val fixtures = Table(
         ("interval", "employments"),
@@ -68,7 +76,7 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
       )
 
       forAll(fixtures) { (exampleInterval, expectedResult) =>
-        await(employmentIncomeService.employments(nino, exampleInterval)) shouldBe expectedResult
+        await(employmentIncomeService.employments(nino, exampleInterval)) shouldBe (expectedResult map (EmploymentIncomeResponse(_, None)))
       }
 
     }

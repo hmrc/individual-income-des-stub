@@ -19,7 +19,7 @@ package unit.uk.gov.hmrc.individualincomedesstub.service
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.domain.{EmpRef, Nino}
-import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, Payment}
+import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, HmrcPayment}
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentService
 import uk.gov.hmrc.play.test.UnitSpec
@@ -58,12 +58,12 @@ class EmploymentServiceSpec extends UnitSpec with MockitoSugar {
   private val aCreateEmploymentRequest = CreateEmploymentRequest(
     Some("2016-01-01"),
     Some("2017-01-30"),
-    Seq(Payment("2016-01-28", 1000.55, 0), Payment("2016-02-28", 1200.44, 0)))
+    Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 1200.44, 0)))
 
   private def anEmployment(empRef: EmpRef, nino: Nino) = Employment(
     empRef, nino,
     Some("2016-01-01"),
     Some("2017-01-30"),
-    Seq(Payment("2016-01-28", 1000.55, 0), Payment("2016-02-28", 1200.44, 0))
+    Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 1200.44, 0))
   )
 }

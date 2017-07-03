@@ -28,7 +28,7 @@ trait AbstractPathStringBindable[T] extends PathBindable[T] {
     Json.toJson(ErrorInvalidRequest(message)).toString
   }
 
-  def bind[T](key: String, value: String, message: String, function: => T): Either[String, T] =
+  def bind[A](key: String, value: String, message: String, function: => A): Either[String, A] =
     Try(Right(function)) getOrElse Left(errorResponse(message))
 
 }
