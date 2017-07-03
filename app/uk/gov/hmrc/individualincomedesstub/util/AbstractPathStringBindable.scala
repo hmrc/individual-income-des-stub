@@ -21,8 +21,14 @@ import play.api.mvc.PathBindable
 import uk.gov.hmrc.individualincomedesstub.domain.ErrorInvalidRequest
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.errorInvalidRequestFormat
 
+import scala.util.Try
+
 trait AbstractPathStringBindable[T] extends PathBindable[T] {
   protected def errorResponse(message: String) = {
     Json.toJson(ErrorInvalidRequest(message)).toString
   }
+
+  def bind[T](key: String, value: String, message: String, function: => T): Either[String, T] =
+    Try(Right(function)) getOrElse Left(errorResponse(message))
+
 }

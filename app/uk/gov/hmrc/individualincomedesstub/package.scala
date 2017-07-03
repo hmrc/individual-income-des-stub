@@ -20,6 +20,6 @@ import uk.gov.hmrc.individualincomedesstub.util.{EmployerReferenceStringBinder, 
 
 package object Binders {
 
-  implicit def ninoBinder = new NinoPathStringBinder
-  implicit def employerReferenceBinder = new EmployerReferenceStringBinder
+  implicit val ninoBinder = new NinoPathStringBinder
+  implicit val employerReferenceBinder = new EmployerReferenceStringBinder
 }

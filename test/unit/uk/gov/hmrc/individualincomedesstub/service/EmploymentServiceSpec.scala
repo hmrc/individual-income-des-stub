@@ -55,7 +55,7 @@ class EmploymentServiceSpec extends UnitSpec with MockitoSugar {
     }
   }
 
-  private def aCreateEmploymentRequest = CreateEmploymentRequest(
+  private val aCreateEmploymentRequest = CreateEmploymentRequest(
     Some("2016-01-01"),
     Some("2017-01-30"),
     Seq(Payment("2016-01-28", 1000.55, 0), Payment("2016-02-28", 1200.44, 0)))
