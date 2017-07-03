@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualincomedesstub
+package unit.uk.gov.hmrc.individualincomedesstub.util
 
-import uk.gov.hmrc.individualincomedesstub.util.{EmployerReferenceStringBinder, IntervalQueryStringBinder, NinoPathStringBinder}
+import org.joda.time.LocalDate.parse
+import org.scalatest.{FlatSpec, Matchers}
+import uk.gov.hmrc.individualincomedesstub.util.Dates
 
-package object Binders {
+class DatesSpec extends FlatSpec with Matchers {
 
-  implicit val ninoBinder = new NinoPathStringBinder
-  implicit val employerReferenceBinder = new EmployerReferenceStringBinder
-  implicit val intervalQueryStringBinder = new IntervalQueryStringBinder
+  "Dates utility" should "derive an interval between two dates" in {
+    val (fromDate, toDate) = (parse("2020-01-01"), parse("2020-01-02"))
+    Dates.toInterval(fromDate, toDate).toString shouldBe "2020-01-01T00:00:00.000Z/2020-01-02T00:00:00.001Z"
+  }
+
 }

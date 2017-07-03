@@ -44,4 +44,6 @@ class EmploymentRepository @Inject() (mongoConnectionProvider: MongoConnectionPr
   def findByReferenceAndNino(employerPayeReference: EmpRef, nino: Nino) = {
     collection.find(Json.obj("employerPayeReference" -> employerPayeReference, "nino" -> nino)).cursor[Employment]().collect[List]()
   }
+
+  def findBy(nino: Nino) = collection.find(Json.obj("nino" -> nino)).cursor[Employment]().collect[Seq]()
 }

@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualincomedesstub
+package uk.gov.hmrc.individualincomedesstub.util
 
-import uk.gov.hmrc.individualincomedesstub.util.{EmployerReferenceStringBinder, IntervalQueryStringBinder, NinoPathStringBinder}
+import org.joda.time.{Interval, LocalDate}
 
-package object Binders {
+object Dates {
 
-  implicit val ninoBinder = new NinoPathStringBinder
-  implicit val employerReferenceBinder = new EmployerReferenceStringBinder
-  implicit val intervalQueryStringBinder = new IntervalQueryStringBinder
+  private def asDate(string: String) = LocalDate.parse(string)
+
+  def toInterval(fromDate: String, toDate: String): Interval =
+    new Interval(asDate(fromDate).toDate.getTime, asDate(toDate).toDateTimeAtStartOfDay.plusMillis(1).toDate.getTime)
+
+  def toInterval(fromDate: LocalDate, toDate: LocalDate): Interval =
+    new Interval(fromDate.toDate.getTime, toDate.toDateTimeAtStartOfDay.plusMillis(1).toDate.getTime)
+
 }

@@ -26,11 +26,11 @@ import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class EmploymentRepositorySpec  extends UnitSpec with WithFakeApplication with MongoSpecSupport with BeforeAndAfterEach {
+class EmploymentRepositorySpec extends UnitSpec with WithFakeApplication with MongoSpecSupport with BeforeAndAfterEach {
 
   override lazy val fakeApplication = new GuiceApplicationBuilder()
     .configure("mongodb.uri" -> mongoUri)
-    .bindings(bindModules:_*)
+    .bindings(bindModules: _*)
     .build()
 
   val employmentRepository = fakeApplication.injector.instanceOf[EmploymentRepository]
@@ -81,6 +81,22 @@ class EmploymentRepositorySpec  extends UnitSpec with WithFakeApplication with M
 
       result.isEmpty shouldBe true
     }
+  }
+
+  "find by nino" should {
+
+    "return an empty sequence when a corresponding employment does not exist" in {
+      await(employmentRepository.findBy(nino)).isEmpty shouldBe true
+    }
+
+    "return a non-empty sequence when corresponding employments exist" in {
+      await(employmentRepository.create(employerReference, nino, aCreateEmploymentRequest))
+      val employments = await(employmentRepository.findBy(nino))
+      employments.nonEmpty shouldBe true
+      employments.size shouldBe 1
+      employments.head shouldBe anEmployment(employerReference, nino)
+    }
+
   }
 
   private val aCreateEmploymentRequest = CreateEmploymentRequest(
