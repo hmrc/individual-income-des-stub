@@ -16,13 +16,23 @@
 
 package uk.gov.hmrc.individualincomedesstub.domain
 
-import org.joda.time.LocalDate
-import uk.gov.hmrc.domain.{Nino, SimpleName}
+import uk.gov.hmrc.domain.{EmpRef, Nino}
+import uk.gov.hmrc.individualincomedesstub.domain.Validators._
 
-case class Payment(paymentDate: LocalDate, taxablePayment: Double, nonTaxablePayment: Double)
-case class Employment(employerPayeReference: String, nino: Nino, startDate: LocalDate, endDate: LocalDate, payments: Seq[Payment])
-case class CreateEmploymentRequest(startDate: LocalDate, endDate: LocalDate, payments: Seq[Payment])
-case class EmployerReference(empRef: String) extends SimpleName {
-  def value = empRef
-  override val name: String = "empRef"
+case class Payment(paymentDate: String, taxablePayment: Double, nonTaxablePayment: Double) {
+  validDate("paymentDate", paymentDate)
+}
+
+case class Employment(employerPayeReference: EmpRef, nino: Nino, startDate: Option[String], endDate: Option[String], payments: Seq[Payment])
+
+case class CreateEmploymentRequest(startDate: Option[String], endDate: Option[String], payments: Seq[Payment]) {
+  (startDate, endDate) match {
+    case (Some(start), Some(end)) =>
+      validDate("startDate", start)
+      validDate("endDate", end)
+      validInterval(start, end, "Invalid employment period")
+    case (Some(start), None) => validDate("startDate", start)
+    case (None, Some(end)) => validDate("endDate", end)
+    case _ =>
+  }
 }

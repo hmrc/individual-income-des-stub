@@ -42,6 +42,16 @@ uses:
               type: !include schemas/employer-response.json
 
   /employer/{empRef}/employment/{nino}:
+    uriParameters:
+      empRef:
+        description: The employer PAYE reference number
+        type: string
+        example: 904/UZ00057
+      nino:
+        description: The employee National Insurance number
+        type: string
+        example: AA123456D
+
     post:
       displayName: Create an employment
       description: !include docs/create-employment-description.md

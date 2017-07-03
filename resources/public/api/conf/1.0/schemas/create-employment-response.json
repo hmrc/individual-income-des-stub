@@ -1,57 +1,59 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "description": "employment",
-  "type": "object",
   "properties": {
-    "employerPayeReference": {
-      "type": "string",
-      "description": "The employer's paye reference",
-      "example": "904/UZ00057"
-    },
-    "nino": {
-      "type": "string",
-      "format": "NINO",
-      "description": "The individual's national insurance number",
-      "example": "NA000799C"
+    "payments": {
+      "description": "The payments associated with the employment",
+      "type": "array",
+      "items": {
+        "additionalProperties": false,
+        "id": "/properties/payments/items",
+        "properties": {
+          "paymentDate": {
+            "id": "/properties/payments/items/properties/paymentDate",
+            "type": "string",
+            "format": "date",
+            "description": "The payment date",
+            "example": "2016-01-28"
+          },
+          "taxablePayment": {
+            "id": "/properties/payments/items/properties/taxablePayment",
+            "type": "number",
+            "description": "The total amount for which tax was paid",
+            "example": "1000.55"
+          },
+          "nonTaxablePayment": {
+            "id": "/properties/payments/items/properties/nonTaxablePayment",
+            "type": "number",
+            "description": "The total amount exempt from taxes",
+            "example": "0"
+          }
+        },
+        "required": ["paymentDate", "taxablePayment", "nonTaxablePayment"],
+        "type": "object"
+      }
     },
     "startDate": {
       "type": "string",
-      "format": "date",
       "description": "The start date for the employment",
       "example": "2016-01-01"
     },
     "endDate": {
       "type": "string",
-      "format": "date",
       "description": "The end date for the employment",
       "example": "2017-03-01"
     },
-    "payments": {
-      "description": "The list of employment payments",
-      "type": "array",
-      "items": [
-        {
-          "type": "object",
-          "properties": {
-            "paymentDate": {
-              "type": "string",
-              "format": "date",
-              "description": "The payment date"
-            },
-            "taxablePayment": {
-              "type": "number",
-              "description": "The total amount for which tax was paid"
-            },
-            "nonTaxablePayment": {
-              "type": "number",
-              "description": "The total amount exempt from taxes"
-            }
-          },
-          "required": ["paymentDate", "taxablePayment", "nonTaxablePayment"],
-          "additionalProperties": false
-        }
-      ]
+    "employerPayeReference": {
+      "type": "string",
+      "description": "The employer PAYE reference number",
+      "example": "904/UZ00057"
+    },
+    "nino": {
+      "type": "string",
+      "description": "The employee National Insurance number",
+      "example": "AA123456D"
     }
   },
-  "required": ["employerPayeReference", "nino", "startDate", "endDate", "payments"]
+  "type": "object",
+  "required": ["employerPayeReference", "nino", "payments"]
 }

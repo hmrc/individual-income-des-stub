@@ -16,31 +16,36 @@
       "example": "2017-03-01"
     },
     "payments": {
-      "description": "The list of employment payments",
+      "description": "The payments associated with the employment",
       "type": "array",
-      "items": [
-        {
-          "type": "object",
+      "items": {
+          "additionalProperties": false,
+          "id": "/properties/payments/items",
           "properties": {
             "paymentDate": {
+              "id": "/properties/payments/items/properties/paymentDate",
               "type": "string",
               "format": "date",
-              "description": "The payment date"
+              "description": "The payment date",
+              "example": "2016-01-28"
             },
             "taxablePayment": {
+              "id": "/properties/payments/items/properties/taxablePayment",
               "type": "number",
-              "description": "The total amount for which tax was paid"
+              "description": "The total amount for which tax was paid",
+              "example": "1000.55"
             },
             "nonTaxablePayment": {
+              "id": "/properties/payments/items/properties/nonTaxablePayment",
               "type": "number",
-              "description": "The total amount exempt from taxes"
+              "description": "The total amount exempt from taxes",
+              "example": "0"
             }
           },
           "required": ["paymentDate", "taxablePayment", "nonTaxablePayment"],
-          "additionalProperties": false
+          "type": "object"
         }
-      ]
     }
   },
-  "required": ["startDate", "endDate", "payments"]
+  "required": ["payments"]
 }

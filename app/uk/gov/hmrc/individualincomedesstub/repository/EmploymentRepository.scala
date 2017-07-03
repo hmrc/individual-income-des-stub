@@ -22,7 +22,7 @@ import play.api.libs.json.Json
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
-import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, JsonFormatters}
 import uk.gov.hmrc.mongo.ReactiveRepository
 
@@ -36,12 +36,12 @@ class EmploymentRepository @Inject() (mongoConnectionProvider: MongoConnectionPr
     Index(key = Seq(("nino", Ascending), ("employerPayeReference", Ascending)), name = Some("ninoAndEmployerPayeReference"), unique = false, background = true)
   )
 
-  def create(employerPayeReference: String, nino: Nino, request: CreateEmploymentRequest) = {
+  def create(employerPayeReference: EmpRef, nino: Nino, request: CreateEmploymentRequest) = {
     val employment = Employment(employerPayeReference, nino, request.startDate, request.endDate, request.payments)
     insert(employment) map (_ => employment)
   }
 
-  def findByReferenceAndNino(employerPayeReference: String, nino: Nino) = {
+  def findByReferenceAndNino(employerPayeReference: EmpRef, nino: Nino) = {
     collection.find(Json.obj("employerPayeReference" -> employerPayeReference, "nino" -> nino)).cursor[Employment]().collect[List]()
   }
 }

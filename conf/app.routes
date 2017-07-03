@@ -1,4 +1,4 @@
 # microservice specific routes
 
 POST        /employer                                 @uk.gov.hmrc.individualincomedesstub.controller.EmployerController.createEmployer
-POST        /employer/:empRef/employment/:nino        @uk.gov.hmrc.individualincomedesstub.controller.EmploymentController.create(empRef: uk.gov.hmrc.individualincomedesstub.domain.EmployerReference, nino: uk.gov.hmrc.domain.Nino)
+POST        /employer/:empRef/employment/:nino        @uk.gov.hmrc.individualincomedesstub.controller.EmploymentController.create(empRef: uk.gov.hmrc.domain.EmpRef, nino: uk.gov.hmrc.domain.Nino)
