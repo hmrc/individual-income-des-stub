@@ -21,7 +21,7 @@ import uk.gov.hmrc.domain.EmpRef
 class EmployerReferenceStringBinder extends AbstractPathStringBindable[EmpRef] {
 
   override def bind(key: String, value: String): Either[String, EmpRef] =
-    bind(key, value, "Invalid employer reference submitted", EmpRef.fromIdentifiers(value))
+    bind("Invalid employer reference submitted", EmpRef.fromIdentifiers(value))
 
   def unbind(key: String, empRef: EmpRef): String = empRef.encodedValue
 
