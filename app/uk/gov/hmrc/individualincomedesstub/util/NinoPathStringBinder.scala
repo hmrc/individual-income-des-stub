@@ -20,11 +20,8 @@ import uk.gov.hmrc.domain.Nino
 
 class NinoPathStringBinder extends AbstractPathStringBindable[Nino] {
 
-  override def bind(key: String, value: String): Either[String, Nino] = try {
-    Right(Nino(value))
-  } catch {
-    case _: Throwable => Left(errorResponse("Malformed nino submitted"))
-  }
+  override def bind(key: String, value: String): Either[String, Nino] =
+    bind("Malformed nino submitted", Nino(value))
 
   override def unbind(key: String, value: Nino): String = value.nino
 }

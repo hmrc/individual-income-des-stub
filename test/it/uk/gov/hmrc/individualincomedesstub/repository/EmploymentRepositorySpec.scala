@@ -19,18 +19,18 @@ package it.uk.gov.hmrc.individualincomedesstub.repository
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.domain.{EmpRef, Nino}
-import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, Payment}
+import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, HmrcPayment}
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class EmploymentRepositorySpec  extends UnitSpec with WithFakeApplication with MongoSpecSupport with BeforeAndAfterEach {
+class EmploymentRepositorySpec extends UnitSpec with WithFakeApplication with MongoSpecSupport with BeforeAndAfterEach {
 
   override lazy val fakeApplication = new GuiceApplicationBuilder()
     .configure("mongodb.uri" -> mongoUri)
-    .bindings(bindModules:_*)
+    .bindings(bindModules: _*)
     .build()
 
   val employmentRepository = fakeApplication.injector.instanceOf[EmploymentRepository]
@@ -83,15 +83,31 @@ class EmploymentRepositorySpec  extends UnitSpec with WithFakeApplication with M
     }
   }
 
-  private def aCreateEmploymentRequest = CreateEmploymentRequest(
+  "find by nino" should {
+
+    "return an empty sequence when a corresponding employment does not exist" in {
+      await(employmentRepository.findBy(nino)).isEmpty shouldBe true
+    }
+
+    "return a non-empty sequence when corresponding employments exist" in {
+      await(employmentRepository.create(employerReference, nino, aCreateEmploymentRequest))
+      val employments = await(employmentRepository.findBy(nino))
+      employments.nonEmpty shouldBe true
+      employments.size shouldBe 1
+      employments.head shouldBe anEmployment(employerReference, nino)
+    }
+
+  }
+
+  private val aCreateEmploymentRequest = CreateEmploymentRequest(
     Some("2016-01-01"),
     Some("2017-01-30"),
-    Seq(Payment("2016-01-28", 1000.55, 0), Payment("2016-02-28", 1200.44, 0)))
+    Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 1200.44, 0)))
 
   private def anEmployment(empRef: EmpRef, nino: Nino) = Employment(
     empRef, nino,
     Some("2016-01-01"),
     Some("2017-01-30"),
-    Seq(Payment("2016-01-28", 1000.55, 0), Payment("2016-02-28", 1200.44, 0))
+    Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 1200.44, 0))
   )
 }

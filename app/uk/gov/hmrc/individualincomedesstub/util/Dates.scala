@@ -16,19 +16,16 @@
 
 package uk.gov.hmrc.individualincomedesstub.util
 
-import play.api.libs.json.Json
-import play.api.mvc.PathBindable
-import uk.gov.hmrc.individualincomedesstub.domain.ErrorInvalidRequest
-import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.errorInvalidRequestFormat
+import org.joda.time.{Interval, LocalDate}
 
-import scala.util.Try
+object Dates {
 
-trait AbstractPathStringBindable[T] extends PathBindable[T] {
-  protected def errorResponse(message: String) = {
-    Json.toJson(ErrorInvalidRequest(message)).toString
-  }
+  private def asDate(string: String) = LocalDate.parse(string)
 
-  def bind[A](message: String, function: => A): Either[String, A] =
-    Try(Right(function)) getOrElse Left(errorResponse(message))
+  def toInterval(fromDate: String, toDate: String): Interval =
+    toInterval(asDate(fromDate), asDate(toDate))
+
+  def toInterval(fromDate: LocalDate, toDate: LocalDate): Interval =
+    new Interval(fromDate.toDate.getTime, toDate.toDateTimeAtStartOfDay.plusMillis(1).toDate.getTime)
 
 }

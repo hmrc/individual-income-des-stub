@@ -23,14 +23,15 @@ import uk.gov.hmrc.domain.EmpRef
 import uk.gov.hmrc.individualincomedesstub.domain.{Address, Employer}
 import uk.gov.hmrc.individualincomedesstub.repository.EmployerRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
-import uk.gov.hmrc.play.test.{WithFakeApplication, UnitSpec}
+import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class EmployerRepositorySpec extends UnitSpec with WithFakeApplication with MongoSpecSupport with BeforeAndAfterEach {
 
   override lazy val fakeApplication = new GuiceApplicationBuilder()
     .configure("mongodb.uri" -> mongoUri)
-    .bindings(bindModules:_*)
+    .bindings(bindModules: _*)
     .build()
 
   val employerRepository = fakeApplication.injector.instanceOf[EmployerRepository]
@@ -75,8 +76,23 @@ class EmployerRepositorySpec extends UnitSpec with WithFakeApplication with Mong
     "fail with DatabaseException when trying to create an employer which already exists" in {
       await(employerRepository.insert(employer))
 
-      intercept[DatabaseException]{await(employerRepository.insert(employer))}
+      intercept[DatabaseException] {
+        await(employerRepository.insert(employer))
+      }
+    }
+  }
+
+  "find by emp refs" should {
+
+    "return empty set when corresponding employers no not exist" in {
+      await(employerRepository.findBy(Set(employer.payeReference))) shouldBe Set.empty[Employer]
+    }
+
+    "return populated set when corresponding employers exist" in {
+      await(employerRepository.insert(employer))
+      await(employerRepository.findBy(Set(employer.payeReference))) shouldBe Set(employer)
     }
 
   }
+
 }

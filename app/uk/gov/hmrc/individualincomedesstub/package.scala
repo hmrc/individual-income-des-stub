@@ -16,10 +16,11 @@
 
 package uk.gov.hmrc.individualincomedesstub
 
-import uk.gov.hmrc.individualincomedesstub.util.{EmployerReferenceStringBinder, NinoPathStringBinder}
+import uk.gov.hmrc.individualincomedesstub.util.{EmployerReferenceStringBinder, IntervalQueryStringBinder, NinoPathStringBinder}
 
 package object Binders {
 
-  implicit def ninoBinder = new NinoPathStringBinder
-  implicit def employerReferenceBinder = new EmployerReferenceStringBinder
+  implicit val ninoBinder = new NinoPathStringBinder
+  implicit val employerReferenceBinder = new EmployerReferenceStringBinder
+  implicit val intervalQueryStringBinder = new IntervalQueryStringBinder
 }

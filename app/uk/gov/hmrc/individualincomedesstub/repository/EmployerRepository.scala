@@ -20,11 +20,12 @@ import javax.inject.{Inject, Singleton}
 
 import play.api.libs.json.Json
 import play.modules.reactivemongo.ReactiveMongoComponent
+import reactivemongo.api.ReadPreference
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
-import reactivemongo.bson.BSONObjectID
+import reactivemongo.bson.{BSONDocument, BSONObjectID}
 import uk.gov.hmrc.domain.EmpRef
-import uk.gov.hmrc.individualincomedesstub.domain.{JsonFormatters, Employer}
+import uk.gov.hmrc.individualincomedesstub.domain.{Employer, JsonFormatters}
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -39,7 +40,14 @@ class EmployerRepository @Inject()(reactiveMongoComponent: ReactiveMongoComponen
     Index(Seq(("payeReference", Ascending)), Some("payeReferenceIndex"), background = true, unique = true)
   )
 
-  def createEmployer(employer: Employer): Future[Employer] = insert(employer) map(_ => employer)
+  def createEmployer(employer: Employer): Future[Employer] = insert(employer) map (_ => employer)
 
   def findByPayeReference(payeReference: EmpRef): Future[Option[Employer]] = collection.find(Json.obj("payeReference" -> payeReference.value)).one[Employer]
+
+  def findBy(empRefs: Set[EmpRef]): Future[Set[Employer]] = {
+    val empRefsAsStrings = empRefs map (_.value)
+    val payeReferenceSelector = Json.obj("payeReference" -> BSONDocument("$in" -> empRefsAsStrings))
+    collection.find(payeReferenceSelector).cursor[Employer](ReadPreference.primary).collect[Set]()
+  }
+
 }

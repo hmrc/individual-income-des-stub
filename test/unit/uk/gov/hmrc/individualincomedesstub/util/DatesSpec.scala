@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualincomedesstub.util
+package unit.uk.gov.hmrc.individualincomedesstub.util
 
-import play.api.libs.json.Json
-import play.api.mvc.PathBindable
-import uk.gov.hmrc.individualincomedesstub.domain.ErrorInvalidRequest
-import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.errorInvalidRequestFormat
+import org.joda.time.LocalDate.parse
+import org.scalatest.{FlatSpec, Matchers}
+import uk.gov.hmrc.individualincomedesstub.util.Dates
 
-import scala.util.Try
+class DatesSpec extends FlatSpec with Matchers {
 
-trait AbstractPathStringBindable[T] extends PathBindable[T] {
-  protected def errorResponse(message: String) = {
-    Json.toJson(ErrorInvalidRequest(message)).toString
+  "Dates utility" should "derive an interval between two dates" in {
+    val (fromDate, toDate) = (parse("2020-01-01"), parse("2020-01-02"))
+    Dates.toInterval(fromDate, toDate).toString shouldBe "2020-01-01T00:00:00.000Z/2020-01-02T00:00:00.001Z"
   }
-
-  def bind[A](message: String, function: => A): Either[String, A] =
-    Try(Right(function)) getOrElse Left(errorResponse(message))
 
 }

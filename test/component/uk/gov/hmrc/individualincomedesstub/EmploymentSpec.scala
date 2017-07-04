@@ -18,10 +18,11 @@ package component.uk.gov.hmrc.individualincomedesstub
 
 import play.api.http.HeaderNames._
 import play.api.http.MimeTypes._
+import play.api.http.Status.{BAD_REQUEST, CREATED}
 import play.api.libs.json.Json
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
-import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, Payment}
+import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, HmrcPayment}
 
 import scala.concurrent.Await.result
 import scalaj.http.Http
@@ -43,7 +44,7 @@ class EmploymentSpec extends BaseSpec {
       val response = requestCreateEmployment(Json.toJson(request).toString)
 
       Then("The response code should be 201 (Created)")
-      response.code shouldBe 201
+      response.code shouldBe CREATED
 
       And("The employment is returned in the response body")
       val employment = anEmployment()
@@ -62,7 +63,7 @@ class EmploymentSpec extends BaseSpec {
       val response = requestCreateEmployment(Json.toJson(request).toString)
 
       Then("The response code should be 201 (Created)")
-      response.code shouldBe 201
+      response.code shouldBe CREATED
 
       And("The employment is returned in the response body")
       val employment = anEmployment(startDate = None, endDate = None)
@@ -82,7 +83,7 @@ class EmploymentSpec extends BaseSpec {
       val response = requestCreateEmployment(Json.toJson(request).toString)
 
       Then("The response code should be 201 (Created)")
-      response.code shouldBe 201
+      response.code shouldBe CREATED
 
       And("The employment is returned in the response body")
       val employment = anEmployment(startDate = None)
@@ -101,7 +102,7 @@ class EmploymentSpec extends BaseSpec {
       val response = requestCreateEmployment(Json.toJson(request).toString)
 
       Then("The response code should be 201 (Created)")
-      response.code shouldBe 201
+      response.code shouldBe CREATED
 
       And("The employment is returned in the response body")
       val employment = anEmployment(endDate = None)
@@ -120,7 +121,7 @@ class EmploymentSpec extends BaseSpec {
       val response = requestCreateEmployment(request)
 
       Then("The response code should be 400 (Bad Request)")
-      response.code shouldBe 400
+      response.code shouldBe BAD_REQUEST
       response.body shouldBe """{"code":"INVALID_REQUEST","message":"startDate: invalid date format"}"""
     }
 
@@ -132,30 +133,31 @@ class EmploymentSpec extends BaseSpec {
       val response = requestCreateEmployment(request)
 
       Then("The response code should be 400 (Bad Request)")
-      response.code shouldBe 400
+      response.code shouldBe BAD_REQUEST
       response.body shouldBe """{"code":"INVALID_REQUEST","message":"endDate: invalid date format"}"""
     }
 
     scenario("Request fails for invalid employment interval") {
       Given("A create employment request with an endDate before the startDate")
-      val request = s"""
-                       |{
-                       |"startDate": "2016-04-28",
-                       |"endDate": "2016-03-01",
-                       |"payments": [
-                       |    {
-                       |        "paymentDate": "2016-01-28",
-                       |        "taxablePayment": 1000.55,
-                       |        "nonTaxablePayment": 0
-                       |    }
-                       |]}
-     """.stripMargin.replaceAll("\n", "")
+      val request =
+        s"""
+         {
+           "startDate": "2016-04-28",
+           "endDate": "2016-03-01",
+           "payments": [
+               {
+                   "paymentDate": "2016-01-28",
+                   "taxablePayment": 1000.55,
+                   "nonTaxablePayment": 0
+               }
+           ]
+         }"""
 
       When("I request to create an employment")
       val response = requestCreateEmployment(request)
 
       Then("The response code should be 400 (Bad Request)")
-      response.code shouldBe 400
+      response.code shouldBe BAD_REQUEST
       response.body shouldBe """{"code":"INVALID_REQUEST","message":"Invalid employment period"}"""
     }
 
@@ -167,7 +169,7 @@ class EmploymentSpec extends BaseSpec {
       val response = requestCreateEmployment(request, nino = "A12345C")
 
       Then("The response code should be 400 (Bad Request)")
-      response.code shouldBe 400
+      response.code shouldBe BAD_REQUEST
       response.body shouldBe """{"code":"INVALID_REQUEST","message":"Malformed nino submitted"}"""
     }
 
@@ -191,37 +193,102 @@ class EmploymentSpec extends BaseSpec {
       val response = requestCreateEmployment(request, reference = "123DI45678")
 
       Then("The response code should be 400 (Bad Request)")
-      response.code shouldBe 400
+      response.code shouldBe BAD_REQUEST
       response.body shouldBe """{"code":"INVALID_REQUEST","message":"Invalid employer reference submitted"}"""
     }
 
     scenario("Request fails for invalid paymentDate format") {
       Given("A create employment request with an invalid paymentDate")
-      val request = s"""
-                     |{
-                     |"startDate": "2016-01-01",
-                     |"endDate": "2017-03-01",
-                     |"payments": [
-                     |    {
-                     |        "paymentDate": "201601-28",
-                     |        "taxablePayment": 1000.55,
-                     |        "nonTaxablePayment": 0
-                     |    }
-                     |]}
-     """.stripMargin.replaceAll("\n", "")
+      val request =
+        s"""
+         {
+           "startDate": "2016-01-01",
+           "endDate": "2017-03-01",
+           "payments": [
+               {
+                   "paymentDate": "201601-28",
+                   "taxablePayment": 1000.55,
+                   "nonTaxablePayment": 0
+               }
+           ]
+         }"""
 
       When("I request to create an employment")
       val response = requestCreateEmployment(request)
 
       Then("The response code should be 400 (Bad Request)")
-      response.code shouldBe 400
+      response.code shouldBe BAD_REQUEST
       response.body shouldBe """{"code":"INVALID_REQUEST","message":"paymentDate: invalid date format"}"""
     }
   }
 
+  feature("retrieve employments") {
+
+    scenario("request with an invalid nino") {
+      Given("a request with an invalid nino")
+      val httpRequest = Http(s"$serviceUrl/individuals/ABCDEFGHI/employments/income")
+
+      When("the employments endpoint is invoked")
+      val httpResponse = httpRequest.asString
+
+      Then("the response should be 400 (Bad Request)")
+      httpResponse.code shouldBe BAD_REQUEST
+      httpResponse.body shouldBe """{"code":"INVALID_REQUEST","message":"Malformed nino submitted"}"""
+    }
+
+    scenario("request without a from date") {
+      Given("a request without a from date")
+      val httpRequest = Http(s"$serviceUrl/individuals/$validNino/employments/income?missingFromDate=whatever")
+
+      When("the employments endpoint is invoked")
+      val httpResponse = httpRequest.asString
+
+      Then("the response should be 400 (Bad Request)")
+      httpResponse.code shouldBe BAD_REQUEST
+      httpResponse.body shouldBe """{"code":"INVALID_REQUEST","message":"fromDate is required"}"""
+    }
+
+    scenario("request with a malformed from date") {
+      Given("a request with an malformed from date")
+      val httpRequest = Http(s"$serviceUrl/individuals/$validNino/employments/income?fromDate=01-01-2017")
+
+      When("the employments endpoint is invoked")
+      val httpResponse = httpRequest.asString
+
+      Then("the response should be 400 (Bad Request)")
+      httpResponse.code shouldBe BAD_REQUEST
+      httpResponse.body shouldBe """{"code":"INVALID_REQUEST","message":"fromDate: invalid date format"}"""
+    }
+
+    scenario("request with a malformed to date") {
+      Given("a request with an malformed to date")
+      val httpRequest = Http(s"$serviceUrl/individuals/$validNino/employments/income?fromDate=2017-01-01&toDate=01-01-2017")
+
+      When("the employments endpoint is invoked")
+      val httpResponse = httpRequest.asString
+
+      Then("the response should be 400 (Bad Request)")
+      httpResponse.code shouldBe BAD_REQUEST
+      httpResponse.body shouldBe """{"code":"INVALID_REQUEST","message":"toDate: invalid date format"}"""
+    }
+
+    scenario("request with an invalid date range") {
+      Given("a request with an invalid date range")
+      val httpRequest = Http(s"$serviceUrl/individuals/$validNino/employments/income?fromDate=2017-01-02&toDate=2017-01-01")
+
+      When("the employments endpoint is invoked")
+      val httpResponse = httpRequest.asString
+
+      Then("the response should be 400 (Bad Request)")
+      httpResponse.code shouldBe BAD_REQUEST
+      httpResponse.body shouldBe """{"code":"INVALID_REQUEST","message":"Invalid time period requested"}"""
+    }
+
+  }
+
   private def aCreateEmploymentRequest(startDate: Option[String] = Some("2016-01-01"),
                                        endDate: Option[String] = Some("2017-03-01"),
-                                       payments: Seq[Payment] = Seq(Payment("2016-01-28", 1000.55, 0), Payment("2016-02-28", 950.55, 0))) = {
+                                       payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 950.55, 0))) = {
 
     CreateEmploymentRequest(startDate, endDate, payments)
   }
@@ -231,7 +298,7 @@ class EmploymentSpec extends BaseSpec {
                            nino: Nino = Nino(validNino),
                            startDate: Option[String] = Some("2016-01-01"),
                            endDate: Option[String] = Some("2017-03-01"),
-                           payments: Seq[Payment] = Seq(Payment("2016-01-28", 1000.55, 0), Payment("2016-02-28", 950.55, 0))) = {
+                           payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 950.55, 0))) = {
 
     Employment(employerPayeReference, nino, startDate, endDate, payments)
   }
