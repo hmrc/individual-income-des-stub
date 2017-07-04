@@ -249,7 +249,7 @@ class EmploymentSpec extends BaseSpec {
     }
 
     scenario("request with a malformed from date") {
-      Given("a request without a from date")
+      Given("a request with an malformed from date")
       val httpRequest = Http(s"$serviceUrl/individuals/$validNino/employments/income?fromDate=01-01-2017")
 
       When("the employments endpoint is invoked")
@@ -260,19 +260,19 @@ class EmploymentSpec extends BaseSpec {
       httpResponse.body shouldBe """{"code":"INVALID_REQUEST","message":"fromDate: invalid date format"}"""
     }
 
-    scenario("request with an invalid date range") {
-      Given("a request with an invalid date range")
-      val httpRequest = Http(s"$serviceUrl/individuals/$validNino/employments/income?fromDate=2017-01-02&toDate=2017-01-01")
+    scenario("request with a malformed to date") {
+      Given("a request with an malformed to date")
+      val httpRequest = Http(s"$serviceUrl/individuals/$validNino/employments/income?fromDate=2017-01-01&toDate=01-01-2017")
 
       When("the employments endpoint is invoked")
       val httpResponse = httpRequest.asString
 
       Then("the response should be 400 (Bad Request)")
       httpResponse.code shouldBe BAD_REQUEST
-      httpResponse.body shouldBe """{"code":"INVALID_REQUEST","message":"Invalid time period requested"}"""
+      httpResponse.body shouldBe """{"code":"INVALID_REQUEST","message":"toDate: invalid date format"}"""
     }
 
-    scenario("request with corresponding employments") {
+    scenario("request with an invalid date range") {
       Given("a request with an invalid date range")
       val httpRequest = Http(s"$serviceUrl/individuals/$validNino/employments/income?fromDate=2017-01-02&toDate=2017-01-01")
 

@@ -33,7 +33,7 @@ class EmploymentIncomeService @Inject()(employmentRepository: EmploymentReposito
   def employments(nino: Nino, interval: Interval): Future[Seq[EmploymentIncomeResponse]] =
     for {
       employments <- employmentRepository.findBy(nino) map (_ filter overlap(interval))
-      employerPayeReferences = employments map (employment => employment.employerPayeReference)
+      employerPayeReferences = employments map (_.employerPayeReference)
       employers <- employerRepository.findBy(employerPayeReferences.toSet)
       maybeEmployers = employments map (employment => employers find (_.payeReference == employment.employerPayeReference))
     } yield employments zip maybeEmployers map { case (employment, employer) =>
