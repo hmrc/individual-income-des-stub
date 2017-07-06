@@ -7,6 +7,7 @@
     "name" : "Individuals Income Test Support",
     "description" : "Test Support for the Individuals API",
     "context" : "individuals-income-test-support",
+    "isTestSupport": true,
     "versions" : [
       {
         "version" : "1.0",
