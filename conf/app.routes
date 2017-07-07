@@ -1,5 +1,5 @@
 # microservice specific routes
 
-POST        /employer                                 @uk.gov.hmrc.individualincomedesstub.controller.EmployerController.createEmployer
-POST        /employer/:empRef/employment/:nino        @uk.gov.hmrc.individualincomedesstub.controller.EmploymentController.create(empRef: uk.gov.hmrc.domain.EmpRef, nino: uk.gov.hmrc.domain.Nino)
-GET         /individuals/:nino/employments/income     @uk.gov.hmrc.individualincomedesstub.controller.EmploymentIncomeController.employments(nino: uk.gov.hmrc.domain.Nino, interval: org.joda.time.Interval)
+POST        /employer                                      @uk.gov.hmrc.individualincomedesstub.controller.EmployerController.createEmployer
+POST        /employer/:empRef/employment/:nino             @uk.gov.hmrc.individualincomedesstub.controller.EmploymentController.create(empRef: uk.gov.hmrc.domain.EmpRef, nino: uk.gov.hmrc.domain.Nino)
+GET         /individuals/nino/:nino/employments/income     @uk.gov.hmrc.individualincomedesstub.controller.EmploymentIncomeController.employments(nino: uk.gov.hmrc.domain.Nino, interval: org.joda.time.Interval)

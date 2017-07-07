@@ -226,7 +226,7 @@ class EmploymentSpec extends BaseSpec {
 
     scenario("request with an invalid nino") {
       Given("a request with an invalid nino")
-      val httpRequest = Http(s"$serviceUrl/individuals/ABCDEFGHI/employments/income")
+      val httpRequest = Http(s"$serviceUrl/individuals/nino/ABCDEFGHI/employments/income")
 
       When("the employments endpoint is invoked")
       val httpResponse = httpRequest.asString
@@ -238,7 +238,7 @@ class EmploymentSpec extends BaseSpec {
 
     scenario("request without a from date") {
       Given("a request without a from date")
-      val httpRequest = Http(s"$serviceUrl/individuals/$validNino/employments/income?missingFromDate=whatever")
+      val httpRequest = Http(s"$serviceUrl/individuals/nino/$validNino/employments/income?missingFromDate=whatever")
 
       When("the employments endpoint is invoked")
       val httpResponse = httpRequest.asString
@@ -250,7 +250,7 @@ class EmploymentSpec extends BaseSpec {
 
     scenario("request with a malformed from date") {
       Given("a request with an malformed from date")
-      val httpRequest = Http(s"$serviceUrl/individuals/$validNino/employments/income?fromDate=01-01-2017")
+      val httpRequest = Http(s"$serviceUrl/individuals/nino/$validNino/employments/income?fromDate=01-01-2017")
 
       When("the employments endpoint is invoked")
       val httpResponse = httpRequest.asString
@@ -262,7 +262,7 @@ class EmploymentSpec extends BaseSpec {
 
     scenario("request with a malformed to date") {
       Given("a request with an malformed to date")
-      val httpRequest = Http(s"$serviceUrl/individuals/$validNino/employments/income?fromDate=2017-01-01&toDate=01-01-2017")
+      val httpRequest = Http(s"$serviceUrl/individuals/nino/$validNino/employments/income?fromDate=2017-01-01&toDate=01-01-2017")
 
       When("the employments endpoint is invoked")
       val httpResponse = httpRequest.asString
@@ -274,7 +274,7 @@ class EmploymentSpec extends BaseSpec {
 
     scenario("request with an invalid date range") {
       Given("a request with an invalid date range")
-      val httpRequest = Http(s"$serviceUrl/individuals/$validNino/employments/income?fromDate=2017-01-02&toDate=2017-01-01")
+      val httpRequest = Http(s"$serviceUrl/individuals/nino/$validNino/employments/income?fromDate=2017-01-02&toDate=2017-01-01")
 
       When("the employments endpoint is invoked")
       val httpResponse = httpRequest.asString
