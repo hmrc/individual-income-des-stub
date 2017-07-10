@@ -23,6 +23,7 @@ object JsonFormatters {
   implicit val employerJsonFormat = Json.format[Employer]
   implicit val hmrcPaymentFormat = Json.format[HmrcPayment]
   implicit val desPaymentFormat = Json.format[DesPayment]
+  implicit val desAddressFormat = Json.format[DesAddress]
   implicit val employmentFormat = Json.format[Employment]
 
   implicit val createEmploymentRequestFormat = Json.format[CreateEmploymentRequest]

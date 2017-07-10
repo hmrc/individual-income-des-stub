@@ -36,6 +36,12 @@ object DesPayment {
   def apply(hmrcPayment: HmrcPayment): DesPayment = DesPayment(LocalDate.parse(hmrcPayment.paymentDate), hmrcPayment.taxablePayment, hmrcPayment.nonTaxablePayment)
 }
 
+case class DesAddress(line1: String, line2: Option[String], postalCode: String)
+
+object DesAddress {
+  def apply(address: Address): DesAddress = DesAddress(address.line1, address.line2, address.postcode)
+}
+
 case class Employment(employerPayeReference: EmpRef, nino: Nino, startDate: Option[String], endDate: Option[String], payments: Seq[HmrcPayment]) {
   def containsPaymentWithin(interval: Interval) =
     payments.exists(_.isPaidWithin(interval))
@@ -68,7 +74,7 @@ case class CreateEmploymentRequest(startDate: Option[String], endDate: Option[St
 
 case class EmploymentIncomeResponse
 (employerName: Option[String],
- employerAddress: Option[Address],
+ employerAddress: Option[DesAddress],
  employerDistrictNumber: Option[String],
  employerSchemeReference: Option[String],
  employmentStartDate: Option[LocalDate],
@@ -82,7 +88,7 @@ object EmploymentIncomeResponse {
   def apply(employment: Employment, maybeEmployer: Option[Employer]): EmploymentIncomeResponse =
     maybeEmployer match {
       case Some(employer) => EmploymentIncomeResponse(
-        Option(employer.name), Option(employer.address), Option(employer.payeReference.taxOfficeNumber), Option(employer.payeReference.taxOfficeReference),
+        Option(employer.name), Option(DesAddress(employer.address)), Option(employer.payeReference.taxOfficeNumber), Option(employer.payeReference.taxOfficeReference),
         employment.startDate.map(parse), employment.endDate.map(parse), employment.payments map (DesPayment(_))
       )
       case _ => EmploymentIncomeResponse(
