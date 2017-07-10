@@ -23,8 +23,8 @@ import uk.gov.hmrc.individualincomedesstub.util.Dates
 class DatesSpec extends FlatSpec with Matchers {
 
   "Dates utility" should "derive an interval between two dates" in {
-    val (fromDate, toDate) = (parse("2020-01-01"), parse("2020-01-02"))
-    Dates.toInterval(fromDate, toDate).toString shouldBe "2020-01-01T00:00:00.000Z/2020-01-02T00:00:00.001Z"
+    val (from, to) = (parse("2020-01-01"), parse("2020-01-02"))
+    Dates.toInterval(from, to).toString shouldBe "2020-01-01T00:00:00.000Z/2020-01-02T00:00:00.001Z"
   }
 
 }

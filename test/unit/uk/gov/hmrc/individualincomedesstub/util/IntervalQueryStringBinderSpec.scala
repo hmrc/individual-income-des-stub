@@ -26,15 +26,15 @@ class IntervalQueryStringBinderSpec extends FlatSpec with Matchers with EitherVa
 
   private val intervalQueryStringBinder = new IntervalQueryStringBinder
 
-  "Interval query string binder" should "fail to bind a missing or malformed fromDate or a malformed toDate parameter" in new TableDrivenPropertyChecks {
+  "Interval query string binder" should "fail to bind a missing or malformed from or a malformed to parameter" in new TableDrivenPropertyChecks {
     val fixtures = Table(
       ("parameters", "response"),
-      (Map[String, Seq[String]]().empty, """{"code":"INVALID_REQUEST","message":"fromDate is required"}"""),
-      (Map("fromDate" -> Seq.empty[String]), """{"code":"INVALID_REQUEST","message":"fromDate is required"}"""),
-      (Map("fromDate" -> Seq("")), """{"code":"INVALID_REQUEST","message":"fromDate: invalid date format"}"""),
-      (Map("fromDate" -> Seq("20200131")), """{"code":"INVALID_REQUEST","message":"fromDate: invalid date format"}"""),
-      (Map("fromDate" -> Seq("2020-01-31"), "toDate" -> Seq("")), """{"code":"INVALID_REQUEST","message":"toDate: invalid date format"}"""),
-      (Map("fromDate" -> Seq("2020-01-31"), "toDate" -> Seq("20201231")), """{"code":"INVALID_REQUEST","message":"toDate: invalid date format"}""")
+      (Map[String, Seq[String]]().empty, """{"code":"INVALID_REQUEST","message":"from is required"}"""),
+      (Map("from" -> Seq.empty[String]), """{"code":"INVALID_REQUEST","message":"from is required"}"""),
+      (Map("from" -> Seq("")), """{"code":"INVALID_REQUEST","message":"from: invalid date format"}"""),
+      (Map("from" -> Seq("20200131")), """{"code":"INVALID_REQUEST","message":"from: invalid date format"}"""),
+      (Map("from" -> Seq("2020-01-31"), "to" -> Seq("")), """{"code":"INVALID_REQUEST","message":"to: invalid date format"}"""),
+      (Map("from" -> Seq("2020-01-31"), "to" -> Seq("20201231")), """{"code":"INVALID_REQUEST","message":"to: invalid date format"}""")
     )
 
     fixtures foreach { case (parameters, response) =>
@@ -45,16 +45,16 @@ class IntervalQueryStringBinderSpec extends FlatSpec with Matchers with EitherVa
     }
   }
 
-  it should "default to today's date when a valid fromDate parameter is present but a toDate parameter is missing" in {
-    val parameters = Map("fromDate" -> Seq("2017-01-31"))
+  it should "default to today's date when a valid from parameter is present but a to parameter is missing" in {
+    val parameters = Map("from" -> Seq("2017-01-31"))
     val maybeEither = intervalQueryStringBinder.bind("", parameters)
     maybeEither.isDefined shouldBe true
     maybeEither.get.isRight shouldBe true
     maybeEither.get.right.value shouldBe toInterval("2017-01-31T00:00:00.000", LocalDateTime.now().withTime(0, 0, 0, 1).toString())
   }
 
-  it should "succeed in binding an interval from well formed fromDate and toDate parameters" in {
-    val parameters = Map("fromDate" -> Seq("2020-01-31"), "toDate" -> Seq("2020-12-31"))
+  it should "succeed in binding an interval from well formed from and to parameters" in {
+    val parameters = Map("from" -> Seq("2020-01-31"), "to" -> Seq("2020-12-31"))
     val maybeEither = intervalQueryStringBinder.bind("", parameters)
     maybeEither.isDefined shouldBe true
     maybeEither.get.isRight shouldBe true
@@ -62,7 +62,7 @@ class IntervalQueryStringBinderSpec extends FlatSpec with Matchers with EitherVa
   }
 
   it should "fail to bind an interval from an invalid date range" in {
-    val parameters = Map("fromDate" -> Seq("2020-12-31"), "toDate" -> Seq("2020-01-31"))
+    val parameters = Map("from" -> Seq("2020-12-31"), "to" -> Seq("2020-01-31"))
     val maybeEither = intervalQueryStringBinder.bind("", parameters)
     maybeEither.isDefined shouldBe true
     maybeEither.get.isLeft shouldBe true
@@ -71,10 +71,10 @@ class IntervalQueryStringBinderSpec extends FlatSpec with Matchers with EitherVa
 
   it should "unbind intervals to query parameters" in {
     val interval = toInterval("2020-01-31", "2020-12-31")
-    intervalQueryStringBinder.unbind("", interval) shouldBe "fromDate=2020-01-31&toDate=2020-12-31"
+    intervalQueryStringBinder.unbind("", interval) shouldBe "from=2020-01-31&to=2020-12-31"
   }
 
-  private def toInterval(fromDate: String, toDate: String): Interval =
-    Dates.toInterval(parse(fromDate).toLocalDate, parse(toDate).toLocalDate)
+  private def toInterval(from: String, to: String): Interval =
+    Dates.toInterval(parse(from).toLocalDate, parse(to).toLocalDate)
 
 }

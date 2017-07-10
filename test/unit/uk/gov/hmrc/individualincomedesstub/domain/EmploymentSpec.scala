@@ -117,8 +117,8 @@ class EmploymentSpec extends FreeSpec with Matchers {
     desPayment.totalNonTaxOrNICsPayments shouldBe hmrcPayment.nonTaxablePayment
   }
 
-  private def toInterval(fromDate: LocalDateTime, toDate: LocalDateTime): Interval =
-    new Interval(fromDate.toDate.getTime, toDate.toDate.getTime)
+  private def toInterval(from: LocalDateTime, to: LocalDateTime): Interval =
+    new Interval(from.toDate.getTime, to.toDate.getTime)
 
   private def toLocalDate(maybeString: Option[String]) =
     LocalDate.parse(maybeString.get)

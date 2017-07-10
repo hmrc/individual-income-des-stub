@@ -74,7 +74,7 @@ class EmploymentIncomeControllerSpec extends PlaySpec with Results with MockitoS
 
   }
 
-  private def toInterval(fromDate: LocalDate, toDate: LocalDate): Interval =
-    new Interval(fromDate.toDate.getTime, toDate.toDate.getTime)
+  private def toInterval(from: LocalDate, to: LocalDate): Interval =
+    new Interval(from.toDate.getTime, to.toDate.getTime)
 
 }
