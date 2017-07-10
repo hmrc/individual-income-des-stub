@@ -100,7 +100,7 @@ class EmploymentSpec extends FreeSpec with Matchers {
     val employmentIncomeResponse = EmploymentIncomeResponse(employment, Some(employer))
 
     employmentIncomeResponse.employerName shouldBe Some(employer.name)
-    employmentIncomeResponse.employerAddress shouldBe Some(employer.address)
+    employmentIncomeResponse.employerAddress shouldBe Some(DesAddress(employer.address))
     employmentIncomeResponse.employerDistrictNumber shouldBe Some(employer.payeReference.taxOfficeNumber)
     employmentIncomeResponse.employerSchemeReference shouldBe Some(employer.payeReference.taxOfficeReference)
 
