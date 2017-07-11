@@ -40,25 +40,6 @@ class EmploymentSpec extends FreeSpec with Matchers {
 
   }
 
-  "An employment should determine whether it overlaps a given time interval" in new TableDrivenPropertyChecks {
-    val employment = Employment(EmpRef("123", "AB12345"), Nino("AB123456C"), Option("2017-02-01"), Option("2017-02-28"), Seq.empty)
-
-    val janInterval = toInterval(parse("2017-01-01T00:00:00.000"), parse("2017-01-31T23:59:59.999"))
-    val janFebInterval = toInterval(parse("2017-01-31T00:00:00.000"), parse("2017-02-01T23:59:59.999"))
-    val febMarInterval = toInterval(parse("2017-02-28T00:00:00.000"), parse("2017-03-01T23:59:59.999"))
-    val marInterval = toInterval(parse("2017-03-01T00:00:00.000"), parse("2017-03-31T23:59:59.999"))
-
-    val fixtures = Table(("interval example", "expected result"),
-      (janInterval, false),
-      (janFebInterval, true),
-      (febMarInterval, true),
-      (marInterval, false))
-
-    forAll(fixtures) { (exampleInterval, expectedResult) =>
-      Employment.overlap(exampleInterval)(employment) shouldBe expectedResult
-    }
-  }
-
   "An employment should determine whether it contains a payment within a given time interval" in new TableDrivenPropertyChecks {
     val payment = HmrcPayment("2017-01-10", 123.45, 67.89)
     val employment = Employment(EmpRef("123", "AB12345"), Nino("AB123456C"), Option("2017-02-01"), Option("2017-02-28"), Seq(payment))
