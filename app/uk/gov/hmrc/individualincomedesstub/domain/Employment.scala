@@ -19,7 +19,6 @@ package uk.gov.hmrc.individualincomedesstub.domain
 import org.joda.time.LocalDate.parse
 import org.joda.time.{Interval, LocalDate}
 import uk.gov.hmrc.domain.{EmpRef, Nino}
-import uk.gov.hmrc.individualincomedesstub.util.Dates.toInterval
 import uk.gov.hmrc.individualincomedesstub.util.Validators._
 
 case class HmrcPayment(paymentDate: String, taxablePayment: Double, nonTaxablePayment: Double) {
@@ -49,13 +48,7 @@ case class Employment(employerPayeReference: EmpRef, nino: Nino, startDate: Opti
 
 object Employment {
 
-  def overlap(interval: Interval)(employment: Employment): Boolean =
-    (employment.startDate, employment.endDate) match {
-      case (Some(startDate), maybeEndDate) =>
-        val employmentInterval = toInterval(startDate, maybeEndDate.getOrElse(LocalDate.now.toString))
-        Option(interval.overlap(employmentInterval)).isDefined || employment.containsPaymentWithin(interval)
-      case _ => false
-    }
+  def overlap(interval: Interval)(employment: Employment): Boolean = employment.containsPaymentWithin(interval)
 
 }
 

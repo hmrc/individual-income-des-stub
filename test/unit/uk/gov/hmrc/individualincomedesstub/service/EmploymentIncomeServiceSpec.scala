@@ -22,7 +22,7 @@ import org.scalatest.mockito.MockitoSugar
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpecLike}
 import uk.gov.hmrc.domain.{EmpRef, Nino}
-import uk.gov.hmrc.individualincomedesstub.domain.{Employer, Employment, EmploymentIncomeResponse}
+import uk.gov.hmrc.individualincomedesstub.domain.{Employer, Employment, EmploymentIncomeResponse, HmrcPayment}
 import uk.gov.hmrc.individualincomedesstub.repository.{EmployerRepository, EmploymentRepository}
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentIncomeService
 import uk.gov.hmrc.individualincomedesstub.util.Dates.toInterval
@@ -55,12 +55,14 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
       await(employmentIncomeService.employments(nino, toInterval(parse("2017-01-01"), parse("2017-06-30")))).isEmpty shouldBe true
     }
 
-    "return a populated filtered sequence when corresponding employments exist" in new TableDrivenPropertyChecks {
-      val janToMarEmployment = Employment(EmpRef("101", "AB10001"), nino, Option("2017-01-01"), Option("2017-03-31"), Seq.empty)
-      val aprToJunEmployment = Employment(EmpRef("102", "AB10002"), nino, Option("2017-04-01"), Option("2017-06-30"), Seq.empty)
-      val julToSepEmployment = Employment(EmpRef("103", "AB10003"), nino, Option("2017-07-01"), Option("2017-09-30"), Seq.empty)
-      val octToDecEmployment = Employment(EmpRef("104", "AB10004"), nino, Option("2017-10-01"), Option("2017-12-31"), Seq.empty)
-      val employments = Seq(janToMarEmployment, aprToJunEmployment, julToSepEmployment, octToDecEmployment)
+    "return a populated filtered sequence when corresponding employments with payments exist" in new TableDrivenPropertyChecks {
+      def payment(paymentDate: String) = HmrcPayment(paymentDate, 123.45, 56.78)
+
+      val employmentWithPaymentAtEndOfMar = Employment(EmpRef("101", "AB10001"), nino, None, None, Seq(payment("2017-03-31")))
+      val employmentWithPaymentAtEndOfJun = Employment(EmpRef("102", "AB10002"), nino, None, None, Seq(payment("2017-06-30")))
+      val employmentWithPaymentAtEndOfSep = Employment(EmpRef("103", "AB10003"), nino, None, None, Seq(payment("2017-09-30")))
+      val employmentWithPaymentAtEndOfDec = Employment(EmpRef("104", "AB10004"), nino, None, None, Seq(payment("2017-12-31")))
+      val employments = Seq(employmentWithPaymentAtEndOfMar, employmentWithPaymentAtEndOfJun, employmentWithPaymentAtEndOfSep, employmentWithPaymentAtEndOfDec)
 
       mockEmploymentRepositoryFindByNino(nino, successful(employments))
       mockEmployerRepositoryFindByEmpRefs(successful(Set.empty))
@@ -68,10 +70,10 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
       val fixtures = Table(
         ("interval", "employments"),
         (toInterval(parse("2016-01-01"), parse("2016-12-31")), Seq.empty),
-        (toInterval(parse("2017-01-01"), parse("2017-03-31")), Seq(janToMarEmployment)),
-        (toInterval(parse("2017-01-01"), parse("2017-06-30")), Seq(janToMarEmployment, aprToJunEmployment)),
-        (toInterval(parse("2017-01-01"), parse("2017-09-30")), Seq(janToMarEmployment, aprToJunEmployment, julToSepEmployment)),
-        (toInterval(parse("2017-01-01"), parse("2017-12-31")), Seq(janToMarEmployment, aprToJunEmployment, julToSepEmployment, octToDecEmployment)),
+        (toInterval(parse("2017-01-01"), parse("2017-03-31")), Seq(employmentWithPaymentAtEndOfMar)),
+        (toInterval(parse("2017-01-01"), parse("2017-06-30")), Seq(employmentWithPaymentAtEndOfMar, employmentWithPaymentAtEndOfJun)),
+        (toInterval(parse("2017-01-01"), parse("2017-09-30")), Seq(employmentWithPaymentAtEndOfMar, employmentWithPaymentAtEndOfJun, employmentWithPaymentAtEndOfSep)),
+        (toInterval(parse("2017-01-01"), parse("2017-12-31")), Seq(employmentWithPaymentAtEndOfMar, employmentWithPaymentAtEndOfJun, employmentWithPaymentAtEndOfSep, employmentWithPaymentAtEndOfDec)),
         (toInterval(parse("2018-01-01"), parse("2018-12-31")), Seq.empty)
       )
 
