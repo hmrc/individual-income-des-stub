@@ -51,11 +51,10 @@ class EmploymentIncomeControllerSpec extends PlaySpec with Results with MockitoS
 
     def asEmploymentResponse(employment: Employment) = EmploymentIncomeResponse(employment, None)
 
-    "return a http 200 (Ok) response with empty employment array when service does not return any employments" in {
+    "return a http 404 (Not Found) response when service does not return any employments" in {
       mockEmploymentIncomeService(successful(Seq.empty))
       val eventualResult = employmentIncomeController.employments(nino, interval)(FakeRequest())
-      status(eventualResult) mustBe OK
-      contentAsString(eventualResult) mustBe """{"employments":[]}"""
+      status(eventualResult) mustBe NOT_FOUND
     }
 
     "return a http 200 (Ok) response with populated employment array when service returns employments" in {

@@ -32,7 +32,8 @@ class EmploymentIncomeController @Inject()(employmentIncomeService: EmploymentIn
 
   def employments(nino: Nino, interval: Interval) = Action.async {
     employmentIncomeService.employments(nino, interval) map { employmentIncomeResponses =>
-      Ok(obj("employments" -> toJson(employmentIncomeResponses)))
+      if (employmentIncomeResponses.nonEmpty) Ok(obj("employments" -> toJson(employmentIncomeResponses)))
+      else NotFound
     } recover recovery
   }
 
