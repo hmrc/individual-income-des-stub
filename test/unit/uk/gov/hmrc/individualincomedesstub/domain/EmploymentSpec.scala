@@ -76,14 +76,16 @@ class EmploymentSpec extends FreeSpec with Matchers {
     val employmentEndDate = Option("2020-02-29")
     val employment = Employment(EmpRef("123", "AB12345"), Nino("AB123456C"), employmentStartDate, employmentEndDate, Seq.empty)
 
-    val employer = Employer(EmpRef.fromIdentifiers("123/AB12345"), "Acme", Address("line1", None, "AB1 2CD"))
+    val employer = TestOrganisation(
+      Some(EmpRef.fromIdentifiers("123/AB12345")), TestOrganisationDetails("Acme",
+      TestAddress("line1", "line2", "AB1 2CD")))
 
     val employmentIncomeResponse = EmploymentIncomeResponse(employment, Some(employer))
 
-    employmentIncomeResponse.employerName shouldBe Some(employer.name)
-    employmentIncomeResponse.employerAddress shouldBe Some(DesAddress(employer.address))
-    employmentIncomeResponse.employerDistrictNumber shouldBe Some(employer.payeReference.taxOfficeNumber)
-    employmentIncomeResponse.employerSchemeReference shouldBe Some(employer.payeReference.taxOfficeReference)
+    employmentIncomeResponse.employerName shouldBe Some(employer.organisationDetails.name)
+    employmentIncomeResponse.employerAddress shouldBe Some(DesAddress(employer.organisationDetails.address))
+    employmentIncomeResponse.employerDistrictNumber shouldBe employer.empRef.map(_.taxOfficeNumber)
+    employmentIncomeResponse.employerSchemeReference shouldBe employer.empRef.map(_.taxOfficeReference)
 
     employmentIncomeResponse.employmentStartDate.get shouldBe toLocalDate(employmentStartDate)
     employmentIncomeResponse.employmentLeavingDate.get shouldBe toLocalDate(employmentEndDate)

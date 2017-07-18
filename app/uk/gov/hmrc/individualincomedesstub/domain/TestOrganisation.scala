@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualincomedesstub.service
+package uk.gov.hmrc.individualincomedesstub.domain
 
-import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.domain.EmpRef
 
-import uk.gov.hmrc.individualincomedesstub.domain.Employer
-import uk.gov.hmrc.individualincomedesstub.repository.EmployerRepository
+case class TestAddress(line1: String, line2: String, postCode: String)
 
-import scala.concurrent.Future
+case class TestOrganisationDetails(name: String, address: TestAddress)
 
-@Singleton
-class EmployerService @Inject()(repository: EmployerRepository) {
-
-  def createEmployer(): Future[Employer] = {
-    repository.createEmployer(Employer())
-  }
-}
+case class TestOrganisation(empRef: Option[EmpRef], organisationDetails: TestOrganisationDetails)

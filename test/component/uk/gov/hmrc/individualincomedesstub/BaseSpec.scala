@@ -21,11 +21,12 @@ import java.util.concurrent.TimeUnit
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import component.uk.gov.hmrc.individualincomedesstub.stubs.ApiPlatformTestUserStub
 import org.scalatest._
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import uk.gov.hmrc.individualincomedesstub.repository.{EmployerRepository, EmploymentRepository}
+import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
 
 import scala.concurrent.Await.result
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -38,23 +39,30 @@ trait BaseSpec extends FeatureSpec with BeforeAndAfterAll with BeforeAndAfterEac
   implicit override lazy val app: Application = GuiceApplicationBuilder().configure(
     "auditing.enabled" -> false,
     "auditing.traceRequests" -> false,
+    "microservice.services.api-platform-test-user.port" -> ApiPlatformTestUserStub.port,
     "mongodb.uri" -> "mongodb://localhost:27017/individual-income-des-stub-component-tests"
   ).build()
 
   val timeout = Duration(5, TimeUnit.SECONDS)
   val serviceUrl = s"http://localhost:$port"
-  val employerRepository = app.injector.instanceOf[EmployerRepository]
   val employmentRepository = app.injector.instanceOf[EmploymentRepository]
+  val mocks = Seq(ApiPlatformTestUserStub)
 
-  val repositories = Seq(employerRepository, employmentRepository)
+  val repositories = Seq(employmentRepository)
 
   override protected def beforeEach(): Unit = {
     repositories.foreach(r => result(r.drop, timeout))
     repositories.foreach(r => result(r.ensureIndexes, timeout))
+    mocks.foreach(m => if (!m.server.isRunning) m.server.start())
+  }
+
+  override protected def afterEach(): Unit = {
+    mocks.foreach(_.mock.resetMappings())
   }
 
   override def afterAll(): Unit = {
     repositories.foreach(r => result(r.drop, timeout))
+    mocks.foreach(_.server.stop())
   }
 }
 

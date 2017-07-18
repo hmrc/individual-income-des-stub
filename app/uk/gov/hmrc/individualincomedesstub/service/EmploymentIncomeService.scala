@@ -19,23 +19,30 @@ package uk.gov.hmrc.individualincomedesstub.service
 import javax.inject.{Inject, Singleton}
 
 import org.joda.time.Interval
-import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.domain.{EmpRef, Nino}
+import uk.gov.hmrc.individualincomedesstub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualincomedesstub.domain.Employment.overlap
-import uk.gov.hmrc.individualincomedesstub.domain.EmploymentIncomeResponse
-import uk.gov.hmrc.individualincomedesstub.repository.{EmployerRepository, EmploymentRepository}
+import uk.gov.hmrc.individualincomedesstub.domain.{EmploymentIncomeResponse, TestOrganisation}
+import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
+import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
-class EmploymentIncomeService @Inject()(employmentRepository: EmploymentRepository, employerRepository: EmployerRepository) {
+class EmploymentIncomeService @Inject()(employmentRepository: EmploymentRepository, apiPlatformTestUserConnector: ApiPlatformTestUserConnector) {
 
-  def employments(nino: Nino, interval: Interval): Future[Seq[EmploymentIncomeResponse]] =
+  def getEmployers(empRefs: Seq[EmpRef])(implicit hc: HeaderCarrier): Future[Seq[TestOrganisation]] = {
+    val futures = empRefs.map(apiPlatformTestUserConnector.getOrganisationByEmpRef(_))
+    Future.sequence(futures).map(_.flatten.toSeq)
+  }
+
+  def employments(nino: Nino, interval: Interval)(implicit hc: HeaderCarrier): Future[Seq[EmploymentIncomeResponse]] =
     for {
       employments <- employmentRepository.findBy(nino) map (_ filter overlap(interval))
       employerPayeReferences = employments map (_.employerPayeReference)
-      employers <- employerRepository.findBy(employerPayeReferences.toSet)
-      maybeEmployers = employments map (employment => employers find (_.payeReference == employment.employerPayeReference))
+      employers <- getEmployers(employerPayeReferences)
+      maybeEmployers = employments map (employment => employers find (_.empRef.exists(_ == employment.employerPayeReference)))
     } yield employments zip maybeEmployers map { case (employment, employer) =>
       EmploymentIncomeResponse(employment, employer)
     }

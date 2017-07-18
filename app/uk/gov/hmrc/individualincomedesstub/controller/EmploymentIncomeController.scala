@@ -30,7 +30,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class EmploymentIncomeController @Inject()(employmentIncomeService: EmploymentIncomeService) extends CommonController {
 
-  def employments(nino: Nino, interval: Interval) = Action.async {
+  def employments(nino: Nino, interval: Interval) = Action.async { implicit request =>
     employmentIncomeService.employments(nino, interval) map { employmentIncomeResponses =>
       if (employmentIncomeResponses.nonEmpty) Ok(obj("employments" -> toJson(employmentIncomeResponses)))
       else NotFound
