@@ -63,7 +63,7 @@ class EmploymentIncomeSpec extends BaseSpec {
           |         "employerAddress":{
           |            "line1":"${employer.organisationDetails.address.line1}",
           |            "line2":"${employer.organisationDetails.address.line2}",
-          |            "postalCode":"${employer.organisationDetails.address.postCode}"
+          |            "postalCode":"${employer.organisationDetails.address.postcode}"
           |         },
           |         "employerDistrictNumber":"${empRef.taxOfficeNumber}",
           |         "employerSchemeReference":"${empRef.taxOfficeReference}",

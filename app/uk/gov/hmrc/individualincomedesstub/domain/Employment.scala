@@ -38,7 +38,7 @@ object DesPayment {
 case class DesAddress(line1: String, line2: Option[String], postalCode: String)
 
 object DesAddress {
-  def apply(address: TestAddress): DesAddress = DesAddress(address.line1, Some(address.line2), address.postCode)
+  def apply(address: TestAddress): DesAddress = DesAddress(address.line1, Some(address.line2), address.postcode)
 }
 
 case class Employment(employerPayeReference: EmpRef, nino: Nino, startDate: Option[String], endDate: Option[String], payments: Seq[HmrcPayment]) {

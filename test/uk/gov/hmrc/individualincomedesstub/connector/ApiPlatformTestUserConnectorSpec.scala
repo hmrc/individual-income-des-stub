@@ -66,7 +66,7 @@ class ApiPlatformTestUserConnectorSpec extends UnitSpec with BeforeAndAfterEach 
                |    "address": {
                |      "line1": "Capital Tower",
                |      "line2": "Aberdeen",
-               |      "postCode": "SW1 4DQ"
+               |      "postcode": "SW1 4DQ"
                |    }
                |  }
                |}

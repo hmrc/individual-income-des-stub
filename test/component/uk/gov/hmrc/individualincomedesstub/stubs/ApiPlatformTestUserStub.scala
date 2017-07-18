@@ -36,7 +36,7 @@ object ApiPlatformTestUserStub extends MockHost(22001) {
              |    "address": {
              |      "line1": "${organisation.organisationDetails.address.line1}",
              |      "line2": "${organisation.organisationDetails.address.line2}",
-             |      "postCode": "${organisation.organisationDetails.address.postCode}"
+             |      "postcode": "${organisation.organisationDetails.address.postcode}"
              |    }
              |  }
              |}

@@ -19,8 +19,6 @@ package uk.gov.hmrc.individualincomedesstub.domain
 import play.api.libs.json._
 
 object JsonFormatters {
-  implicit val addressJsonFormat = Json.format[Address]
-  implicit val employerJsonFormat = Json.format[Employer]
   implicit val hmrcPaymentFormat = Json.format[HmrcPayment]
   implicit val desPaymentFormat = Json.format[DesPayment]
   implicit val desAddressFormat = Json.format[DesAddress]
