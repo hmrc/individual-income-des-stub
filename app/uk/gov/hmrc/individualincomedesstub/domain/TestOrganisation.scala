@@ -18,7 +18,7 @@ package uk.gov.hmrc.individualincomedesstub.domain
 
 import uk.gov.hmrc.domain.EmpRef
 
-case class TestAddress(line1: String, line2: String, postCode: String)
+case class TestAddress(line1: String, line2: String, postcode: String)
 
 case class TestOrganisationDetails(name: String, address: TestAddress)
 
