@@ -24,7 +24,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.controller.EmploymentController
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
-import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, HmrcPayment}
+import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, EmploymentPayFrequency, HmrcPayment}
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentService
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
@@ -95,18 +95,20 @@ class EmploymentControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
 
   private def aCreateEmploymentRequest(startDate: Option[String] = Some("2016-01-01"),
                                        endDate: Option[String] = Some("2017-03-01"),
-                                       payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 950.55, 0))) = {
+                                       payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 950.55, 0)),
+                                       payFrequency: EmploymentPayFrequency.Value = EmploymentPayFrequency.CALENDAR_MONTHLY) = {
 
-    CreateEmploymentRequest(startDate, endDate, payments)
+    CreateEmploymentRequest(startDate, endDate, payments, Some(payFrequency))
   }
 
   private def anEmployment(employerPayeReference: EmpRef,
                            nino: Nino,
                            startDate: Option[String] = Some("2016-01-01"),
                            endDate: Option[String] = Some("2017-03-01"),
-                           payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 950.55, 0))) = {
+                           payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 950.55, 0)),
+                           payFrequency: EmploymentPayFrequency.Value = EmploymentPayFrequency.CALENDAR_MONTHLY) = {
 
-    Employment(employerPayeReference, nino, startDate, endDate, payments)
+    Employment(employerPayeReference, nino, startDate, endDate, payments, Some(payFrequency))
   }
 }
 
