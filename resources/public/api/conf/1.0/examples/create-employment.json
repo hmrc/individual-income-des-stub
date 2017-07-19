@@ -1,16 +1,19 @@
 {
   "startDate": "2016-01-01",
   "endDate": "2017-03-01",
+  "payFrequency": "CALENDAR_MONTHLY",
   "payments": [
     {
       "paymentDate": "2016-01-28",
       "taxablePayment": 1000.55,
-      "nonTaxablePayment": 0
+      "nonTaxablePayment": 0,
+      "monthPayNumber": 10
     },
     {
       "paymentDate": "2016-02-28",
       "taxablePayment": 950.55,
-      "nonTaxablePayment": 0
+      "nonTaxablePayment": 0,
+      "weekPayNumber": 48
     }
   ]
 }

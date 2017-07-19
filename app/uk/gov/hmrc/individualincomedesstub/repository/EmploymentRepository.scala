@@ -37,7 +37,7 @@ class EmploymentRepository @Inject() (mongoConnectionProvider: MongoConnectionPr
   )
 
   def create(employerPayeReference: EmpRef, nino: Nino, request: CreateEmploymentRequest) = {
-    val employment = Employment(employerPayeReference, nino, request.startDate, request.endDate, request.payments)
+    val employment = Employment(employerPayeReference, nino, request.startDate, request.endDate, request.payments, request.payFrequency)
     insert(employment) map (_ => employment)
   }
 

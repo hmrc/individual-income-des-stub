@@ -22,6 +22,9 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.{FreeSpec, Matchers}
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.domain._
+import uk.gov.hmrc.individualincomedesstub.domain.DesEmploymentPayFrequency._
+import uk.gov.hmrc.individualincomedesstub.domain.EmploymentPayFrequency._
+
 
 class EmploymentSpec extends FreeSpec with Matchers {
 
@@ -100,10 +103,26 @@ class EmploymentSpec extends FreeSpec with Matchers {
     desPayment.totalNonTaxOrNICsPayments shouldBe hmrcPayment.nonTaxablePayment
   }
 
+  "A Des pay frequency should derive itself from a  employment pay frequency" in new TableDrivenPropertyChecks {
+    val fixtures = Table(("Employment frequency", "Expected Des employment frequency"),
+      (WEEKLY, Some(W1)),
+      (FORTNIGHTLY, Some(W2)),
+      (FOUR_WEEKLY, Some(W4)),
+      (ONE_OFF, Some(IO)),
+      (IRREGULAR, Some(IR)),
+      (CALENDAR_MONTHLY, Some(M1)),
+      (QUARTERLY, Some(M3)),
+      (BI_ANNUALLY, Some(M6)),
+      (ANNUALLY, Some(MA)))
+
+    forAll(fixtures) { (empFrequency, expectedDesEmpFrequency) =>
+      DesEmploymentPayFrequency.from(empFrequency) shouldBe expectedDesEmpFrequency
+    }
+  }
+
   private def toInterval(from: LocalDateTime, to: LocalDateTime): Interval =
     new Interval(from.toDate.getTime, to.toDate.getTime)
 
   private def toLocalDate(maybeString: Option[String]) =
     LocalDate.parse(maybeString.get)
-
 }

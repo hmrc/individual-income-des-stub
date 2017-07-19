@@ -22,7 +22,7 @@ import play.api.http.Status.{BAD_REQUEST, CREATED}
 import play.api.libs.json.Json
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
-import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, HmrcPayment}
+import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, EmploymentPayFrequency, HmrcPayment}
 
 import scala.concurrent.Await.result
 import scalaj.http.Http
@@ -115,7 +115,7 @@ class EmploymentSpec extends BaseSpec {
 
     scenario("Request fails for invalid startDate format") {
       Given("A create employment request with an invalid startDate")
-      val request = s"""{"startDate": "201601-01","payments":[]}"""
+      val request = s"""{"startDate": "201601-01","payments":[], "payFrequency":"CALENDAR_MONTHLY"}"""
 
       When("I request to create an employment")
       val response = requestCreateEmployment(request)
@@ -127,7 +127,7 @@ class EmploymentSpec extends BaseSpec {
 
     scenario("Request fails for invalid endDate format") {
       Given("A create employment request with an invalid endDate")
-      val request = s"""{"endDate": "201703-01","payments":[]}"""
+      val request = s"""{"endDate": "201703-01","payments":[], "payFrequency":"CALENDAR_MONTHLY"}"""
 
       When("I request to create an employment")
       val response = requestCreateEmployment(request)
@@ -144,6 +144,7 @@ class EmploymentSpec extends BaseSpec {
          {
            "startDate": "2016-04-28",
            "endDate": "2016-03-01",
+           "payFrequency":"CALENDAR_MONTHLY",
            "payments": [
                {
                    "paymentDate": "2016-01-28",
@@ -204,6 +205,7 @@ class EmploymentSpec extends BaseSpec {
          {
            "startDate": "2016-01-01",
            "endDate": "2017-03-01",
+           "payFrequency":"CALENDAR_MONTHLY",
            "payments": [
                {
                    "paymentDate": "201601-28",
@@ -288,9 +290,10 @@ class EmploymentSpec extends BaseSpec {
 
   private def aCreateEmploymentRequest(startDate: Option[String] = Some("2016-01-01"),
                                        endDate: Option[String] = Some("2017-03-01"),
-                                       payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 950.55, 0))) = {
+                                       payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 950.55, 0)),
+                                       payFrequency: EmploymentPayFrequency.Value = EmploymentPayFrequency.CALENDAR_MONTHLY) = {
 
-    CreateEmploymentRequest(startDate, endDate, payments)
+    CreateEmploymentRequest(startDate, endDate, payments, Some(payFrequency))
   }
 
 
@@ -298,9 +301,10 @@ class EmploymentSpec extends BaseSpec {
                            nino: Nino = Nino(validNino),
                            startDate: Option[String] = Some("2016-01-01"),
                            endDate: Option[String] = Some("2017-03-01"),
-                           payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 950.55, 0))) = {
+                           payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 950.55, 0)),
+                           payFrequency: EmploymentPayFrequency.Value = EmploymentPayFrequency.CALENDAR_MONTHLY) = {
 
-    Employment(employerPayeReference, nino, startDate, endDate, payments)
+    Employment(employerPayeReference, nino, startDate, endDate, payments, Some(payFrequency))
   }
 
   private def requestCreateEmployment(request: String, reference: String = employerReferenceEncoded, nino: String = validNino) = {

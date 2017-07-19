@@ -27,6 +27,16 @@
             "type": "number",
             "description": "The total amount exempt from taxes",
             "example": "0"
+          },
+          "weekPayNumber": {
+            "type": "number",
+            "description": "A number corresponding to the week the payment was made",
+            "example": "45"
+          },
+          "monthPayNumber": {
+            "type": "number",
+            "description": "A number between 1 and 12, corresponding to the month the payment was made",
+            "example": "10"
           }
         },
         "required": ["paymentDate", "taxablePayment", "nonTaxablePayment"],
@@ -52,6 +62,21 @@
       "type": "string",
       "description": "The employee National Insurance number",
       "example": "AA123456D"
+    },
+    "payFrequency": {
+      "type": "string",
+      "description": "A value representing the frequency of payment for an employment",
+      "enum": [
+        "WEEKLY",
+        "FORTNIGHTLY",
+        "FOUR_WEEKLY",
+        "CALENDAR_MONTHLY",
+        "QUARTERLY",
+        "BI_ANNUALLY",
+        "ANNUALLY",
+        "ONE_OFF",
+        "IRREGULAR"
+      ]
     }
   },
   "type": "object",
