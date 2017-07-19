@@ -57,7 +57,7 @@ class EmploymentSpec extends FreeSpec with Matchers {
     }
   }
 
-  "An employment income response should derive itself from an employment without a missing employer" in {
+  "An employment income response should derive itself from an employment with a missing employer" in {
     val employmentStartDate = Option("2020-02-01")
     val employmentEndDate = Option("2020-02-29")
     val employment = Employment(EmpRef("123", "AB12345"), Nino("AB123456C"), employmentStartDate, employmentEndDate, Seq.empty)
@@ -66,8 +66,8 @@ class EmploymentSpec extends FreeSpec with Matchers {
 
     employmentIncomeResponse.employerName shouldBe None
     employmentIncomeResponse.employerAddress shouldBe None
-    employmentIncomeResponse.employerDistrictNumber shouldBe None
-    employmentIncomeResponse.employerSchemeReference shouldBe None
+    employmentIncomeResponse.employerDistrictNumber.getOrElse(fail("missing employerDistrictNumber")) shouldBe employment.employerPayeReference.taxOfficeNumber
+    employmentIncomeResponse.employerSchemeReference.getOrElse(fail("missing employerSchemeReference")) shouldBe employment.employerPayeReference.taxOfficeReference
 
     employmentIncomeResponse.employmentStartDate.get shouldBe toLocalDate(employmentStartDate)
     employmentIncomeResponse.employmentLeavingDate.get shouldBe toLocalDate(employmentEndDate)
