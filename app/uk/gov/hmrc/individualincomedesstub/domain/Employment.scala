@@ -106,12 +106,12 @@ object EmploymentIncomeResponse {
       case Some(employer) => EmploymentIncomeResponse(
         Option(employer.organisationDetails.name),
         Option(DesAddress(employer.organisationDetails.address)),
-        employer.empRef.map(_.taxOfficeNumber),
-        employer.empRef.map(_.taxOfficeReference),
+        Some(employment.employerPayeReference.taxOfficeNumber),
+        Some(employment.employerPayeReference.taxOfficeReference),
         employment.startDate.map(parse), employment.endDate.map(parse), desPayFrequency, employment.payments map (DesPayment(_))
       )
       case _ => EmploymentIncomeResponse(
-        None, None, None, None,
+        None, None, Some(employment.employerPayeReference.taxOfficeNumber), Some(employment.employerPayeReference.taxOfficeReference),
         employment.startDate.map(parse), employment.endDate.map(parse), desPayFrequency, employment.payments map (DesPayment(_))
       )
     }

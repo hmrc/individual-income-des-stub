@@ -106,6 +106,8 @@ class EmploymentIncomeSpec extends BaseSpec {
           |{
           |   "employments":[
           |      {
+          |         "employerDistrictNumber":"123",
+          |         "employerSchemeReference":"AI45678",
           |         "employmentStartDate":"2016-01-01",
           |         "employmentLeavingDate":"2016-06-01",
           |         "payFrequency":"M1",

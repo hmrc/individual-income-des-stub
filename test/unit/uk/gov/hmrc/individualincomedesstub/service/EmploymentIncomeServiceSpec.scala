@@ -58,6 +58,12 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
     }
 
     "return a populated filtered sequence when corresponding employments with payments exist" in new TableDrivenPropertyChecks {
+      def incomeResponse(employment: Employment) = {
+        new EmploymentIncomeResponse(None, None, Some(employment.employerPayeReference.taxOfficeNumber),
+          Some(employment.employerPayeReference.taxOfficeReference), employment.startDate.map(parse),
+          employment.endDate.map(parse), None, employment.payments.map(DesPayment(_)))
+      }
+
       def payment(paymentDate: String) = HmrcPayment(paymentDate, 123.45, 56.78)
 
       val employmentWithPaymentAtEndOfMar = Employment(EmpRef("101", "AB10001"), nino, None, None, Seq(payment("2017-03-31")))
@@ -80,13 +86,10 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
       )
 
       forAll(fixtures) { (exampleInterval, expectedResult) =>
-        await(employmentIncomeService.employments(nino, exampleInterval)) shouldBe (expectedResult map (EmploymentIncomeResponse(_, None)))
+        await(employmentIncomeService.employments(nino, exampleInterval)) shouldBe (expectedResult map (incomeResponse(_)))
       }
-
     }
-
   }
-
 }
 
 trait WordSpecWithFutures extends WordSpecLike {
