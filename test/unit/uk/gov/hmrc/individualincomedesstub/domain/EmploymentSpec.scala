@@ -116,7 +116,7 @@ class EmploymentSpec extends FreeSpec with Matchers {
       (ANNUALLY, Some(MA)))
 
     forAll(fixtures) { (empFrequency, expectedDesEmpFrequency) =>
-      DesEmploymentPayFrequency.from(empFrequency) shouldBe expectedDesEmpFrequency
+      DesEmploymentPayFrequency.from(empFrequency.toString) shouldBe expectedDesEmpFrequency
     }
   }
 

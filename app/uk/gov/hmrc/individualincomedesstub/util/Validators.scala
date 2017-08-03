@@ -18,7 +18,7 @@ package uk.gov.hmrc.individualincomedesstub.util
 
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.{Interval, LocalDate}
-import uk.gov.hmrc.individualincomedesstub.domain.ValidationException
+import uk.gov.hmrc.individualincomedesstub.domain.{EmploymentPayFrequency, ValidationException}
 
 import scala.util.Try
 
@@ -35,5 +35,9 @@ object Validators {
 
   def validInterval(startDate: String, endDate: String, errorMessage: String) = {
     valid(Try(new Interval(LocalDate.parse(startDate).toDate.getTime, LocalDate.parse(endDate).toDate.getTime)).isSuccess, errorMessage)
+  }
+
+  def validPayFrequency(string: String, errorMessage: String): Unit = {
+    valid(Try(EmploymentPayFrequency.withName(string)).isSuccess, errorMessage)
   }
 }

@@ -98,7 +98,7 @@ class EmploymentControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
                                        payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 950.55, 0)),
                                        payFrequency: EmploymentPayFrequency.Value = EmploymentPayFrequency.CALENDAR_MONTHLY) = {
 
-    CreateEmploymentRequest(startDate, endDate, payments, Some(payFrequency))
+    CreateEmploymentRequest(startDate, endDate, payments, Some(payFrequency.toString))
   }
 
   private def anEmployment(employerPayeReference: EmpRef,
@@ -108,7 +108,7 @@ class EmploymentControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
                            payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 950.55, 0)),
                            payFrequency: EmploymentPayFrequency.Value = EmploymentPayFrequency.CALENDAR_MONTHLY) = {
 
-    Employment(employerPayeReference, nino, startDate, endDate, payments, Some(payFrequency))
+    Employment(employerPayeReference, nino, startDate, endDate, payments, Some(payFrequency.toString))
   }
 }
 
