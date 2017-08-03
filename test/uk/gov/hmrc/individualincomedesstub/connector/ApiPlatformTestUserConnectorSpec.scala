@@ -20,6 +20,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import org.scalatest.BeforeAndAfterEach
+import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
 import uk.gov.hmrc.domain.EmpRef
 import uk.gov.hmrc.individualincomedesstub.domain.{TestAddress, TestOrganisation, TestOrganisationDetails}
 import uk.gov.hmrc.play.http.{BadRequestException, HeaderCarrier}
@@ -56,7 +57,7 @@ class ApiPlatformTestUserConnectorSpec extends UnitSpec with BeforeAndAfterEach 
 
     "retrieve a test organisation by empRef" in new Setup {
       stubFor(get(urlEqualTo(s"/organisations/empref/${empRef.encodedValue}"))
-        .willReturn(aResponse().withStatus(200)
+        .willReturn(aResponse().withStatus(OK)
           .withBody(
             s"""
                |{
@@ -80,14 +81,14 @@ class ApiPlatformTestUserConnectorSpec extends UnitSpec with BeforeAndAfterEach 
 
     "return nothing if the organisation cannot be found" in new Setup {
       stubFor(get(urlEqualTo(s"/organisations/empref/${empRef.encodedValue}"))
-        .willReturn(aResponse().withStatus(404)))
+        .willReturn(aResponse().withStatus(NOT_FOUND)))
 
       await(underTest.getOrganisationByEmpRef(empRef)) shouldBe None
     }
 
     "propagate errors" in new Setup {
       stubFor(get(urlEqualTo(s"/organisations/empref/${empRef.encodedValue}"))
-        .willReturn(aResponse().withStatus(400)))
+        .willReturn(aResponse().withStatus(BAD_REQUEST)))
 
       intercept[BadRequestException](await(underTest.getOrganisationByEmpRef(empRef)))
     }

@@ -18,7 +18,7 @@ package component.uk.gov.hmrc.individualincomedesstub
 
 import play.api.http.HeaderNames._
 import play.api.http.MimeTypes._
-import play.api.http.Status.{BAD_REQUEST, CREATED}
+import play.api.http.Status.{BAD_REQUEST, CREATED, NOT_FOUND}
 import play.api.libs.json.Json
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
@@ -182,7 +182,7 @@ class EmploymentSpec extends BaseSpec {
       val response = requestCreateEmployment(request, reference = "123/DI45678")
 
       Then("The response code should be 404 (Not Found)")
-      response.code shouldBe 404
+      response.code shouldBe NOT_FOUND
       response.body shouldBe """{"statusCode":404,"message":"URI not found","requested":"/employer/123/DI45678/employment/NA000799C"}"""
     }
 
