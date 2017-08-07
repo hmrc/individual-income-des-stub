@@ -29,18 +29,18 @@ object ApiPlatformTestUserStub extends MockHost(22001) {
       .willReturn(aResponse().withStatus(Status.OK)
         .withBody(
           s"""
-             |{
-             |  "empRef": "${empRef.value}",
-             |  "organisationDetails": {
-             |    "name": "${organisation.organisationDetails.name}",
-             |    "address": {
-             |      "line1": "${organisation.organisationDetails.address.line1}",
-             |      "line2": "${organisation.organisationDetails.address.line2}",
-             |      "postcode": "${organisation.organisationDetails.address.postcode}"
-             |    }
-             |  }
-             |}
-             """.stripMargin.replaceAll("\n", ""))))
+             {
+               "empRef": "${empRef.value}",
+               "organisationDetails": {
+                 "name": "${organisation.organisationDetails.name}",
+                 "address": {
+                   "line1": "${organisation.organisationDetails.address.line1}",
+                   "line2": "${organisation.organisationDetails.address.line2}",
+                   "postcode": "${organisation.organisationDetails.address.postcode}"
+                 }
+               }
+             }
+             """)))
   }
 
   def getByEmpRefReturnsNoTestOrganisation(empRef: EmpRef) = {
