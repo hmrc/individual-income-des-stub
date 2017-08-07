@@ -31,7 +31,7 @@ class EmploymentIncomeSpec extends BaseSpec {
   val employment = CreateEmploymentRequest(
     startDate = Some("2016-01-01"),
     endDate = Some("2016-06-01"),
-    payments = Seq(HmrcPayment("2016-05-30", 252.55, 12.25, monthPayNumber = Some(10))),
+    payments = Seq(HmrcPayment("2016-05-30", 252.55, monthPayNumber = Some(10))),
     Some(EmploymentPayFrequency.CALENDAR_MONTHLY.toString)
   )
   val employer = TestOrganisation(
@@ -75,7 +75,6 @@ class EmploymentIncomeSpec extends BaseSpec {
           |            {
           |               "paymentDate":"2016-05-30",
           |               "totalPayInPeriod":252.55,
-          |               "totalNonTaxOrNICsPayments":12.25,
           |               "monthPayNumber":10
           |            }
           |         ]
@@ -115,7 +114,6 @@ class EmploymentIncomeSpec extends BaseSpec {
           |            {
           |               "paymentDate":"2016-05-30",
           |               "totalPayInPeriod":252.55,
-          |               "totalNonTaxOrNICsPayments":12.25,
           |               "monthPayNumber":10
           |            }
           |         ]

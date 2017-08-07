@@ -102,14 +102,14 @@ class EmploymentRepositorySpec extends UnitSpec with WithFakeApplication with Mo
   private val aCreateEmploymentRequest = CreateEmploymentRequest(
     Some("2016-01-01"),
     Some("2017-01-30"),
-    Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 1200.44, 0)),
+    Seq(HmrcPayment("2016-01-28", 1000.55), HmrcPayment("2016-02-28", 1200.44)),
     Some(EmploymentPayFrequency.CALENDAR_MONTHLY.toString))
 
   private def anEmployment(empRef: EmpRef, nino: Nino) = Employment(
     empRef, nino,
     Some("2016-01-01"),
     Some("2017-01-30"),
-    Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 1200.44, 0)),
+    Seq(HmrcPayment("2016-01-28", 1000.55), HmrcPayment("2016-02-28", 1200.44)),
     Some(EmploymentPayFrequency.CALENDAR_MONTHLY.toString)
   )
 }

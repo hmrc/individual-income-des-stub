@@ -23,7 +23,6 @@ import uk.gov.hmrc.individualincomedesstub.util.Validators._
 
 case class HmrcPayment(paymentDate: String,
                        taxablePayment: Double,
-                       nonTaxablePayment: Double,
                        monthPayNumber: Option[Int] = None,
                        weekPayNumber: Option[Int] = None) {
   validDate("paymentDate", paymentDate)
@@ -35,7 +34,6 @@ case class HmrcPayment(paymentDate: String,
 
 case class DesPayment(paymentDate: LocalDate,
                       totalPayInPeriod: Double,
-                      totalNonTaxOrNICsPayments: Double,
                       monthPayNumber: Option[Int] = None,
                       weekPayNumber: Option[Int] = None)
 
@@ -43,7 +41,7 @@ object DesPayment {
   def apply(hmrcPayment: HmrcPayment): DesPayment =
     DesPayment(LocalDate.parse(hmrcPayment.paymentDate),
       hmrcPayment.taxablePayment,
-      hmrcPayment.nonTaxablePayment, hmrcPayment.monthPayNumber, hmrcPayment.weekPayNumber)
+      hmrcPayment.monthPayNumber, hmrcPayment.weekPayNumber)
 }
 
 case class DesAddress(line1: String, line2: Option[String], postalCode: String)
