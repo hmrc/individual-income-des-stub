@@ -57,7 +57,7 @@ case class Employment(employerPayeReference: EmpRef,
                       startDate: Option[String],
                       endDate: Option[String],
                       payments: Seq[HmrcPayment],
-                      payFrequency: Option[EmploymentPayFrequency.Value] = None) {
+                      payFrequency: Option[String] = None) {
   def containsPaymentWithin(interval: Interval) =
     payments.exists(_.isPaidWithin(interval))
 }
@@ -71,7 +71,11 @@ object Employment {
 case class CreateEmploymentRequest(startDate: Option[String],
                                    endDate: Option[String],
                                    payments: Seq[HmrcPayment],
-                                   payFrequency: Option[EmploymentPayFrequency.Value]) {
+                                   payFrequency: Option[String]) {
+
+  if (payFrequency.isDefined)
+    validPayFrequency(payFrequency.get, "payFrequency is invalid")
+
   (startDate, endDate) match {
     case (Some(start), Some(end)) =>
       validDate("startDate", start)
@@ -126,10 +130,11 @@ object DesEmploymentPayFrequency extends Enumeration {
 
   private val conversionMap = Map(WEEKLY -> W1, FORTNIGHTLY -> W2, FOUR_WEEKLY -> W4, ONE_OFF -> IO, IRREGULAR -> IR, CALENDAR_MONTHLY -> M1, QUARTERLY -> M3, BI_ANNUALLY -> M6, ANNUALLY -> MA)
 
-  def from(payFrequency: EmploymentPayFrequency.Value) = conversionMap.get(payFrequency)
+  def from(payFrequency: String) = conversionMap.get(EmploymentPayFrequency.withName(payFrequency))
 
 }
 
 object EmploymentPayFrequency extends Enumeration {
+  type EmploymentPayFrequency = Value
   val WEEKLY, FORTNIGHTLY, FOUR_WEEKLY, ONE_OFF, IRREGULAR, CALENDAR_MONTHLY, QUARTERLY, BI_ANNUALLY, ANNUALLY = Value
 }

@@ -19,6 +19,7 @@ package unit.uk.gov.hmrc.individualincomedesstub.controller
 import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
+import play.api.http.Status.{BAD_REQUEST, CREATED}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.{EmpRef, Nino}
@@ -51,7 +52,7 @@ class EmploymentControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
 
       val result = await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.toJson(request))))
 
-      status(result) shouldBe 201
+      status(result) shouldBe CREATED
       bodyOf(result) shouldBe Json.toJson(employment).toString
     }
 
@@ -63,7 +64,7 @@ class EmploymentControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
 
       val result = await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.toJson(request))))
 
-      status(result) shouldBe 201
+      status(result) shouldBe CREATED
       bodyOf(result) shouldBe Json.toJson(employment).toString
     }
 
@@ -75,20 +76,20 @@ class EmploymentControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
 
       val result = await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.toJson(request))))
 
-      status(result) shouldBe 201
+      status(result) shouldBe CREATED
       bodyOf(result) shouldBe Json.toJson(employment).toString
     }
 
     "Fail with correct error message for missing payments field" in new Setup {
       val result = await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.parse("""{"startDate": "2016-01-01", "endDate": "2017-03-01"}"""))))
-      status(result) shouldBe 400
+      status(result) shouldBe BAD_REQUEST
       bodyOf(result) shouldBe """{"code":"INVALID_REQUEST","message":"payments is required"}"""
     }
 
     "Fail with correct error message for invalid payment" in new Setup {
       val result = await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(
         Json.parse("""{"startDate": "2016-01-01","endDate": "2017-03-01","payments":[{"taxablePayment": 1000.55,"nonTaxablePayment": 0}]}"""))))
-      status(result) shouldBe 400
+      status(result) shouldBe BAD_REQUEST
       bodyOf(result) shouldBe """{"code":"INVALID_REQUEST","message":"payments(0)/paymentDate is required"}"""
     }
   }
@@ -98,7 +99,7 @@ class EmploymentControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
                                        payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 950.55, 0)),
                                        payFrequency: EmploymentPayFrequency.Value = EmploymentPayFrequency.CALENDAR_MONTHLY) = {
 
-    CreateEmploymentRequest(startDate, endDate, payments, Some(payFrequency))
+    CreateEmploymentRequest(startDate, endDate, payments, Some(payFrequency.toString))
   }
 
   private def anEmployment(employerPayeReference: EmpRef,
@@ -108,7 +109,7 @@ class EmploymentControllerSpec extends UnitSpec with MockitoSugar with ScalaFutu
                            payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55, 0), HmrcPayment("2016-02-28", 950.55, 0)),
                            payFrequency: EmploymentPayFrequency.Value = EmploymentPayFrequency.CALENDAR_MONTHLY) = {
 
-    Employment(employerPayeReference, nino, startDate, endDate, payments, Some(payFrequency))
+    Employment(employerPayeReference, nino, startDate, endDate, payments, Some(payFrequency.toString))
   }
 }
 

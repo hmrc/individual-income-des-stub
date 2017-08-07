@@ -32,7 +32,7 @@ class EmploymentIncomeSpec extends BaseSpec {
     startDate = Some("2016-01-01"),
     endDate = Some("2016-06-01"),
     payments = Seq(HmrcPayment("2016-05-30", 252.55, 12.25, monthPayNumber = Some(10))),
-    Some(EmploymentPayFrequency.CALENDAR_MONTHLY)
+    Some(EmploymentPayFrequency.CALENDAR_MONTHLY.toString)
   )
   val employer = TestOrganisation(
     Some(empRef),
