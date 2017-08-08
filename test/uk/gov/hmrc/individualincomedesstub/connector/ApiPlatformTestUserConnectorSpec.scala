@@ -60,18 +60,18 @@ class ApiPlatformTestUserConnectorSpec extends UnitSpec with BeforeAndAfterEach 
         .willReturn(aResponse().withStatus(OK)
           .withBody(
             s"""
-               |{
-               |  "empRef": "${empRef.value}",
-               |  "organisationDetails": {
-               |    "name": "Disney Inc",
-               |    "address": {
-               |      "line1": "Capital Tower",
-               |      "line2": "Aberdeen",
-               |      "postcode": "SW1 4DQ"
-               |    }
-               |  }
-               |}
-             """.stripMargin.replaceAll("\n", "")
+               {
+                 "empRef": "${empRef.value}",
+                 "organisationDetails": {
+                   "name": "Disney Inc",
+                   "address": {
+                     "line1": "Capital Tower",
+                     "line2": "Aberdeen",
+                     "postcode": "SW1 4DQ"
+                   }
+                 }
+               }
+             """
           )))
 
       val result = await(underTest.getOrganisationByEmpRef(empRef))

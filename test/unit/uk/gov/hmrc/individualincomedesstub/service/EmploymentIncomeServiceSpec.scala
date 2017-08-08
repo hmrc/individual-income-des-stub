@@ -64,7 +64,7 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
           employment.endDate.map(parse), None, employment.payments.map(DesPayment(_)))
       }
 
-      def payment(paymentDate: String) = HmrcPayment(paymentDate, 123.45, 56.78)
+      def payment(paymentDate: String) = HmrcPayment(paymentDate, 123.45)
 
       val employmentWithPaymentAtEndOfMar = Employment(EmpRef("101", "AB10001"), nino, None, None, Seq(payment("2017-03-31")))
       val employmentWithPaymentAtEndOfJun = Employment(EmpRef("102", "AB10002"), nino, None, None, Seq(payment("2017-06-30")))

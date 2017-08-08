@@ -58,14 +58,14 @@ class EmploymentServiceSpec extends UnitSpec with MockitoSugar {
   private val aCreateEmploymentRequest = CreateEmploymentRequest(
     Some("2016-01-01"),
     Some("2017-01-30"),
-    Seq(HmrcPayment("2016-01-28", 1000.55, 0, monthPayNumber = Some(10)), HmrcPayment("2016-02-28", 1200.44, 0, monthPayNumber = Some(10))),
+    Seq(HmrcPayment("2016-01-28", 1000.55, monthPayNumber = Some(10)), HmrcPayment("2016-02-28", 1200.44, monthPayNumber = Some(10))),
     Some(EmploymentPayFrequency.CALENDAR_MONTHLY.toString))
 
   private def anEmployment(empRef: EmpRef, nino: Nino) = Employment(
     empRef, nino,
     Some("2016-01-01"),
     Some("2017-01-30"),
-    Seq(HmrcPayment("2016-01-28", 1000.55, 0, monthPayNumber = Some(10)), HmrcPayment("2016-02-28", 1200.44, 0, monthPayNumber = Some(10))),
+    Seq(HmrcPayment("2016-01-28", 1000.55, monthPayNumber = Some(10)), HmrcPayment("2016-02-28", 1200.44, monthPayNumber = Some(10))),
     Some(EmploymentPayFrequency.CALENDAR_MONTHLY.toString)
   )
 }

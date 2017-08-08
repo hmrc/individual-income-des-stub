@@ -50,12 +50,6 @@
               "description": "The total amount for which tax was paid",
               "example": "1000.55"
             },
-            "nonTaxablePayment": {
-              "id": "/properties/payments/items/properties/nonTaxablePayment",
-              "type": "number",
-              "description": "The total amount exempt from taxes",
-              "example": "0"
-            },
             "weekPayNumber": {
               "type": "number",
               "description": "A number corresponding to the week the payment was made",
@@ -67,7 +61,7 @@
               "example": "10"
             }
           },
-          "required": ["paymentDate", "taxablePayment", "nonTaxablePayment"],
+          "required": ["paymentDate", "taxablePayment"],
           "type": "object"
       }
     }

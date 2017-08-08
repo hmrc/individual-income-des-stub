@@ -29,7 +29,7 @@ import uk.gov.hmrc.individualincomedesstub.domain.EmploymentPayFrequency._
 class EmploymentSpec extends FreeSpec with Matchers {
 
   "A payment should determine whether it was paid within a given time interval" in new TableDrivenPropertyChecks {
-    val payment = HmrcPayment("2017-01-10", 123.45, 67.89)
+    val payment = HmrcPayment("2017-01-10", 123.45)
 
     val fixtures = Table(("exampleinterval", "expected result"),
       (toInterval(parse("2017-01-08T00:00:00.000"), parse("2017-01-09T00:00:00.001")), false),
@@ -44,7 +44,7 @@ class EmploymentSpec extends FreeSpec with Matchers {
   }
 
   "An employment should determine whether it contains a payment within a given time interval" in new TableDrivenPropertyChecks {
-    val payment = HmrcPayment("2017-01-10", 123.45, 67.89)
+    val payment = HmrcPayment("2017-01-10", 123.45)
     val employment = Employment(EmpRef("123", "AB12345"), Nino("AB123456C"), Option("2017-02-01"), Option("2017-02-28"), Seq(payment))
 
     val fixtures = Table(("interval example", "expected result"),
@@ -96,11 +96,10 @@ class EmploymentSpec extends FreeSpec with Matchers {
   }
 
   "A DES payment should derive itself from a HMRC payment" in {
-    val hmrcPayment = HmrcPayment("2020-01-01", 123.45, 67.89)
+    val hmrcPayment = HmrcPayment("2020-01-01", 123.45)
     val desPayment = DesPayment(hmrcPayment)
     desPayment.paymentDate shouldBe LocalDate.parse(hmrcPayment.paymentDate)
     desPayment.totalPayInPeriod shouldBe hmrcPayment.taxablePayment
-    desPayment.totalNonTaxOrNICsPayments shouldBe hmrcPayment.nonTaxablePayment
   }
 
   "A Des pay frequency should derive itself from a  employment pay frequency" in new TableDrivenPropertyChecks {

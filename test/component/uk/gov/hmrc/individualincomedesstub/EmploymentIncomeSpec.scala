@@ -31,7 +31,7 @@ class EmploymentIncomeSpec extends BaseSpec {
   val employment = CreateEmploymentRequest(
     startDate = Some("2016-01-01"),
     endDate = Some("2016-06-01"),
-    payments = Seq(HmrcPayment("2016-05-30", 252.55, 12.25, monthPayNumber = Some(10))),
+    payments = Seq(HmrcPayment("2016-05-30", 252.55, monthPayNumber = Some(10))),
     Some(EmploymentPayFrequency.CALENDAR_MONTHLY.toString)
   )
   val employer = TestOrganisation(
@@ -57,32 +57,31 @@ class EmploymentIncomeSpec extends BaseSpec {
       And("The employment income is returned in the response body")
       Json.parse(response.body) shouldBe Json.parse(
         s"""
-          |{
-          |   "employments":[
-          |      {
-          |         "employerName":"${employer.organisationDetails.name}",
-          |         "employerAddress":{
-          |            "line1":"${employer.organisationDetails.address.line1}",
-          |            "line2":"${employer.organisationDetails.address.line2}",
-          |            "postalCode":"${employer.organisationDetails.address.postcode}"
-          |         },
-          |         "employerDistrictNumber":"${empRef.taxOfficeNumber}",
-          |         "employerSchemeReference":"${empRef.taxOfficeReference}",
-          |         "employmentStartDate":"2016-01-01",
-          |         "employmentLeavingDate":"2016-06-01",
-          |         "payFrequency":"M1",
-          |         "payments":[
-          |            {
-          |               "paymentDate":"2016-05-30",
-          |               "totalPayInPeriod":252.55,
-          |               "totalNonTaxOrNICsPayments":12.25,
-          |               "monthPayNumber":10
-          |            }
-          |         ]
-          |      }
-          |   ]
-          |}
-        """.stripMargin
+          {
+             "employments":[
+                {
+                   "employerName":"${employer.organisationDetails.name}",
+                   "employerAddress":{
+                      "line1":"${employer.organisationDetails.address.line1}",
+                      "line2":"${employer.organisationDetails.address.line2}",
+                      "postalCode":"${employer.organisationDetails.address.postcode}"
+                   },
+                   "employerDistrictNumber":"${empRef.taxOfficeNumber}",
+                   "employerSchemeReference":"${empRef.taxOfficeReference}",
+                   "employmentStartDate":"2016-01-01",
+                   "employmentLeavingDate":"2016-06-01",
+                   "payFrequency":"M1",
+                   "payments":[
+                      {
+                         "paymentDate":"2016-05-30",
+                         "totalPayInPeriod":252.55,
+                         "monthPayNumber":10
+                      }
+                   ]
+                }
+             ]
+          }
+        """
       )
     }
 
@@ -103,26 +102,25 @@ class EmploymentIncomeSpec extends BaseSpec {
       And("The employment income is returned in the response body")
       Json.parse(response.body) shouldBe Json.parse(
         s"""
-          |{
-          |   "employments":[
-          |      {
-          |         "employerDistrictNumber":"123",
-          |         "employerSchemeReference":"AI45678",
-          |         "employmentStartDate":"2016-01-01",
-          |         "employmentLeavingDate":"2016-06-01",
-          |         "payFrequency":"M1",
-          |         "payments":[
-          |            {
-          |               "paymentDate":"2016-05-30",
-          |               "totalPayInPeriod":252.55,
-          |               "totalNonTaxOrNICsPayments":12.25,
-          |               "monthPayNumber":10
-          |            }
-          |         ]
-          |      }
-          |   ]
-          |}
-        """.stripMargin
+           {
+              "employments":[
+                 {
+                    "employerDistrictNumber":"123",
+                    "employerSchemeReference":"AI45678",
+                    "employmentStartDate":"2016-01-01",
+                    "employmentLeavingDate":"2016-06-01",
+                    "payFrequency":"M1",
+                    "payments":[
+                       {
+                          "paymentDate":"2016-05-30",
+                          "totalPayInPeriod":252.55,
+                          "monthPayNumber":10
+                       }
+                    ]
+                 }
+              ]
+           }
+        """
       )
     }
   }
