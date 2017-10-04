@@ -16,30 +16,26 @@
 
 package uk.gov.hmrc.individualincomedesstub
 
-import com.typesafe.config.Config
-import net.ceedubs.ficus.Ficus._
 import play.api.libs.json.Json
 import play.api.mvc.{RequestHeader, Result}
 import play.api.{Application, Configuration, Play}
 import uk.gov.hmrc.api.config.{ServiceLocatorConfig, ServiceLocatorRegistration}
 import uk.gov.hmrc.api.connector.ServiceLocatorConnector
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualincomedesstub.domain.ErrorInvalidRequest
-import uk.gov.hmrc.play.audit.filters.AuditFilter
+import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
 import uk.gov.hmrc.play.auth.controllers.AuthParamsControllerConfig
 import uk.gov.hmrc.play.auth.microservice.filters.AuthorisationFilter
 import uk.gov.hmrc.play.config.{AppName, ControllerConfig}
-import uk.gov.hmrc.play.filters.MicroserviceFilterSupport
-import uk.gov.hmrc.play.http.HeaderCarrier
-import uk.gov.hmrc.play.http.logging.filters.LoggingFilter
 import uk.gov.hmrc.play.microservice.bootstrap.DefaultMicroserviceGlobal
-import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
+import uk.gov.hmrc.play.microservice.filters.{AuditFilter, LoggingFilter, MicroserviceFilterSupport}
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 import scala.util.Try
 
 object ControllerConfiguration extends ControllerConfig {
-  lazy val controllerConfigs = Play.current.configuration.underlying.as[Config]("controllers")
+  lazy val controllerConfigs = Play.current.configuration.underlying.getConfig("controllers")
 }
 
 object AuthParamsControllerConfiguration extends AuthParamsControllerConfig {

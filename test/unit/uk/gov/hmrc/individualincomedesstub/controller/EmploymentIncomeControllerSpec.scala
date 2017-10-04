@@ -32,10 +32,10 @@ import uk.gov.hmrc.individualincomedesstub.controller.EmploymentIncomeController
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.employmentIncomeResponseFormat
 import uk.gov.hmrc.individualincomedesstub.domain.{Employment, EmploymentIncomeResponse}
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentIncomeService
-import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
+import uk.gov.hmrc.http.HeaderCarrier
 
 class EmploymentIncomeControllerSpec extends PlaySpec with Results with MockitoSugar {
 
