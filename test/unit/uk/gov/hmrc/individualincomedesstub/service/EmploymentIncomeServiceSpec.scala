@@ -28,11 +28,11 @@ import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentIncomeService
 import uk.gov.hmrc.individualincomedesstub.util.Dates.toInterval
-import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 import scala.language.postfixOps
+import uk.gov.hmrc.http.HeaderCarrier
 
 class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with MockitoSugar with BeforeAndAfterEach {
 

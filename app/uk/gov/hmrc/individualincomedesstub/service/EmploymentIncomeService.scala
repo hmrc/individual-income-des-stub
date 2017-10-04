@@ -24,10 +24,10 @@ import uk.gov.hmrc.individualincomedesstub.connector.ApiPlatformTestUserConnecto
 import uk.gov.hmrc.individualincomedesstub.domain.Employment.overlap
 import uk.gov.hmrc.individualincomedesstub.domain.{EmploymentIncomeResponse, TestOrganisation}
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
-import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
 class EmploymentIncomeService @Inject()(employmentRepository: EmploymentRepository, apiPlatformTestUserConnector: ApiPlatformTestUserConnector) {

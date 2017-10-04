@@ -19,6 +19,7 @@ package uk.gov.hmrc.individualincomedesstub.repository
 import javax.inject.{Inject, Singleton}
 
 import play.api.libs.json.Json
+import reactivemongo.play.json._
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID

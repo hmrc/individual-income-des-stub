@@ -23,8 +23,8 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
 import uk.gov.hmrc.domain.EmpRef
 import uk.gov.hmrc.individualincomedesstub.domain.{TestAddress, TestOrganisation, TestOrganisationDetails}
-import uk.gov.hmrc.play.http.{BadRequestException, HeaderCarrier}
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import uk.gov.hmrc.http.{ BadRequestException, HeaderCarrier }
 
 class ApiPlatformTestUserConnectorSpec extends UnitSpec with BeforeAndAfterEach with WithFakeApplication {
 

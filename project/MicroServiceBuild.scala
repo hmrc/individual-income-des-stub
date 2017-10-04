@@ -13,17 +13,10 @@ object MicroServiceBuild extends Build with MicroService {
 
   val compile = Seq(
     ws,
-    "uk.gov.hmrc" %% "play-reactivemongo" % "5.2.0",
-    "uk.gov.hmrc" %% "play-auditing" % "2.9.0",
-    "uk.gov.hmrc" %% "microservice-bootstrap" % "5.15.0",
-    "uk.gov.hmrc" %% "play-authorisation" % "4.3.0",
-    "uk.gov.hmrc" %% "play-health" % "2.1.0",
-    "uk.gov.hmrc" %% "play-url-binders" % "2.1.0",
-    "uk.gov.hmrc" %% "play-config" % "4.3.0",
-    "uk.gov.hmrc" %% "play-hmrc-api" % "1.4.0",
-    "uk.gov.hmrc" %% "logback-json-logger" % "3.1.0",
+    "uk.gov.hmrc" %% "microservice-bootstrap" % "6.6.0",
     "uk.gov.hmrc" %% "domain" % "4.1.0",
-    "org.scalacheck" %% "scalacheck" % "1.12.6"
+    "uk.gov.hmrc" %% "play-hmrc-api" % "2.0.0",
+    "uk.gov.hmrc" %% "play-reactivemongo" % "6.1.0"
   )
 
   def test(scope: String = "test,it") = Seq(
@@ -37,5 +30,4 @@ object MicroServiceBuild extends Build with MicroService {
     "org.scalaj" %% "scalaj-http" % "1.1.6" % scope,
     "com.github.tomakehurst" % "wiremock" % "2.6.0" % scope
   )
-
 }
