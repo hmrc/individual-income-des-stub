@@ -21,6 +21,7 @@ import play.api.http.Status.OK
 import play.api.libs.json.Json
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.domain._
+import scala.concurrent.Await.result
 
 import scalaj.http.Http
 
@@ -46,7 +47,7 @@ class EmploymentIncomeSpec extends BaseSpec {
       ApiPlatformTestUserStub.getByEmpRefReturnsTestOrganisation(empRef, employer)
 
       And("An employment")
-      employmentRepository.create(empRef, nino, employment)
+      result(employmentRepository.create(empRef, nino, employment), timeout)
 
       When("I fetch the employment income when there was a payment")
       val response = fetchEmploymentIncome(nino.value, employment.startDate.get)
@@ -91,7 +92,7 @@ class EmploymentIncomeSpec extends BaseSpec {
       ApiPlatformTestUserStub.getByEmpRefReturnsNoTestOrganisation(empRef)
 
       And("An employment")
-      employmentRepository.create(empRef, nino, employment)
+      result(employmentRepository.create(empRef, nino, employment), timeout)
 
       When("I fetch the employment income when there was a payment")
       val response = fetchEmploymentIncome(nino.value, employment.startDate.get)
