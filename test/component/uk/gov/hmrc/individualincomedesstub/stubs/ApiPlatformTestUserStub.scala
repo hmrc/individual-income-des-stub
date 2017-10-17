@@ -16,7 +16,7 @@
 
 package component.uk.gov.hmrc.individualincomedesstub.stubs
 
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlPathEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlPathMatching}
 import component.uk.gov.hmrc.individualincomedesstub.MockHost
 import play.api.http.Status
 import uk.gov.hmrc.domain.EmpRef
@@ -25,7 +25,7 @@ import uk.gov.hmrc.individualincomedesstub.domain.TestOrganisation
 object ApiPlatformTestUserStub extends MockHost(22001) {
 
   def getByEmpRefReturnsTestOrganisation(empRef: EmpRef, organisation: TestOrganisation) = {
-    mock.register(get(urlPathEqualTo(s"/organisations/empref/${empRef.encodedValue}"))
+    mock.register(get(urlPathMatching(s"/organisations/empref/${empRef.encodedValue}"))
       .willReturn(aResponse().withStatus(Status.OK)
         .withBody(
           s"""
@@ -44,7 +44,7 @@ object ApiPlatformTestUserStub extends MockHost(22001) {
   }
 
   def getByEmpRefReturnsNoTestOrganisation(empRef: EmpRef) = {
-    mock.register(get(urlPathEqualTo(s"/organisations/empref/${empRef.encodedValue}"))
+    mock.register(get(urlPathMatching(s"/organisations/empref/${empRef.encodedValue}"))
       .willReturn(aResponse().withStatus(Status.NOT_FOUND)))
   }
 }
