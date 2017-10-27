@@ -35,6 +35,17 @@ object JsonFormatters {
   implicit val createEmploymentRequestFormat = Json.format[CreateEmploymentRequest]
   implicit val employmentIncomeResponseFormat = Json.format[EmploymentIncomeResponse]
 
+  implicit val taxYearFormat = new Format[TaxYear] {
+    override def reads(json: JsValue): JsResult[TaxYear] = JsSuccess(TaxYear(json.asInstanceOf[JsString].value))
+
+    override def writes(taxYear: TaxYear): JsValue = JsString(taxYear.ty)
+  }
+
+  implicit val selfAssessmentReturnFormat = Json.format[SelfAssessmentReturn]
+  implicit val selfAssessmentFormat = Json.format[SelfAssessment]
+  implicit val selfAssessmentReturnRequestPayloadFormat = Json.format[SelfAssessmentReturnData]
+  implicit val selfAssessmentCreateRequestFormat = Json.format[SelfAssessmentCreateRequest]
+
   implicit val errorInvalidRequestFormat = new Format[ErrorInvalidRequest] {
     def reads(json: JsValue): JsResult[ErrorInvalidRequest] = JsSuccess(
       ErrorInvalidRequest((json \ "message").as[String])

@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Self assessment response",
+  "type": "object",
+  "properties": {
+    "nino": {
+      "type": "string",
+      "description": "The National Insurance number",
+      "example": "AA123456D"
+    },
+    "taxYear": {
+      "type": "string",
+      "description": "The financial tax year",
+      "example": "2015-16"
+    },
+    "saReturns": {
+      "description": "The self assessment returns",
+      "type": "array",
+      "items": {
+        "additionalProperties": false,
+        "id": "/properties/saReturns/items",
+        "properties": {
+          "selfEmploymentStartDate": {
+            "id": "/properties/saReturns/items/selfEmploymentStartDate",
+            "type": "string",
+            "format": "date",
+            "description": "The self employment start date",
+            "example": "2015-01-28"
+          },
+          "saReceivedDate": {
+            "id": "/properties/saReturns/items/saReceivedDate",
+            "type": "string",
+            "format": "date",
+            "description": "The date in which the self assessment was submitted",
+            "example": "2016-01-01"
+          },
+          "selfEmploymentIncome": {
+            "id": "/properties/saReturns/items/selfEmploymentIncome",
+            "type": "number",
+            "description": "The income obtained for the self employment",
+            "example": "1233.33"
+          },
+          "employmentsIncome": {
+            "id": "/properties/saReturns/items/employmentsIncome",
+            "type": "number",
+            "description": "The accumulated self employment income",
+            "example": "13567.77"
+          }
+        },
+        "required": ["saReceivedDate"],
+        "type": "object"
+      }
+    }
+  },
+  "type": "object",
+  "required": ["nino", "taxYear", "saReturns"]
+}

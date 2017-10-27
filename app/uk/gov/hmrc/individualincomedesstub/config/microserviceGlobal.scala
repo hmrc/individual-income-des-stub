@@ -18,11 +18,11 @@ package uk.gov.hmrc.individualincomedesstub
 
 import play.api.libs.json.Json
 import play.api.mvc.{RequestHeader, Result}
-import play.api.{Application, Configuration, Play}
+import play.api.{Application, Configuration, Logger, Play}
 import uk.gov.hmrc.api.config.{ServiceLocatorConfig, ServiceLocatorRegistration}
 import uk.gov.hmrc.api.connector.ServiceLocatorConnector
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.individualincomedesstub.domain.ErrorInvalidRequest
+import uk.gov.hmrc.individualincomedesstub.domain.{ErrorInternalServer, ErrorInvalidRequest}
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
 import uk.gov.hmrc.play.auth.controllers.AuthParamsControllerConfig
 import uk.gov.hmrc.play.auth.microservice.filters.AuthorisationFilter
@@ -81,6 +81,14 @@ object MicroserviceGlobal extends DefaultMicroserviceGlobal with ServiceLocatorR
     maybeInvalidRequest match {
       case Some(errorResponse) => successful(errorResponse.toHttpResponse)
       case _ => successful(ErrorInvalidRequest("Invalid Request").toHttpResponse)
+    }
+  }
+
+  override def onError(request: RequestHeader, ex: Throwable): Future[Result] = {
+    ex match {
+      case _ =>
+        Logger.error("An unexpected error occured", ex)
+        successful(ErrorInternalServer.toHttpResponse)
     }
   }
 }

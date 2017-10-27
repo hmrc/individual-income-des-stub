@@ -26,7 +26,7 @@ import org.scalatest._
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
+import uk.gov.hmrc.individualincomedesstub.repository.{EmploymentRepository, SelfAssessmentRepository}
 
 import scala.concurrent.Await.result
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -46,9 +46,10 @@ trait BaseSpec extends FeatureSpec with BeforeAndAfterAll with BeforeAndAfterEac
   val timeout = Duration(5, TimeUnit.SECONDS)
   val serviceUrl = s"http://localhost:$port"
   val employmentRepository = app.injector.instanceOf[EmploymentRepository]
+  val selfAssessmentRepository = app.injector.instanceOf[SelfAssessmentRepository]
   val mocks = Seq(ApiPlatformTestUserStub)
 
-  val repositories = Seq(employmentRepository)
+  val repositories = Seq(employmentRepository, selfAssessmentRepository)
 
   override protected def beforeEach(): Unit = {
     repositories.foreach(r => result(r.drop, timeout))
