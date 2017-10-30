@@ -1,0 +1,18 @@
+{
+  "nino": "AA123456D",
+  "taxYear": "2015-16",
+  "saReturns": [
+    {
+      "selfEmploymentStartDate": "2014-01-01",
+      "saReceivedDate": "2015-01-01",
+      "selfEmploymentIncome": 1233.33,
+      "employmentsIncome": 13567.77
+    },
+    {
+      "selfEmploymentStartDate": "2015-01-01",
+      "saReceivedDate": "2016-01-01",
+      "selfEmploymentIncome": 1338.33,
+      "employmentsIncome": 14906.10
+    }
+  ]
+}

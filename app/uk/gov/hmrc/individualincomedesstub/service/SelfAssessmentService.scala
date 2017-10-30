@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualincomedesstub
+package uk.gov.hmrc.individualincomedesstub.service
 
-import uk.gov.hmrc.individualincomedesstub.util.{EmployerReferenceStringBinder, IntervalQueryStringBinder, NinoPathStringBinder, TaxYearStringBinder}
+import javax.inject.{Inject, Singleton}
 
-package object Binders {
+import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.individualincomedesstub.domain._
+import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
 
-  implicit val ninoBinder = new NinoPathStringBinder
-  implicit val employerReferenceBinder = new EmployerReferenceStringBinder
-  implicit val intervalQueryStringBinder = new IntervalQueryStringBinder
-  implicit val taxYearBinder = new TaxYearStringBinder
+@Singleton
+class SelfAssessmentService @Inject()(selfAssessmentRepository: SelfAssessmentRepository) {
+
+  def create(nino: Nino, taxYear: TaxYear, request: SelfAssessmentCreateRequest) = {
+    selfAssessmentRepository.create(SelfAssessment(nino, taxYear, request.saReturns.map(SelfAssessmentReturn(_))))
+  }
 }

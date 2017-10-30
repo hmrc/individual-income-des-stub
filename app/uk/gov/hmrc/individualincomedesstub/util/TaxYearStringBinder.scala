@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualincomedesstub
+package uk.gov.hmrc.individualincomedesstub.util
 
-import uk.gov.hmrc.individualincomedesstub.util.{EmployerReferenceStringBinder, IntervalQueryStringBinder, NinoPathStringBinder, TaxYearStringBinder}
+import uk.gov.hmrc.individualincomedesstub.domain.TaxYear
 
-package object Binders {
+class TaxYearStringBinder extends AbstractPathStringBindable[TaxYear] {
+  override def bind(key: String, value: String) = bind("Malformed tax year submitted", TaxYear(value))
 
-  implicit val ninoBinder = new NinoPathStringBinder
-  implicit val employerReferenceBinder = new EmployerReferenceStringBinder
-  implicit val intervalQueryStringBinder = new IntervalQueryStringBinder
-  implicit val taxYearBinder = new TaxYearStringBinder
+  override def unbind(key: String, value: TaxYear) = value.ty
 }

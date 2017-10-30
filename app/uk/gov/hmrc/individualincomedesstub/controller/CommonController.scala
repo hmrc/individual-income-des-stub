@@ -46,6 +46,7 @@ trait CommonController extends BaseController {
 
   private[controller] def recovery: PartialFunction[Throwable, Result] = {
     case e: IllegalArgumentException => ErrorInvalidRequest(e.getMessage).toHttpResponse
+    case _: DuplicateSelfAssessmentException => ErrorDuplicateAssessment.toHttpResponse
   }
 }
 
