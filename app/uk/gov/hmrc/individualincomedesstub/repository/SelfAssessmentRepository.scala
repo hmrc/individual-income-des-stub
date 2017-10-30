@@ -19,14 +19,16 @@ package uk.gov.hmrc.individualincomedesstub.repository
 import javax.inject.{Inject, Singleton}
 
 import play.api.libs.json.Json
+import reactivemongo.play.json._
+import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
-import reactivemongo.play.json._
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.individualincomedesstub.domain.TaxYear
+import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.taxYearFormat
 import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.mongo.ReactiveRepository
-
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
@@ -34,15 +36,14 @@ class SelfAssessmentRepository @Inject()(mongoConnectionProvider: MongoConnectio
   extends ReactiveRepository[SelfAssessment, BSONObjectID]("selfAssessment", mongoConnectionProvider.mongoDatabase, JsonFormatters.selfAssessmentFormat) {
 
   override lazy val indexes = Seq(
-    Index(key = Seq(("nino", Ascending)), name = Some("ninoIndex"), unique = false, background = true)
+    Index(key = Seq(("nino", Ascending), ("taxYear", Ascending)), name = Some("ninoAndTaxYearIndex"), unique = true, background = true)
   )
 
-  def create(nino: Nino, taxYear: TaxYear, request: SelfAssessmentCreateRequest) = {
-
-    val selfAssessment = SelfAssessment(nino, taxYear, request.saReturns map (SelfAssessmentReturn(_)))
-
-    insert(selfAssessment) map (_ => selfAssessment)
+  def create(selfAssessment: SelfAssessment) = {
+    insert(selfAssessment) map (_ => selfAssessment) recover {
+      case WriteResult.Code(11000) => throw new DuplicateSelfAssessmentException
+    }
   }
 
-  def findByNino(nino: Nino) = collection.find(Json.obj("nino" -> nino)).cursor[SelfAssessment]().collect[Seq]()
+  def findByNinoAndTaxYear(nino: Nino, taxYear: TaxYear) = collection.find(Json.obj("nino" -> nino, "taxYear" -> taxYear)).cursor[SelfAssessment]().collect[Seq]()
 }

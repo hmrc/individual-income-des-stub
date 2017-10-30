@@ -31,22 +31,22 @@ class SelfAssessmentServiceSpec extends UnitSpec with MockitoSugar {
 
   trait Setup {
     val request = SelfAssessmentCreateRequest(Seq.empty)
-    val employment = SelfAssessment(nino, taxYear, Seq.empty)
+    val sa = SelfAssessment(nino, taxYear, Seq.empty)
     val repository = mock[SelfAssessmentRepository]
     val underTest = new SelfAssessmentService(repository)
   }
 
   "create" should {
-    "return the created self employment" in new Setup {
-      when(repository.create(nino, taxYear, request)).thenReturn(employment)
+    "return the created self assessment" in new Setup {
+      when(repository.create(sa)).thenReturn(sa)
 
       val result = await(underTest.create(nino, taxYear, request))
 
-      result shouldBe employment
+      result shouldBe sa
     }
 
-    "propagate exceptions when a self employment cannot be created" in new Setup {
-      when(repository.create(nino, taxYear, request)).thenThrow(new RuntimeException("failed"))
+    "propagate exceptions when a self assessment cannot be created" in new Setup {
+      when(repository.create(sa)).thenThrow(new RuntimeException("failed"))
       intercept[RuntimeException](await(underTest.create(nino, taxYear, request)))
     }
   }

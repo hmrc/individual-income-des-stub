@@ -16,9 +16,11 @@
 
 package it.uk.gov.hmrc.individualincomedesstub.repository
 
+import org.joda.time.LocalDate
+import org.joda.time.LocalDate.parse
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.guice.GuiceApplicationBuilder
-import reactivemongo.api.indexes.IndexType
+import reactivemongo.api.indexes.IndexType.Ascending
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
@@ -49,88 +51,51 @@ class SelfAssessmentRepositorySpec  extends UnitSpec with WithFakeApplication wi
   }
 
   "collection" should {
-    "have a unique index on id" in {
+    "have a unique compound index on nino and taxYear" in {
       await(repository.collection.indexesManager.list()).find({ i =>
-        i.name == Some("ninoIndex") &&
-          i.key == Seq("nino" -> IndexType.Ascending) &&
+        i.name == Some("ninoAndTaxYearIndex") &&
+          i.key == Seq("nino" -> Ascending, "taxYear" -> Ascending) &&
           i.background &&
-          !i.unique
+          i.unique
       }) should not be None
     }
   }
 
   "create" should {
-    "create a self employment" in {
-      val request = selfAssessmentCreateRequest()
+    "create a self assessment" in {
       val sa = selfAssessment()
-      val result = await(repository.create(nino, taxYear, request))
+      val result = await(repository.create(sa))
       result shouldBe sa
     }
 
-    "create a self employment with default income values for its saReturns" in {
-
-      val saReturnData = selfAssessmentReturnData(selfEmploymentIncome = None, employmentsIncome = None)
-      val saReturn = selfAssessmentReturn(selfEmploymentIncome = 0.0, employmentsIncome = 0.0)
-      val sa = selfAssessment(Seq(saReturn, saReturn))
-
-      val result = await(repository.create(nino, taxYear, selfAssessmentCreateRequest(Seq(saReturnData, saReturnData))))
-
-      result shouldBe sa
-    }
-
-    "create a self employment with no start date for its saReturns" in {
-      val saReturnPayload = selfAssessmentReturnData(selfEmploymentStartDate = None)
-      val saReturn = selfAssessmentReturn(selfEmploymentStartDate = None)
-      val sa = selfAssessment(Seq(saReturn, saReturn))
-
-      val result = await(repository.create(nino, taxYear, selfAssessmentCreateRequest(Seq(saReturnPayload, saReturnPayload))))
-      result shouldBe sa
-    }
-
-    "allow multiple self employments for a given nino" in {
-      val request = selfAssessmentCreateRequest()
+    "fail to create a duplicate self assessment" in {
       val sa = selfAssessment()
-      await(repository.create(nino, taxYear, request))
-      await(repository.create(nino, taxYear, request))
+      await(repository.create(sa))
 
-      val result = await(repository.findAll())
-
-      result shouldBe Seq(sa, sa)
+      intercept[DuplicateSelfAssessmentException](await(repository.create(sa)))
     }
   }
 
-  "find by nino" should {
-    "return an empty sequence when there are no employments for a given nino" in {
-      await(repository.findByNino(nino)) shouldBe Seq.empty
+  "find by nino and tax year" should {
+    "return an empty sequence when there is no self assessment for a given nino and taxYear" in {
+      await(repository.findByNinoAndTaxYear(nino, taxYear)) shouldBe Seq.empty
     }
 
-    "return all employments for a given nino" in {
-      val request = selfAssessmentCreateRequest()
+    "return self assessment for a given nino and taxYear" in {
       val sa = selfAssessment()
-      await(repository.create(nino, taxYear, request))
-      await(repository.create(nino, taxYear, request))
+      await(repository.create(sa))
 
-      val result = await(repository.findByNino(nino))
+      val result = await(repository.findByNinoAndTaxYear(nino, taxYear))
 
-      result shouldBe Seq(sa, sa)
+      result shouldBe Seq(sa)
     }
   }
 
-  def selfAssessmentReturnData(selfEmploymentStartDate: Option[String] = Some("2015-01-01"),
-                               selfEmploymentIncome: Option[Double] = Some(1233.33),
-                               employmentsIncome: Option[Double] = Some(13567.77),
-                               saReceivedDate: String = "2016-01-01") = {
-    SelfAssessmentReturnData(selfEmploymentStartDate, saReceivedDate, selfEmploymentIncome, employmentsIncome)
-  }
-
-  def selfAssessmentCreateRequest(saReturns: Seq[SelfAssessmentReturnData] = Seq(selfAssessmentReturnData())) = {
-    SelfAssessmentCreateRequest(saReturns)
-  }
-
-  def selfAssessmentReturn(selfEmploymentStartDate: Option[String] = Some("2015-01-01"),
+  def selfAssessmentReturn(selfEmploymentStartDate: Option[LocalDate] = Some(parse("2015-01-01")),
                            selfEmploymentIncome: Double = 1233.33,
                            employmentsIncome: Double = 13567.77,
-                           saReceivedDate: String = "2016-01-01") = {
+                           saReceivedDate: LocalDate = parse("2016-01-01")
+                          ) = {
     SelfAssessmentReturn(selfEmploymentStartDate, saReceivedDate, selfEmploymentIncome, employmentsIncome)
   }
 

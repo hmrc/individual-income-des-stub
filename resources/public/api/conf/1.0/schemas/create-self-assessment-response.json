@@ -43,7 +43,7 @@
           "employmentsIncome": {
             "id": "/properties/saReturns/items/employmentsIncome",
             "type": "number",
-            "description": "The accumulated self employment income",
+            "description": "The income obtained from employments",
             "example": "13567.77"
           }
         },

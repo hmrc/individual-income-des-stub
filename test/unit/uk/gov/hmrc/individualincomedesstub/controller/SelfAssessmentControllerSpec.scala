@@ -42,8 +42,8 @@ class SelfAssessmentControllerSpec extends UnitSpec with MockitoSugar with Scala
     val underTest = new SelfAssessmentController(selfAssessmentService)
   }
 
-  "create self employment" should {
-    "return a 201 (Created) response when self assessment employment data is created successfully" in new Setup {
+  "create self assessment" should {
+    "return a 201 (Created) response when self assessment data is created successfully" in new Setup {
       val request = SelfAssessmentCreateRequest(Seq.empty)
       val sa = SelfAssessment(nino, taxYear, Seq.empty)
 

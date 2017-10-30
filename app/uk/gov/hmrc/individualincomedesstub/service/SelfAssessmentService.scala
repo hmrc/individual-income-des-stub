@@ -19,13 +19,13 @@ package uk.gov.hmrc.individualincomedesstub.service
 import javax.inject.{Inject, Singleton}
 
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.individualincomedesstub.domain.{SelfAssessmentCreateRequest, TaxYear}
+import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
 
 @Singleton
 class SelfAssessmentService @Inject()(selfAssessmentRepository: SelfAssessmentRepository) {
 
   def create(nino: Nino, taxYear: TaxYear, request: SelfAssessmentCreateRequest) = {
-    selfAssessmentRepository.create(nino, taxYear, request)
+    selfAssessmentRepository.create(SelfAssessment(nino, taxYear, request.saReturns.map(SelfAssessmentReturn(_))))
   }
 }

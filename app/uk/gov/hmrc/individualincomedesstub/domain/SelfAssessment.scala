@@ -16,22 +16,24 @@
 
 package uk.gov.hmrc.individualincomedesstub.domain
 
+import org.joda.time.LocalDate
+import org.joda.time.LocalDate.parse
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.individualincomedesstub.util.Validators
+import uk.gov.hmrc.individualincomedesstub.util.Validators.validDate
 
 import scala.util.matching.Regex
 import scala.util.matching.Regex.Match
 
-case class SelfAssessmentReturn(selfEmploymentStartDate: Option[String],
-                                saReceivedDate: String,
+case class SelfAssessmentReturn(selfEmploymentStartDate: Option[LocalDate],
+                                saReceivedDate: LocalDate,
                                 selfEmploymentIncome: Double,
                                 employmentsIncome: Double)
 
 object SelfAssessmentReturn {
   def apply(saReturnPayload: SelfAssessmentReturnData): SelfAssessmentReturn = {
     SelfAssessmentReturn(
-      saReturnPayload.selfEmploymentStartDate,
-      saReturnPayload.saReceivedDate,
+      saReturnPayload.selfEmploymentStartDate.map(parse(_)),
+      parse(saReturnPayload.saReceivedDate),
       saReturnPayload.selfEmploymentIncome.getOrElse(0.0),
       saReturnPayload.employmentsIncome.getOrElse(0.0)
     )
@@ -49,8 +51,8 @@ case class SelfAssessmentReturnData(selfEmploymentStartDate: Option[String],
 
 case class SelfAssessmentCreateRequest(saReturns: Seq[SelfAssessmentReturnData]) {
   saReturns map { sa =>
-    Validators.validDate("saReceivedDate", sa.saReceivedDate)
-    sa.selfEmploymentStartDate map (Validators.validDate("selfEmploymentStartDate", _))
+    validDate("saReceivedDate", sa.saReceivedDate)
+    sa.selfEmploymentStartDate map (validDate("selfEmploymentStartDate", _))
   }
 }
 

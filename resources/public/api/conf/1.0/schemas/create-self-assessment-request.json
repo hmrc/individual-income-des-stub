@@ -21,7 +21,7 @@
               "id": "/properties/saReturns/items/saReceivedDate",
               "type": "string",
               "format": "date",
-              "description": "The date in which the self assessment was submitted",
+              "description": "The date on which the self assessment was submitted",
               "example": "2016-01-01"
             },
             "selfEmploymentIncome": {
@@ -33,7 +33,7 @@
             "employmentsIncome": {
               "id": "/properties/saReturns/items/employmentsIncome",
               "type": "number",
-              "description": "The accumulated self employment income",
+              "description": "The total employments income obtained during the tax year",
               "example": "13567.77"
             }
           },

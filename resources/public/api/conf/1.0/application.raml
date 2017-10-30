@@ -63,7 +63,7 @@ uses:
   /{nino}/self-assessment/{taxYear}:
     uriParameters:
       nino:
-        description: The employee National Insurance number
+        description: The Individual National Insurance number
         type: string
         example: AA123456D
       taxYear:
@@ -87,6 +87,15 @@ uses:
             application/json:
               example: !include examples/create-self-assessment-response.json
               type: !include schemas/create-self-assessment-response.json
+        409:
+          body:
+            application/json:
+              type: types.errorResponse
+              examples:
+                Conflict:
+                  description: The self-assessment record already exists
+                  value:
+                    code: SA_ALREADY_EXISTS
         400:
           body:
             application/json:
