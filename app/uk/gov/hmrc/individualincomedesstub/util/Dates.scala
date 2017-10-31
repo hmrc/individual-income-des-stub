@@ -17,6 +17,7 @@
 package uk.gov.hmrc.individualincomedesstub.util
 
 import org.joda.time.{Interval, LocalDate}
+import uk.gov.hmrc.individualincomedesstub.domain.{TaxYear, TaxYearInterval, ValidationException}
 
 object Dates {
 
@@ -28,4 +29,10 @@ object Dates {
   def toInterval(from: LocalDate, to: LocalDate): Interval =
     new Interval(from.toDate.getTime, to.toDateTimeAtStartOfDay.plusMillis(1).toDate.getTime)
 
+  def toTaxYearInterval(fromTaxYear: TaxYear, toTaxYear: TaxYear): TaxYearInterval = {
+    if (fromTaxYear.startYr > toTaxYear.startYr)
+      throw new ValidationException("Invalid time period requested")
+
+    else TaxYearInterval(fromTaxYear, toTaxYear)
+  }
 }

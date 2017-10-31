@@ -18,17 +18,16 @@ package uk.gov.hmrc.individualincomedesstub.repository
 
 import javax.inject.{Inject, Singleton}
 
-import play.api.libs.json.Json
-import reactivemongo.play.json._
+import play.api.libs.json.Json.obj
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
+import reactivemongo.play.json._
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.individualincomedesstub.domain.TaxYear
-import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.taxYearFormat
 import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.mongo.ReactiveRepository
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
@@ -45,5 +44,5 @@ class SelfAssessmentRepository @Inject()(mongoConnectionProvider: MongoConnectio
     }
   }
 
-  def findByNinoAndTaxYear(nino: Nino, taxYear: TaxYear) = collection.find(Json.obj("nino" -> nino, "taxYear" -> taxYear)).cursor[SelfAssessment]().collect[Seq]()
+  def findByNino(nino: Nino) = collection.find(obj("nino" -> nino)).cursor[SelfAssessment]().collect[Seq]()
 }

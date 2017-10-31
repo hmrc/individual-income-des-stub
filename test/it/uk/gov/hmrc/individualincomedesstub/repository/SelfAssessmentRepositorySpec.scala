@@ -76,16 +76,16 @@ class SelfAssessmentRepositorySpec  extends UnitSpec with WithFakeApplication wi
     }
   }
 
-  "find by nino and tax year" should {
-    "return an empty sequence when there is no self assessment for a given nino and taxYear" in {
-      await(repository.findByNinoAndTaxYear(nino, taxYear)) shouldBe Seq.empty
+  "find by nino" should {
+    "return an empty sequence when there are no self assessments for a given nino" in {
+      await(repository.findByNino(nino)) shouldBe Seq.empty
     }
 
-    "return self assessment for a given nino and taxYear" in {
+    "return self assessments for a given nino" in {
       val sa = selfAssessment()
       await(repository.create(sa))
 
-      val result = await(repository.findByNinoAndTaxYear(nino, taxYear))
+      val result = await(repository.findByNino(nino))
 
       result shouldBe Seq(sa)
     }

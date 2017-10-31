@@ -18,15 +18,11 @@ package uk.gov.hmrc.individualincomedesstub.util
 
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.{Interval, LocalDate}
-import play.api.libs.json.Json.toJson
-import play.api.mvc.QueryStringBindable
-import uk.gov.hmrc.individualincomedesstub.domain.ErrorInvalidRequest
-import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.errorInvalidRequestFormat
 import uk.gov.hmrc.individualincomedesstub.util.Dates.toInterval
 
 import scala.util.Try
 
-class IntervalQueryStringBinder extends QueryStringBindable[Interval] {
+class IntervalQueryStringBinder extends AbstractQueryStringBindable[Interval] {
 
   private val dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
 
@@ -50,7 +46,5 @@ class IntervalQueryStringBinder extends QueryStringBindable[Interval] {
   override def unbind(key: String, dateRange: Interval): String = {
     s"from=${dateTimeFormatter.print(dateRange.getStart.toLocalDate)}&to=${dateTimeFormatter.print(dateRange.getEnd.toLocalDate)}"
   }
-
-  protected def errorResponse(message: String) = toJson(ErrorInvalidRequest(message)).toString
 
 }

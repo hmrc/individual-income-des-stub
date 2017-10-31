@@ -45,6 +45,8 @@ object JsonFormatters {
   implicit val selfAssessmentFormat = Json.format[SelfAssessment]
   implicit val selfAssessmentReturnDataFormat = Json.format[SelfAssessmentReturnData]
   implicit val selfAssessmentCreateRequestFormat = Json.format[SelfAssessmentCreateRequest]
+  implicit val selfAssessmentResponseReturnDataFormat = Json.format[SelfAssessmentResponseReturnData]
+  implicit val selfAssessmentResponseFormat = Json.format[SelfAssessmentResponse]
 
   implicit val errorInvalidRequestFormat = new Format[ErrorInvalidRequest] {
     def reads(json: JsValue): JsResult[ErrorInvalidRequest] = JsSuccess(

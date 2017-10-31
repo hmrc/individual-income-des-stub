@@ -78,7 +78,7 @@ class SelfAssessmentSpec extends BaseSpec {
       Json.parse(response.body) shouldBe Json.toJson(sa)
 
       And("The self assessment is stored in mongo")
-      val storedSa = result(selfAssessmentRepository.findByNinoAndTaxYear(nino, taxYear), timeout)
+      val storedSa = result(selfAssessmentRepository.findByNino(nino), timeout)
       storedSa shouldBe Seq(sa)
     }
 
@@ -109,7 +109,7 @@ class SelfAssessmentSpec extends BaseSpec {
       Json.parse(response.body) shouldBe Json.toJson(sa)
 
       And("The self assessment is stored in mongo")
-      val storedSa = result(selfAssessmentRepository.findByNinoAndTaxYear(nino, taxYear), timeout)
+      val storedSa = result(selfAssessmentRepository.findByNino(nino), timeout)
       storedSa shouldBe Seq(sa)
     }
 
@@ -139,7 +139,7 @@ class SelfAssessmentSpec extends BaseSpec {
       Json.parse(response.body) shouldBe Json.toJson(employment)
 
       And("The self assessment is stored in mongo")
-      val storedEmployment = result(selfAssessmentRepository.findByNinoAndTaxYear(nino, taxYear), timeout)
+      val storedEmployment = result(selfAssessmentRepository.findByNino(nino), timeout)
       storedEmployment shouldBe Seq(employment)
     }
 
