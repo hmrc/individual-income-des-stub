@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualincomedesstub
+package uk.gov.hmrc.individualincomedesstub.util
 
-import uk.gov.hmrc.individualincomedesstub.util._
+import play.api.libs.json.Json
+import play.api.mvc.QueryStringBindable
+import uk.gov.hmrc.individualincomedesstub.domain.ErrorInvalidRequest
+import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.errorInvalidRequestFormat
 
-package object Binders {
-
-  implicit val ninoBinder = new NinoPathStringBinder
-  implicit val employerReferenceBinder = new EmployerReferenceStringBinder
-  implicit val intervalQueryStringBinder = new IntervalQueryStringBinder
-  implicit val taxYearBinder = new TaxYearStringBinder
+trait AbstractQueryStringBindable[T] extends QueryStringBindable[T] {
+  protected def errorResponse(message: String) = {
+    Json.toJson(ErrorInvalidRequest(message)).toString
+  }
 }

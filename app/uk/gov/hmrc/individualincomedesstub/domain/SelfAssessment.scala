@@ -42,7 +42,9 @@ object SelfAssessmentReturn {
 
 case class SelfAssessment(nino: Nino,
                           taxYear: TaxYear,
-                          saReturns: Seq[SelfAssessmentReturn])
+                          saReturns: Seq[SelfAssessmentReturn]) {
+  def isIn(startYear: Int, endYear: Int) = taxYear.startYr.toInt >= startYear - 1 && taxYear.endYr.toInt <= endYear
+}
 
 case class SelfAssessmentReturnData(selfEmploymentStartDate: Option[String],
                                     saReceivedDate: String,
@@ -56,10 +58,35 @@ case class SelfAssessmentCreateRequest(saReturns: Seq[SelfAssessmentReturnData])
   }
 }
 
+case class SelfAssessmentResponseReturnData(caseStartDate: Option[LocalDate],
+                                            receivedDate: LocalDate,
+                                            incomeFromSelfEmployment: Double,
+                                            incomeFromAllEmployments: Double)
+
+object SelfAssessmentResponseReturnData {
+  def apply(selfAssessmentReturn: SelfAssessmentReturn): SelfAssessmentResponseReturnData = {
+    SelfAssessmentResponseReturnData(
+      selfAssessmentReturn.selfEmploymentStartDate,
+      selfAssessmentReturn.saReceivedDate,
+      selfAssessmentReturn.selfEmploymentIncome,
+      selfAssessmentReturn.employmentsIncome
+    )
+  }
+}
+
+case class SelfAssessmentResponse(taxYear: String, returnList: Seq[SelfAssessmentResponseReturnData])
+
+object SelfAssessmentResponse {
+  def apply(selfAssessment: SelfAssessment): SelfAssessmentResponse = {
+    SelfAssessmentResponse(selfAssessment.taxYear.endYr, selfAssessment.saReturns.map(SelfAssessmentResponseReturnData(_)))
+  }
+}
+
 case class TaxYear(ty: String) {
   if (!TaxYear.isValid(ty)) throw new IllegalArgumentException
 
   val startYr = ty.split("-")(0)
+  val endYr = startYr.toInt + 1 toString
 }
 
 object TaxYear {
