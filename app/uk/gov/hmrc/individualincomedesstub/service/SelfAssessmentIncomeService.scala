@@ -19,16 +19,17 @@ package uk.gov.hmrc.individualincomedesstub.service
 import javax.inject.{Inject, Singleton}
 
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.individualincomedesstub.domain.{SelfAssessmentResponse, SelfAssessmentResponseReturnData, TaxYearInterval}
+import uk.gov.hmrc.individualincomedesstub.domain.{SelfAssessmentResponse, SelfAssessmentResponseReturnData}
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class SelfAssessmentIncomeService @Inject()(selfAssessmentRepository: SelfAssessmentRepository) {
 
-  def income(nino: Nino, taxYearInterval: TaxYearInterval) = {
+  def income(nino: Nino, startYear: Int, endYear: Int) = {
     selfAssessmentRepository.findByNino(nino) map { assessments =>
-      assessments.filter(_.isIn(taxYearInterval)) map { assessment =>
+      assessments.filter(_.isIn(startYear, endYear)) map { assessment =>
         SelfAssessmentResponse(assessment.taxYear.endYr, assessment.saReturns.map(SelfAssessmentResponseReturnData(_)))
       }
     }

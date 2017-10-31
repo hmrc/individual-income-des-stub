@@ -44,7 +44,7 @@ class SelfAssessmentIncomeServiceSpec extends UnitSpec with MockitoSugar {
 
       when(repository.findByNino(nino)).thenReturn(Seq(sa))
 
-      val result = await(underTest.income(nino, TaxYearInterval(TaxYear("2014-15"), TaxYear("2015-16"))))
+      val result = await(underTest.income(nino, 2014, 2015))
 
       result shouldBe Seq(SelfAssessmentResponse("2015", Seq(SelfAssessmentResponseReturnData(sa.saReturns.head))))
     }
@@ -52,14 +52,14 @@ class SelfAssessmentIncomeServiceSpec extends UnitSpec with MockitoSugar {
     "return an empty sequence when there is no self assessment income for a given period" in new Setup {
       when(repository.findByNino(nino)).thenReturn(Seq.empty)
 
-      val result = await(underTest.income(nino, TaxYearInterval(TaxYear("2014-15"), TaxYear("2015-16"))))
+      val result = await(underTest.income(nino, 2014, 2015))
 
       result shouldBe Seq.empty
     }
 
     "propagate exceptions when sa income cannot be retrieved" in new Setup {
       when(repository.findByNino(nino)).thenThrow(new RuntimeException("failed"))
-      intercept[RuntimeException](await(underTest.income(nino, TaxYearInterval(TaxYear("2014-15"), TaxYear("2015-16")))))
+      intercept[RuntimeException](await(underTest.income(nino, 2015, 2016)))
     }
   }
 

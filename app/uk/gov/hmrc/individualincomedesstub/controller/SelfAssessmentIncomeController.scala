@@ -22,7 +22,6 @@ import play.api.libs.json.Json
 import play.api.mvc.Action
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
-import uk.gov.hmrc.individualincomedesstub.domain.TaxYearInterval
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentIncomeService
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -30,8 +29,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class SelfAssessmentIncomeController @Inject() (selfAssessmentIncomeService: SelfAssessmentIncomeService) extends CommonController {
 
-  def income(nino: Nino, taxYearInterval: TaxYearInterval) = Action.async { implicit request =>
-    selfAssessmentIncomeService.income(nino, taxYearInterval) map { saReturns =>
+  def income(nino: Nino, startYear: Int, endYear: Int) = Action.async { implicit request =>
+    selfAssessmentIncomeService.income(nino, startYear, endYear) map { saReturns =>
       if(saReturns.nonEmpty) Ok(Json.toJson(saReturns))
       else NotFound
     } recover recovery

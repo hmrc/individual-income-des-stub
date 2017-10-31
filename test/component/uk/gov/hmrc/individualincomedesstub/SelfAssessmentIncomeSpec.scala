@@ -92,42 +92,6 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
       response.code shouldBe NOT_FOUND
     }
 
-    scenario("Request fails for an invalid tax year range") {
-
-      When("I attempt to fetch self assessment for an invalid tax year range")
-      val response = fetchSelfAssessmentIncome(nino, "2014", "2013")
-
-      Then("The response code should be 400 (Bad Request)")
-      response.code shouldBe BAD_REQUEST
-
-      And("The correct error message in the response body")
-      Json.parse(response.body) shouldBe Json.parse("""{"code":"INVALID_REQUEST","message":"Invalid time period requested"}""")
-    }
-
-    scenario("Request fails for an invalid start year") {
-
-      When("I attempt to fetch self assessment using an invalid start year")
-      val response = fetchSelfAssessmentIncome(nino, "213", "2014")
-
-      Then("The response code should be 400 (Bad Request)")
-      response.code shouldBe BAD_REQUEST
-
-      And("The correct error message in the response body")
-      Json.parse(response.body) shouldBe Json.parse("""{"code":"INVALID_REQUEST","message":"startYear: invalid tax year format"}""")
-    }
-
-    scenario("Request fails for an invalid end year") {
-
-      When("I attempt to fetch self assessment using an invalid end year")
-      val response = fetchSelfAssessmentIncome(nino, "2013", "201")
-
-      Then("The response code should be 400 (Bad Request)")
-      response.code shouldBe BAD_REQUEST
-
-      And("The correct error message in the response body")
-      Json.parse(response.body) shouldBe Json.parse("""{"code":"INVALID_REQUEST","message":"endYear: invalid tax year format"}""")
-    }
-
     scenario("Request fails for missing start year") {
 
       When("I attempt to fetch self assessment without a start year")
@@ -137,7 +101,7 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
       response.code shouldBe BAD_REQUEST
 
       And("The correct error message in the response body")
-      Json.parse(response.body) shouldBe Json.parse("""{"code":"INVALID_REQUEST","message":"startYear is required"}""")
+      Json.parse(response.body) shouldBe Json.parse("""{"code":"INVALID_REQUEST","message":"Invalid Request"}""")
     }
 
     scenario("Request fails for missing end year") {
@@ -149,7 +113,7 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
       response.code shouldBe BAD_REQUEST
 
       And("The correct error message in the response body")
-      Json.parse(response.body) shouldBe Json.parse("""{"code":"INVALID_REQUEST","message":"endYear is required"}""")
+      Json.parse(response.body) shouldBe Json.parse("""{"code":"INVALID_REQUEST","message":"Invalid Request"}""")
     }
   }
 

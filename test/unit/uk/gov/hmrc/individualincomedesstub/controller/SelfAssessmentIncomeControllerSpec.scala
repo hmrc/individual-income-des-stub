@@ -26,7 +26,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.individualincomedesstub.controller.SelfAssessmentIncomeController
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.selfAssessmentResponseFormat
-import uk.gov.hmrc.individualincomedesstub.domain.{SelfAssessmentResponse, SelfAssessmentResponseReturnData, TaxYear, TaxYearInterval}
+import uk.gov.hmrc.individualincomedesstub.domain.{SelfAssessmentResponse, SelfAssessmentResponseReturnData}
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentIncomeService
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
@@ -38,7 +38,6 @@ class SelfAssessmentIncomeControllerSpec extends UnitSpec with MockitoSugar with
 
   trait Setup {
     val nino = Nino("AB123456A")
-    val taxPeriod = TaxYearInterval(TaxYear("2014-15"), TaxYear("2015-16"))
     val fakeRequest = FakeRequest()
     val selfAssessmentIncomeService = mock[SelfAssessmentIncomeService]
     val underTest = new SelfAssessmentIncomeController(selfAssessmentIncomeService)
@@ -48,18 +47,18 @@ class SelfAssessmentIncomeControllerSpec extends UnitSpec with MockitoSugar with
     "retrieve self assessment income for a given period" in new Setup {
       val selfAssessmentResponse = SelfAssessmentResponse("2015", Seq(SelfAssessmentResponseReturnData(Some(parse("2014-01-01")), parse("2015-01-01"), 100.15, 12300.55)))
 
-      when(selfAssessmentIncomeService.income(nino, taxPeriod)).thenReturn(successful(Seq(selfAssessmentResponse)))
+      when(selfAssessmentIncomeService.income(nino, 2015, 2016)).thenReturn(successful(Seq(selfAssessmentResponse)))
 
-      val result = await(underTest.income(nino, taxPeriod)(fakeRequest))
+      val result = await(underTest.income(nino, 2015, 2016)(fakeRequest))
 
       status(result) shouldBe OK
       jsonBodyOf(result) shouldBe toJson(Seq(selfAssessmentResponse))
     }
 
     "return 404 (Not Found) if there is no self assessment income for a given period" in new Setup {
-      when(selfAssessmentIncomeService.income(nino, taxPeriod)).thenReturn(successful(Seq.empty))
+      when(selfAssessmentIncomeService.income(nino, 2015, 2016)).thenReturn(successful(Seq.empty))
 
-      val result = await(underTest.income(nino, taxPeriod)(fakeRequest))
+      val result = await(underTest.income(nino, 2015, 2016)(fakeRequest))
 
       status(result) shouldBe NOT_FOUND
     }

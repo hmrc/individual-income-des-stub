@@ -3,4 +3,4 @@
 POST        /employer/:empRef/employment/:nino                    @uk.gov.hmrc.individualincomedesstub.controller.EmploymentController.create(empRef: uk.gov.hmrc.domain.EmpRef, nino: uk.gov.hmrc.domain.Nino)
 POST        /:nino/self-assessment/:taxYear                       @uk.gov.hmrc.individualincomedesstub.controller.SelfAssessmentController.create(nino: uk.gov.hmrc.domain.Nino, taxYear: uk.gov.hmrc.individualincomedesstub.domain.TaxYear)
 GET         /individuals/nino/:nino/employments/income            @uk.gov.hmrc.individualincomedesstub.controller.EmploymentIncomeController.employments(nino: uk.gov.hmrc.domain.Nino, interval: org.joda.time.Interval)
-GET         /individuals/nino/:nino/self-assessment/income        @uk.gov.hmrc.individualincomedesstub.controller.SelfAssessmentIncomeController.income(nino: uk.gov.hmrc.domain.Nino, taxYearInterval: uk.gov.hmrc.individualincomedesstub.domain.TaxYearInterval)
+GET         /individuals/nino/:nino/self-assessment/income        @uk.gov.hmrc.individualincomedesstub.controller.SelfAssessmentIncomeController.income(nino: uk.gov.hmrc.domain.Nino, startYear: Int, endYear: Int)

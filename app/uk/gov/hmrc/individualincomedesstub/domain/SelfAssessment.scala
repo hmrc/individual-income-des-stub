@@ -43,7 +43,7 @@ object SelfAssessmentReturn {
 case class SelfAssessment(nino: Nino,
                           taxYear: TaxYear,
                           saReturns: Seq[SelfAssessmentReturn]) {
-  def isIn(taxYearInterval: TaxYearInterval) = taxYear.startYr.toInt >= taxYearInterval.fromTaxYear.startYr.toInt && taxYear.endYr.toInt <= taxYearInterval.toTaxYear.endYr.toInt
+  def isIn(startYear: Int, endYear: Int) = taxYear.startYr.toInt >= startYear - 1 && taxYear.endYr.toInt <= endYear
 }
 
 case class SelfAssessmentReturnData(selfEmploymentStartDate: Option[String],
@@ -102,5 +102,3 @@ object TaxYear {
   }
 
 }
-
-case class TaxYearInterval(fromTaxYear: TaxYear, toTaxYear: TaxYear)

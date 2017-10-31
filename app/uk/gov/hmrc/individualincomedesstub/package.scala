@@ -24,5 +24,4 @@ package object Binders {
   implicit val employerReferenceBinder = new EmployerReferenceStringBinder
   implicit val intervalQueryStringBinder = new IntervalQueryStringBinder
   implicit val taxYearBinder = new TaxYearStringBinder
-  implicit val taxYearIntervalBinder = new TaxYearIntervalQueryStringBinder
 }
