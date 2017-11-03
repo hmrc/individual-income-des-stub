@@ -92,11 +92,11 @@ class SelfAssessmentRepositorySpec  extends UnitSpec with WithFakeApplication wi
   }
 
   def selfAssessmentReturn(selfEmploymentStartDate: Option[LocalDate] = Some(parse("2015-01-01")),
-                           selfEmploymentIncome: Double = 1233.33,
+                           selfEmploymentProfit: Double = 1233.33,
                            employmentsIncome: Double = 13567.77,
                            saReceivedDate: LocalDate = parse("2016-01-01")
                           ) = {
-    SelfAssessmentReturn(selfEmploymentStartDate, saReceivedDate, selfEmploymentIncome, employmentsIncome)
+    SelfAssessmentReturn(selfEmploymentStartDate, saReceivedDate, selfEmploymentProfit, employmentsIncome)
   }
 
   def selfAssessment(saReturns: Seq[SelfAssessmentReturn] = Seq(selfAssessmentReturn())) = {

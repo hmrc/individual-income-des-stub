@@ -63,7 +63,7 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
                       {
                           "caseStartDate": "2013-01-01",
                           "receivedDate": "2014-01-01",
-                          "incomeFromSelfEmployment": 100.15,
+                          "profitFromSelfEmployment": 100.15,
                           "incomeFromAllEmployments": 100.15
                       }
                   ]
@@ -74,7 +74,7 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
                       {
                           "caseStartDate": "2013-01-01",
                           "receivedDate": "2015-01-01",
-                          "incomeFromSelfEmployment": 200.20,
+                          "profitFromSelfEmployment": 200.20,
                           "incomeFromAllEmployments": 300.35
                       }
                   ]
