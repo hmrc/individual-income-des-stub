@@ -26,7 +26,7 @@ import scala.util.matching.Regex.Match
 
 case class SelfAssessmentReturn(selfEmploymentStartDate: Option[LocalDate],
                                 saReceivedDate: LocalDate,
-                                selfEmploymentIncome: Double,
+                                selfEmploymentProfit: Double,
                                 employmentsIncome: Double)
 
 object SelfAssessmentReturn {
@@ -34,7 +34,7 @@ object SelfAssessmentReturn {
     SelfAssessmentReturn(
       saReturnPayload.selfEmploymentStartDate.map(parse(_)),
       parse(saReturnPayload.saReceivedDate),
-      saReturnPayload.selfEmploymentIncome.getOrElse(0.0),
+      saReturnPayload.selfEmploymentProfit.getOrElse(0.0),
       saReturnPayload.employmentsIncome.getOrElse(0.0)
     )
   }
@@ -48,7 +48,7 @@ case class SelfAssessment(nino: Nino,
 
 case class SelfAssessmentReturnData(selfEmploymentStartDate: Option[String],
                                     saReceivedDate: String,
-                                    selfEmploymentIncome: Option[Double],
+                                    selfEmploymentProfit: Option[Double],
                                     employmentsIncome: Option[Double])
 
 case class SelfAssessmentCreateRequest(saReturns: Seq[SelfAssessmentReturnData]) {
@@ -60,7 +60,7 @@ case class SelfAssessmentCreateRequest(saReturns: Seq[SelfAssessmentReturnData])
 
 case class SelfAssessmentResponseReturnData(caseStartDate: Option[LocalDate],
                                             receivedDate: LocalDate,
-                                            incomeFromSelfEmployment: Double,
+                                            profitFromSelfEmployment: Double,
                                             incomeFromAllEmployments: Double)
 
 object SelfAssessmentResponseReturnData {
@@ -68,7 +68,7 @@ object SelfAssessmentResponseReturnData {
     SelfAssessmentResponseReturnData(
       selfAssessmentReturn.selfEmploymentStartDate,
       selfAssessmentReturn.saReceivedDate,
-      selfAssessmentReturn.selfEmploymentIncome,
+      selfAssessmentReturn.selfEmploymentProfit,
       selfAssessmentReturn.employmentsIncome
     )
   }
