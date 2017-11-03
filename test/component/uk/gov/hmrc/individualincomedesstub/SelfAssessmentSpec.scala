@@ -49,13 +49,15 @@ class SelfAssessmentSpec extends BaseSpec {
                "selfEmploymentStartDate": "2014-01-01",
                "saReceivedDate": "2015-01-01",
                "selfEmploymentIncome": 1233.33,
-               "employmentsIncome": 13567.77
+               "employmentsIncome": 13567.77,
+               "selfEmploymentProfit": 1233.33
              },
              {
                "selfEmploymentStartDate": "2015-01-01",
                "saReceivedDate": "2016-01-01",
                "selfEmploymentIncome": 1338.33,
-               "employmentsIncome": 14906.10
+               "employmentsIncome": 14906.10,
+               "selfEmploymentProfit": 1338.33
              }
            ]
           }
@@ -71,7 +73,7 @@ class SelfAssessmentSpec extends BaseSpec {
 
       val saReturns = Seq(
         selfAssessmentReturn(),
-        selfAssessmentReturn(Some(parse("2015-01-01")), 1338.33, 14906.10, parse("2016-01-01"))
+        selfAssessmentReturn(Some(parse("2015-01-01")), 1338.33, 14906.10, parse("2016-01-01"), 1338.33)
       )
 
       val sa = selfAssessment(saReturns = saReturns)
@@ -92,7 +94,8 @@ class SelfAssessmentSpec extends BaseSpec {
              {
                "saReceivedDate": "2015-01-01",
                "selfEmploymentIncome": 1233.33,
-               "employmentsIncome": 13567.77
+               "employmentsIncome": 13567.77,
+               "selfEmploymentProfit": 1233.33
              }
            ]
           }
@@ -135,7 +138,7 @@ class SelfAssessmentSpec extends BaseSpec {
       response.code shouldBe CREATED
 
       And("The self assessment is created and returned with default income values")
-      val employment = selfAssessment(saReturns = Seq(selfAssessmentReturn(selfEmploymentIncome = 0.0, employmentsIncome = 0.0)))
+      val employment = selfAssessment(saReturns = Seq(selfAssessmentReturn(selfEmploymentProfit = 0.0, employmentsIncome = 0.0)))
       Json.parse(response.body) shouldBe Json.toJson(employment)
 
       And("The self assessment is stored in mongo")
@@ -195,8 +198,9 @@ class SelfAssessmentSpec extends BaseSpec {
   def selfAssessmentReturn(selfEmploymentStartDate: Option[LocalDate] = Some(parse("2014-01-01")),
                            selfEmploymentIncome: Double = 1233.33,
                            employmentsIncome: Double = 13567.77,
-                           saReceivedDate: LocalDate = parse("2015-01-01")) = {
-    SelfAssessmentReturn(selfEmploymentStartDate, saReceivedDate, selfEmploymentIncome, employmentsIncome)
+                           saReceivedDate: LocalDate = parse("2015-01-01"),
+                           selfEmploymentProfit: Double = 1233.33) = {
+    SelfAssessmentReturn(selfEmploymentStartDate, saReceivedDate, selfEmploymentProfit, employmentsIncome, selfEmploymentProfit)
   }
 
   def selfAssessment(nino: String = ninoString, taxYear: String = taxYearString, saReturns: Seq[SelfAssessmentReturn] = Seq(selfAssessmentReturn())) = {

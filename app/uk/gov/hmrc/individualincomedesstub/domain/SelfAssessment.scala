@@ -27,7 +27,8 @@ import scala.util.matching.Regex.Match
 case class SelfAssessmentReturn(selfEmploymentStartDate: Option[LocalDate],
                                 saReceivedDate: LocalDate,
                                 selfEmploymentIncome: Double,
-                                employmentsIncome: Double)
+                                employmentsIncome: Double,
+                                selfEmploymentProfit: Double)
 
 object SelfAssessmentReturn {
   def apply(saReturnPayload: SelfAssessmentReturnData): SelfAssessmentReturn = {
@@ -35,7 +36,8 @@ object SelfAssessmentReturn {
       saReturnPayload.selfEmploymentStartDate.map(parse(_)),
       parse(saReturnPayload.saReceivedDate),
       saReturnPayload.selfEmploymentIncome.getOrElse(0.0),
-      saReturnPayload.employmentsIncome.getOrElse(0.0)
+      saReturnPayload.employmentsIncome.getOrElse(0.0),
+      saReturnPayload.selfEmploymentProfit.getOrElse(0.0)
     )
   }
 }
@@ -49,7 +51,8 @@ case class SelfAssessment(nino: Nino,
 case class SelfAssessmentReturnData(selfEmploymentStartDate: Option[String],
                                     saReceivedDate: String,
                                     selfEmploymentIncome: Option[Double],
-                                    employmentsIncome: Option[Double])
+                                    employmentsIncome: Option[Double],
+                                    selfEmploymentProfit: Option[Double])
 
 case class SelfAssessmentCreateRequest(saReturns: Seq[SelfAssessmentReturnData]) {
   saReturns map { sa =>
@@ -61,7 +64,8 @@ case class SelfAssessmentCreateRequest(saReturns: Seq[SelfAssessmentReturnData])
 case class SelfAssessmentResponseReturnData(caseStartDate: Option[LocalDate],
                                             receivedDate: LocalDate,
                                             incomeFromSelfEmployment: Double,
-                                            incomeFromAllEmployments: Double)
+                                            incomeFromAllEmployments: Double,
+                                            profitFromSelfEmployment: Double)
 
 object SelfAssessmentResponseReturnData {
   def apply(selfAssessmentReturn: SelfAssessmentReturn): SelfAssessmentResponseReturnData = {
@@ -69,7 +73,8 @@ object SelfAssessmentResponseReturnData {
       selfAssessmentReturn.selfEmploymentStartDate,
       selfAssessmentReturn.saReceivedDate,
       selfAssessmentReturn.selfEmploymentIncome,
-      selfAssessmentReturn.employmentsIncome
+      selfAssessmentReturn.employmentsIncome,
+      selfAssessmentReturn.selfEmploymentProfit
     )
   }
 }

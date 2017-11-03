@@ -45,7 +45,7 @@ class SelfAssessmentIncomeControllerSpec extends UnitSpec with MockitoSugar with
 
   "fetch self assessment income" should {
     "retrieve self assessment income for a given period" in new Setup {
-      val selfAssessmentResponse = SelfAssessmentResponse("2015", Seq(SelfAssessmentResponseReturnData(Some(parse("2014-01-01")), parse("2015-01-01"), 100.15, 12300.55)))
+      val selfAssessmentResponse = SelfAssessmentResponse("2015", Seq(SelfAssessmentResponseReturnData(Some(parse("2014-01-01")), parse("2015-01-01"), 100.15, 12300.55, 200.15)))
 
       when(selfAssessmentIncomeService.income(nino, 2015, 2016)).thenReturn(successful(Seq(selfAssessmentResponse)))
 

@@ -35,6 +35,12 @@
               "type": "number",
               "description": "The total employments income obtained during the tax year",
               "example": "13567.77"
+            },
+            "selfEmploymentProfit": {
+              "id": "/properties/saReturns/items/selfEmploymentProfit",
+              "type": "number",
+              "description": "The profit obtained for the self employment",
+              "example": "1233.33"
             }
           },
           "required": ["saReceivedDate"],
