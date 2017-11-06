@@ -40,12 +40,12 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
         SelfAssessment(
           nino,
           TaxYear("2013-14"),
-          Seq(SelfAssessmentReturn(Some(LocalDate.parse("2013-01-01")), LocalDate.parse("2014-01-1"), 100.15, 100.15))))
+          Seq(SelfAssessmentReturn(Some(LocalDate.parse("2013-01-01")), LocalDate.parse("2014-01-1"), 100.15, 100.15, 200.15))))
       selfAssessmentRepository.create(
         SelfAssessment(
           nino,
           TaxYear("2014-15"),
-          Seq(SelfAssessmentReturn(Some(LocalDate.parse("2013-01-01")), LocalDate.parse("2015-01-1"), 200.20, 300.35))))
+          Seq(SelfAssessmentReturn(Some(LocalDate.parse("2013-01-01")), LocalDate.parse("2015-01-1"), 200.20, 300.35, 100.15))))
 
       When("I fetch self assessment income for that period")
       val response = fetchSelfAssessmentIncome(nino, "2014", "2015")
@@ -64,7 +64,8 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
                           "caseStartDate": "2013-01-01",
                           "receivedDate": "2014-01-01",
                           "incomeFromSelfEmployment": 100.15,
-                          "incomeFromAllEmployments": 100.15
+                          "incomeFromAllEmployments": 100.15,
+                          "profitFromSelfEmployment": 200.15
                       }
                   ]
                },
@@ -75,7 +76,8 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
                           "caseStartDate": "2013-01-01",
                           "receivedDate": "2015-01-01",
                           "incomeFromSelfEmployment": 200.20,
-                          "incomeFromAllEmployments": 300.35
+                          "incomeFromAllEmployments": 300.35,
+                          "profitFromSelfEmployment": 100.15
                       }
                   ]
               }

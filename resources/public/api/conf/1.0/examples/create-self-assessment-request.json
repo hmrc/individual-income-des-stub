@@ -4,13 +4,15 @@
       "selfEmploymentStartDate": "2014-01-01",
       "saReceivedDate": "2015-01-01",
       "selfEmploymentIncome": 1233.33,
-      "employmentsIncome": 13567.77
+      "employmentsIncome": 13567.77,
+      "selfEmploymentProfit": 2233.33
     },
     {
       "selfEmploymentStartDate": "2015-01-01",
       "saReceivedDate": "2016-01-01",
       "selfEmploymentIncome": 1338.33,
-      "employmentsIncome": 14906.10
+      "employmentsIncome": 14906.10,
+      "selfEmploymentProfit": 538.33
     }
   ]
 }

@@ -45,6 +45,12 @@
             "type": "number",
             "description": "The income obtained from employments",
             "example": "13567.77"
+          },
+          "selfEmploymentProfit": {
+            "id": "/properties/saReturns/items/selfEmploymentProfit",
+            "type": "number",
+            "description": "The profit obtained for the self employment",
+            "example": "4233.33"
           }
         },
         "required": ["saReceivedDate"],
