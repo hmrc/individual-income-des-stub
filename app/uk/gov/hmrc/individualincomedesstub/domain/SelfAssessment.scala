@@ -26,7 +26,7 @@ import scala.util.matching.Regex.Match
 
 case class SelfAssessmentReturn(selfEmploymentStartDate: Option[LocalDate],
                                 saReceivedDate: LocalDate,
-                                selfEmploymentIncome: Double,
+                                selfAssessmentIncome: Double,
                                 employmentsIncome: Double,
                                 selfEmploymentProfit: Double)
 
@@ -35,7 +35,7 @@ object SelfAssessmentReturn {
     SelfAssessmentReturn(
       saReturnPayload.selfEmploymentStartDate.map(parse(_)),
       parse(saReturnPayload.saReceivedDate),
-      saReturnPayload.selfEmploymentIncome.getOrElse(0.0),
+      saReturnPayload.selfAssessmentIncome.getOrElse(0.0),
       saReturnPayload.employmentsIncome.getOrElse(0.0),
       saReturnPayload.selfEmploymentProfit.getOrElse(0.0)
     )
@@ -50,7 +50,7 @@ case class SelfAssessment(nino: Nino,
 
 case class SelfAssessmentReturnData(selfEmploymentStartDate: Option[String],
                                     saReceivedDate: String,
-                                    selfEmploymentIncome: Option[Double],
+                                    selfAssessmentIncome: Option[Double],
                                     employmentsIncome: Option[Double],
                                     selfEmploymentProfit: Option[Double])
 
@@ -63,7 +63,7 @@ case class SelfAssessmentCreateRequest(saReturns: Seq[SelfAssessmentReturnData])
 
 case class SelfAssessmentResponseReturnData(caseStartDate: Option[LocalDate],
                                             receivedDate: LocalDate,
-                                            incomeFromSelfEmployment: Double,
+                                            incomeFromSelfAssessment: Double,
                                             incomeFromAllEmployments: Double,
                                             profitFromSelfEmployment: Double)
 
@@ -72,7 +72,7 @@ object SelfAssessmentResponseReturnData {
     SelfAssessmentResponseReturnData(
       selfAssessmentReturn.selfEmploymentStartDate,
       selfAssessmentReturn.saReceivedDate,
-      selfAssessmentReturn.selfEmploymentIncome,
+      selfAssessmentReturn.selfAssessmentIncome,
       selfAssessmentReturn.employmentsIncome,
       selfAssessmentReturn.selfEmploymentProfit
     )

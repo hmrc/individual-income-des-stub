@@ -24,10 +24,10 @@
               "description": "The date on which the self assessment was submitted",
               "example": "2016-01-01"
             },
-            "selfEmploymentIncome": {
-              "id": "/properties/saReturns/items/selfEmploymentIncome",
+            "selfAssessmentIncome": {
+              "id": "/properties/saReturns/items/selfAssessmentIncome",
               "type": "number",
-              "description": "The income obtained for the self employment",
+              "description": "The total income declared in self assessment",
               "example": "1233.33"
             },
             "employmentsIncome": {
