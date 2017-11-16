@@ -24,7 +24,7 @@ import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
 import reactivemongo.bson.BSONObjectID
 import reactivemongo.play.json._
-import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.mongo.ReactiveRepository
 
@@ -35,7 +35,7 @@ class SelfAssessmentRepository @Inject()(mongoConnectionProvider: MongoConnectio
   extends ReactiveRepository[SelfAssessment, BSONObjectID]("selfAssessment", mongoConnectionProvider.mongoDatabase, JsonFormatters.selfAssessmentFormat) {
 
   override lazy val indexes = Seq(
-    Index(key = Seq(("nino", Ascending), ("taxYear", Ascending)), name = Some("ninoAndTaxYearIndex"), unique = true, background = true)
+    Index(key = Seq(("saUtr", Ascending)), name = Some("saUtrIndex"), unique = true, background = true)
   )
 
   def create(selfAssessment: SelfAssessment) = {
@@ -44,5 +44,5 @@ class SelfAssessmentRepository @Inject()(mongoConnectionProvider: MongoConnectio
     }
   }
 
-  def findByNino(nino: Nino) = collection.find(obj("nino" -> nino)).cursor[SelfAssessment]().collect[Seq]()
+  def findByUtr(saUtr: SaUtr) = collection.find(obj("saUtr" -> saUtr.value)).one[SelfAssessment]
 }

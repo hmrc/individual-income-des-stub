@@ -20,11 +20,11 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import org.scalatest.BeforeAndAfterEach
-import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
-import uk.gov.hmrc.domain.EmpRef
-import uk.gov.hmrc.individualincomedesstub.domain.{TestAddress, TestOrganisation, TestOrganisationDetails}
+import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, INTERNAL_SERVER_ERROR}
+import uk.gov.hmrc.domain.{EmpRef, Nino, SaUtr}
+import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
-import uk.gov.hmrc.http.{ BadRequestException, HeaderCarrier }
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
 
 class ApiPlatformTestUserConnectorSpec extends UnitSpec with BeforeAndAfterEach with WithFakeApplication {
 
@@ -35,6 +35,9 @@ class ApiPlatformTestUserConnectorSpec extends UnitSpec with BeforeAndAfterEach 
   val testOrganisation = TestOrganisation(
     Some(empRef),
     TestOrganisationDetails("Disney Inc", TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
+
+  val nino = Nino("AB123456A")
+  val utr = SaUtr("2432552635")
 
   trait Setup {
     implicit val hc = HeaderCarrier()
@@ -92,5 +95,33 @@ class ApiPlatformTestUserConnectorSpec extends UnitSpec with BeforeAndAfterEach 
 
       intercept[BadRequestException](await(underTest.getOrganisationByEmpRef(empRef)))
     }
+  }
+
+  "getIndividualByNino" should {
+
+    "retrieve the individual" in new Setup {
+      stubFor(get(urlEqualTo(s"/individuals/nino/$nino"))
+        .willReturn(aResponse().withStatus(OK)
+          .withBody(s"""{"saUtr": "${utr.value}"}""")))
+
+      val result = await(underTest.getIndividualByNino(nino))
+
+      result shouldBe TestIndividual(Some(utr))
+    }
+
+    "fail with RecordNotFoundException when there is no individual matching the nino" in new Setup {
+      stubFor(get(urlEqualTo(s"/individuals/nino/$nino"))
+        .willReturn(aResponse().withStatus(NOT_FOUND)))
+
+      intercept[RecordNotFoundException]{await(underTest.getIndividualByNino(nino))}
+    }
+
+    "propagate errors" in new Setup {
+      stubFor(get(urlEqualTo(s"/individuals/nino/$nino"))
+        .willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR)))
+
+      intercept[BadRequestException](await(underTest.getOrganisationByEmpRef(empRef)))
+    }
+
   }
 }

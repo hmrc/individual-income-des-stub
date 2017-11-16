@@ -18,20 +18,35 @@ package uk.gov.hmrc.individualincomedesstub.service
 
 import javax.inject.{Inject, Singleton}
 
-import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.individualincomedesstub.domain.{SelfAssessmentResponse, SelfAssessmentResponseReturnData}
+import uk.gov.hmrc.domain.{Nino, SaUtr}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.individualincomedesstub.connector.ApiPlatformTestUserConnector
+import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, SelfAssessmentResponse}
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
-class SelfAssessmentIncomeService @Inject()(selfAssessmentRepository: SelfAssessmentRepository) {
+class SelfAssessmentIncomeService @Inject()(
+                                             apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
+                                             selfAssessmentRepository: SelfAssessmentRepository) {
 
-  def income(nino: Nino, startYear: Int, endYear: Int) = {
-    selfAssessmentRepository.findByNino(nino) map { assessments =>
-      assessments.filter(_.isIn(startYear, endYear)) map { assessment =>
-        SelfAssessmentResponse(assessment.taxYear.endYr, assessment.saReturns.map(SelfAssessmentResponseReturnData(_)))
+  def income(nino: Nino, startYear: Int, endYear: Int)(implicit hc: HeaderCarrier): Future[Seq[SelfAssessmentResponse]] = {
+
+    def selfAssessmentReturnsForPeriod(saUtr: SaUtr): Future[Seq[SelfAssessmentResponse]] = {
+      selfAssessmentRepository.findByUtr(saUtr) map {
+        case Some(selfAssessment) =>
+          selfAssessment.taxReturns.filter(_.isIn(startYear, endYear)) map (SelfAssessmentResponse(saUtr, selfAssessment.registrationDate, _))
+        case None => Seq.empty
       }
     }
+
+    for {
+      individual <- apiPlatformTestUserConnector.getIndividualByNino(nino)
+      utr = individual.saUtr.getOrElse(throw new RecordNotFoundException)
+      selfAssessmentReturns <- selfAssessmentReturnsForPeriod(utr)
+      _ = if(selfAssessmentReturns.isEmpty) throw new RecordNotFoundException
+    } yield selfAssessmentReturns
   }
 }

@@ -23,5 +23,5 @@ package object Binders {
   implicit val ninoBinder = new NinoPathStringBinder
   implicit val employerReferenceBinder = new EmployerReferenceStringBinder
   implicit val intervalQueryStringBinder = new IntervalQueryStringBinder
-  implicit val taxYearBinder = new TaxYearStringBinder
+  implicit val saUtrPathStringBinder = new SaUtrPathStringBinder
 }

@@ -17,37 +17,50 @@
 package unit.uk.gov.hmrc.individualincomedesstub.controller
 
 import org.joda.time.LocalDate.parse
-import org.mockito.Mockito.when
+import org.mockito.BDDMockito.given
+import org.mockito.Matchers.{any, eq => refEq}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.http.Status._
 import play.api.libs.json.Json.toJson
 import play.api.test.FakeRequest
-import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.domain.{Nino, SaUtr}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualincomedesstub.controller.SelfAssessmentIncomeController
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.selfAssessmentResponseFormat
-import uk.gov.hmrc.individualincomedesstub.domain.{SelfAssessmentResponse, SelfAssessmentResponseReturnData}
+import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, SelfAssessmentResponse, SelfAssessmentResponseReturn}
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentIncomeService
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
-import scala.concurrent.Future.successful
+import scala.concurrent.Future.{failed, successful}
 
 class SelfAssessmentIncomeControllerSpec extends UnitSpec with MockitoSugar with ScalaFutures with WithFakeApplication {
 
   implicit lazy val materializer = fakeApplication.materializer
 
   trait Setup {
+    implicit val hc = HeaderCarrier()
+
     val nino = Nino("AB123456A")
     val fakeRequest = FakeRequest()
     val selfAssessmentIncomeService = mock[SelfAssessmentIncomeService]
     val underTest = new SelfAssessmentIncomeController(selfAssessmentIncomeService)
   }
 
+  val selfAssessmentResponse = SelfAssessmentResponse(
+    taxYear = "2015",
+    returnList = Seq(
+      SelfAssessmentResponseReturn(
+        utr = SaUtr("2432552635"),
+        caseStartDate = parse("2014-01-01"),
+        receivedDate = parse("2015-06-01"),
+        incomeFromAllEmployments = 100.15,
+        profitFromSelfEmployment = 2000.55,
+        incomeFromSelfAssessment = 12300.15)))
+
   "fetch self assessment income" should {
     "retrieve self assessment income for a given period" in new Setup {
-      val selfAssessmentResponse = SelfAssessmentResponse("2015", Seq(SelfAssessmentResponseReturnData(Some(parse("2014-01-01")), parse("2015-01-01"), 100.15, 12300.55, 200.15)))
-
-      when(selfAssessmentIncomeService.income(nino, 2015, 2016)).thenReturn(successful(Seq(selfAssessmentResponse)))
+      given(selfAssessmentIncomeService.income(refEq(nino), refEq(2015), refEq(2016))(any[HeaderCarrier])).willReturn(successful(Seq(selfAssessmentResponse)))
 
       val result = await(underTest.income(nino, 2015, 2016)(fakeRequest))
 
@@ -56,7 +69,7 @@ class SelfAssessmentIncomeControllerSpec extends UnitSpec with MockitoSugar with
     }
 
     "return 404 (Not Found) if there is no self assessment income for a given period" in new Setup {
-      when(selfAssessmentIncomeService.income(nino, 2015, 2016)).thenReturn(successful(Seq.empty))
+      given(selfAssessmentIncomeService.income(refEq(nino), refEq(2015), refEq(2016))(any[HeaderCarrier])).willReturn(failed(new RecordNotFoundException()))
 
       val result = await(underTest.income(nino, 2015, 2016)(fakeRequest))
 
