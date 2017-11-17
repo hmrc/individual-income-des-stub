@@ -71,16 +71,12 @@ uses:
                   value:
                     code: INVALID_REQUEST
                     
-  /{nino}/self-assessment/{taxYear}:
+  /{utr}/self-assessment:
     uriParameters:
-      nino:
-        description: The Individual National Insurance number
+      utr:
+        description: The self-assessment unique tax reference
         type: string
-        example: AA123456D
-      taxYear:
-        description: The tax year for the self assessment returns
-        type: string
-        example: 2015-16
+        example: 2234567890
 
     post:
       displayName: Create a self assessment
