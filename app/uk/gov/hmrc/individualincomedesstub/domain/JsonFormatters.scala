@@ -31,6 +31,7 @@ object JsonFormatters {
   implicit val testAddressFormat = Json.format[TestAddress]
   implicit val testOrganisationDetailsFormat = Json.format[TestOrganisationDetails]
   implicit val testOrganisationFormat = Json.format[TestOrganisation]
+  implicit val testIndividualFormat = Json.format[TestIndividual]
 
   implicit val createEmploymentRequestFormat = Json.format[CreateEmploymentRequest]
   implicit val employmentIncomeResponseFormat = Json.format[EmploymentIncomeResponse]
@@ -41,11 +42,11 @@ object JsonFormatters {
     override def writes(taxYear: TaxYear): JsValue = JsString(taxYear.ty)
   }
 
-  implicit val selfAssessmentReturnFormat = Json.format[SelfAssessmentReturn]
+  implicit val selfAssessmentTaxReturnFormat = Json.format[SelfAssessmentTaxReturn]
   implicit val selfAssessmentFormat = Json.format[SelfAssessment]
-  implicit val selfAssessmentReturnDataFormat = Json.format[SelfAssessmentReturnData]
+  implicit val selfAssessmentTaxReturnData = Json.format[SelfAssessmentTaxReturnData]
   implicit val selfAssessmentCreateRequestFormat = Json.format[SelfAssessmentCreateRequest]
-  implicit val selfAssessmentResponseReturnDataFormat = Json.format[SelfAssessmentResponseReturnData]
+  implicit val selfAssessmentResponseReturnFormat = Json.format[SelfAssessmentResponseReturn]
   implicit val selfAssessmentResponseFormat = Json.format[SelfAssessmentResponse]
 
   implicit val errorInvalidRequestFormat = new Format[ErrorInvalidRequest] {

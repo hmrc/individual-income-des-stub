@@ -22,195 +22,89 @@ import play.api.http.HeaderNames._
 import play.api.http.MimeTypes._
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.selfAssessmentFormat
-import uk.gov.hmrc.individualincomedesstub.domain.{SelfAssessment, SelfAssessmentReturn, TaxYear}
+import uk.gov.hmrc.individualincomedesstub.domain.{SelfAssessment, SelfAssessmentTaxReturn, TaxYear}
 
 import scala.concurrent.Await.result
 import scalaj.http.Http
 
 class SelfAssessmentSpec extends BaseSpec {
 
-  val taxYearString = "2014-15"
-  val ninoString = "AB123456A"
-  val taxYear = TaxYear(taxYearString)
-  val nino = Nino(ninoString)
+  val utr = SaUtr("2432552635")
+  val selfAssessment = SelfAssessment(utr, LocalDate.parse("2014-01-01"), Seq(
+    SelfAssessmentTaxReturn(TaxYear("2014-15"), parse("2016-01-01"), 13567.77, 1233.33, 22345)))
 
   feature("Create self assessment") {
 
-    scenario("Self assessment successfully created for valid NINO and TaxYear") {
+    scenario("Self assessment successfully created for a valid UTR") {
 
       Given("A valid create self assessment request")
       val request = Json.parse(
         """
           {
-           "saReturns": [
+           "registrationDate": "2014-01-01",
+           "taxReturns": [
              {
-               "selfEmploymentStartDate": "2014-01-01",
-               "saReceivedDate": "2015-01-01",
-               "selfAssessmentIncome": 1233.33,
-               "employmentsIncome": 13567.77,
-               "selfEmploymentProfit": 1233.33
-             },
-             {
-               "selfEmploymentStartDate": "2015-01-01",
-               "saReceivedDate": "2016-01-01",
-               "selfAssessmentIncome": 1338.33,
-               "employmentsIncome": 14906.10,
-               "selfEmploymentProfit": 1338.33
+                "taxYear": "2014-15",
+                "submissionDate": "2016-01-01",
+                "employmentsIncome": 13567.77,
+                "selfEmploymentProfit": 1233.33,
+                "totalIncome": 22345
              }
            ]
           }
         """)
 
       When("I submit a POST request to create a self assessment")
-      val response = requestCreateSelfAssessment(request, ninoString, taxYearString)
+      val response = requestCreateSelfAssessment(request, utr.value)
 
       Then("The response code should be 201 (Created)")
       response.code shouldBe CREATED
 
       And("The self assessment is returned in the response body")
-
-      val saReturns = Seq(
-        selfAssessmentReturn(),
-        selfAssessmentReturn(Some(parse("2015-01-01")), 1338.33, 14906.10, parse("2016-01-01"), 1338.33)
-      )
-
-      val sa = selfAssessment(saReturns = saReturns)
-      Json.parse(response.body) shouldBe Json.toJson(sa)
+      Json.parse(response.body) shouldBe Json.toJson(selfAssessment)
 
       And("The self assessment is stored in mongo")
-      val storedSa = result(selfAssessmentRepository.findByNino(nino), timeout)
-      storedSa shouldBe Seq(sa)
-    }
-
-    scenario("Self assessment successfully created with no start date") {
-
-      Given("A valid create self assessment request with no employment start date")
-      val request = Json.parse(
-        """
-          {
-           "saReturns": [
-             {
-               "saReceivedDate": "2015-01-01",
-               "selfAssessmentIncome": 1233.33,
-               "employmentsIncome": 13567.77,
-               "selfEmploymentProfit": 1233.33
-             }
-           ]
-          }
-        """)
-
-      When("I submit a POST request to create a self assessment")
-      val response = requestCreateSelfAssessment(request, ninoString, taxYearString)
-
-      Then("The response code should be 201 (Created)")
-      response.code shouldBe CREATED
-
-      And("The self assessment is returned in the response body")
-      val sa = selfAssessment(saReturns = Seq(selfAssessmentReturn(selfEmploymentStartDate = None)))
-      Json.parse(response.body) shouldBe Json.toJson(sa)
-
-      And("The self assessment is stored in mongo")
-      val storedSa = result(selfAssessmentRepository.findByNino(nino), timeout)
-      storedSa shouldBe Seq(sa)
+      val storedSa = result(selfAssessmentRepository.findByUtr(utr), timeout)
+      storedSa shouldBe Some(selfAssessment)
     }
 
     scenario("Self assessment successfully created with default income values") {
+      val expectedReturn = SelfAssessmentTaxReturn(TaxYear("2014-15"), parse("2016-01-01"), 0, 0, 0)
 
-      Given("A valid create self assessment request with no sa income and employments income")
+      Given("A valid create self assessment request with no income values")
       val request = Json.parse(
         """
           {
-           "saReturns": [
+           "registrationDate": "2014-01-01",
+           "taxReturns": [
              {
-              "selfEmploymentStartDate": "2014-01-01",
-               "saReceivedDate": "2015-01-01"
+                "taxYear": "2014-15",
+                "submissionDate": "2016-01-01"
              }
            ]
           }
         """)
 
       When("I submit a POST request to create a self assessment")
-      val response = requestCreateSelfAssessment(request, ninoString, taxYearString)
+      val response = requestCreateSelfAssessment(request, utr.value)
 
       Then("The response code should be 201 (Created)")
       response.code shouldBe CREATED
 
       And("The self assessment is created and returned with default income values")
-      val employment = selfAssessment(saReturns = Seq(selfAssessmentReturn(selfEmploymentProfit = 0.0, employmentsIncome = 0.0, selfAssessmentIncome = 0.0)))
-      Json.parse(response.body) shouldBe Json.toJson(employment)
+      Json.parse(response.body) shouldBe Json.toJson(selfAssessment.copy(taxReturns = Seq(expectedReturn)))
 
       And("The self assessment is stored in mongo")
-      val storedEmployment = result(selfAssessmentRepository.findByNino(nino), timeout)
-      storedEmployment shouldBe Seq(employment)
+      val storedEmployment = result(selfAssessmentRepository.findByUtr(utr), timeout)
+      storedEmployment shouldBe Some(selfAssessment.copy(taxReturns = Seq(expectedReturn)))
     }
-
-    scenario("Request fails for missing sa return received date") {
-      Given("A create self assessment request with no sa return received date")
-      val request = Json.parse(
-        """
-          {
-           "saReturns": [
-             {
-              "selfEmploymentStartDate": "2014-01-01"
-             }
-           ]
-          }
-        """)
-
-      When("I submit a POST request to create a self assessment")
-      val response = requestCreateSelfAssessment(request, ninoString, taxYearString)
-
-      Then("The response code shoud be 400 (Bad Request)")
-      response.code shouldBe BAD_REQUEST
-
-      And("The response body contains the appropriate error message")
-      response.body shouldBe """{"code":"INVALID_REQUEST","message":"saReturns(0)/saReceivedDate is required"}"""
-    }
-
-    scenario("Request fails for invalid NINO") {
-
-      When("I submit a POST request to create a self assessment with an invalid NINO")
-      val response = requestCreateSelfAssessment(Json.parse("{}"), "A23456A", taxYearString)
-
-      Then("The response code shoud be 400 (Bad Request)")
-      response.code shouldBe BAD_REQUEST
-
-      And("The response body contains the appropriate error message")
-      response.body shouldBe """{"code":"INVALID_REQUEST","message":"Malformed nino submitted"}"""
-    }
-
-    scenario("Request fails for invalid tax year") {
-
-      When("I submit a POST request to create a self assessment with an invalid tax year")
-      val response = requestCreateSelfAssessment(Json.parse("{}"), "AB123456A", "2014-1")
-
-      Then("The response code shoud be 400 (Bad Request)")
-      response.code shouldBe BAD_REQUEST
-
-      And("The response body contains the appropriate error message")
-      response.body shouldBe """{"code":"INVALID_REQUEST","message":"Malformed tax year submitted"}"""
-    }
-
   }
 
-  def selfAssessmentReturn(selfEmploymentStartDate: Option[LocalDate] = Some(parse("2014-01-01")),
-                           selfAssessmentIncome: Double = 1233.33,
-                           employmentsIncome: Double = 13567.77,
-                           saReceivedDate: LocalDate = parse("2015-01-01"),
-                           selfEmploymentProfit: Double = 1233.33) = {
-    SelfAssessmentReturn(selfEmploymentStartDate, saReceivedDate, selfAssessmentIncome, employmentsIncome, selfEmploymentProfit)
-  }
-
-  def selfAssessment(nino: String = ninoString, taxYear: String = taxYearString, saReturns: Seq[SelfAssessmentReturn] = Seq(selfAssessmentReturn())) = {
-    SelfAssessment(Nino(nino), TaxYear(taxYear), saReturns)
-  }
-
-  private def requestCreateSelfAssessment(request: JsValue, nino: String, taxYear: String) = {
-    Http(s"$serviceUrl/$nino/self-assessment/$taxYear")
+  private def requestCreateSelfAssessment(request: JsValue, utr: String) = {
+    Http(s"$serviceUrl/$utr/self-assessment")
       .postData(request.toString())
-      .headers(CONTENT_TYPE -> JSON
-      ).asString
+      .headers(CONTENT_TYPE -> JSON).asString
   }
 }

@@ -18,72 +18,87 @@ package uk.gov.hmrc.individualincomedesstub.domain
 
 import org.joda.time.LocalDate
 import org.joda.time.LocalDate.parse
-import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.individualincomedesstub.util.Validators.validDate
+import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.individualincomedesstub.util.Validators.{validDate, validTaxYear}
 
 import scala.util.matching.Regex
 import scala.util.matching.Regex.Match
 
-case class SelfAssessmentReturn(selfEmploymentStartDate: Option[LocalDate],
-                                saReceivedDate: LocalDate,
-                                selfAssessmentIncome: Double,
-                                employmentsIncome: Double,
-                                selfEmploymentProfit: Double)
+case class SelfAssessmentTaxReturn(taxYear: TaxYear,
+                                   submissionDate: LocalDate,
+                                   employmentsIncome: Double,
+                                   selfEmploymentProfit: Double,
+                                   totalIncome: Double) {
 
-object SelfAssessmentReturn {
-  def apply(saReturnPayload: SelfAssessmentReturnData): SelfAssessmentReturn = {
-    SelfAssessmentReturn(
-      saReturnPayload.selfEmploymentStartDate.map(parse(_)),
-      parse(saReturnPayload.saReceivedDate),
-      saReturnPayload.selfAssessmentIncome.getOrElse(0.0),
-      saReturnPayload.employmentsIncome.getOrElse(0.0),
-      saReturnPayload.selfEmploymentProfit.getOrElse(0.0)
+  def isIn(startYear: Int, endYear: Int) = taxYear.endYr.toInt >= startYear && taxYear.endYr.toInt <= endYear
+}
+
+object SelfAssessmentTaxReturn {
+  def apply(saTaxReturnData: SelfAssessmentTaxReturnData): SelfAssessmentTaxReturn = {
+    SelfAssessmentTaxReturn(
+      TaxYear(saTaxReturnData.taxYear),
+      parse(saTaxReturnData.submissionDate),
+      saTaxReturnData.employmentsIncome.getOrElse(0.0),
+      saTaxReturnData.selfEmploymentProfit.getOrElse(0.0),
+      saTaxReturnData.totalIncome.getOrElse(0.0)
     )
   }
 }
 
-case class SelfAssessment(nino: Nino,
-                          taxYear: TaxYear,
-                          saReturns: Seq[SelfAssessmentReturn]) {
-  def isIn(startYear: Int, endYear: Int) = taxYear.startYr.toInt >= startYear - 1 && taxYear.endYr.toInt <= endYear
-}
+case class SelfAssessment(saUtr: SaUtr,
+                          registrationDate: LocalDate,
+                          taxReturns: Seq[SelfAssessmentTaxReturn])
 
-case class SelfAssessmentReturnData(selfEmploymentStartDate: Option[String],
-                                    saReceivedDate: String,
-                                    selfAssessmentIncome: Option[Double],
-                                    employmentsIncome: Option[Double],
-                                    selfEmploymentProfit: Option[Double])
-
-case class SelfAssessmentCreateRequest(saReturns: Seq[SelfAssessmentReturnData]) {
-  saReturns map { sa =>
-    validDate("saReceivedDate", sa.saReceivedDate)
-    sa.selfEmploymentStartDate map (validDate("selfEmploymentStartDate", _))
-  }
-}
-
-case class SelfAssessmentResponseReturnData(caseStartDate: Option[LocalDate],
-                                            receivedDate: LocalDate,
-                                            incomeFromSelfAssessment: Double,
-                                            incomeFromAllEmployments: Double,
-                                            profitFromSelfEmployment: Double)
-
-object SelfAssessmentResponseReturnData {
-  def apply(selfAssessmentReturn: SelfAssessmentReturn): SelfAssessmentResponseReturnData = {
-    SelfAssessmentResponseReturnData(
-      selfAssessmentReturn.selfEmploymentStartDate,
-      selfAssessmentReturn.saReceivedDate,
-      selfAssessmentReturn.selfAssessmentIncome,
-      selfAssessmentReturn.employmentsIncome,
-      selfAssessmentReturn.selfEmploymentProfit
+object SelfAssessment {
+  def apply(utr: SaUtr, request: SelfAssessmentCreateRequest): SelfAssessment = {
+    SelfAssessment(
+      utr,
+      parse(request.registrationDate),
+      request.taxReturns.map(SelfAssessmentTaxReturn(_))
     )
   }
 }
 
-case class SelfAssessmentResponse(taxYear: String, returnList: Seq[SelfAssessmentResponseReturnData])
+case class SelfAssessmentTaxReturnData(taxYear: String,
+                                       submissionDate: String,
+                                       employmentsIncome: Option[Double],
+                                       selfEmploymentProfit: Option[Double],
+                                       totalIncome: Option[Double])
+
+case class SelfAssessmentCreateRequest(registrationDate: String, taxReturns: Seq[SelfAssessmentTaxReturnData]) {
+  validDate("registrationDate", registrationDate)
+  taxReturns foreach { sa =>
+    validDate("submissionDate", sa.submissionDate)
+    validTaxYear(sa.taxYear)
+  }
+}
+
+case class SelfAssessmentResponseReturn(utr: SaUtr,
+                                        caseStartDate: LocalDate,
+                                        receivedDate: LocalDate,
+                                        incomeFromAllEmployments: Double,
+                                        profitFromSelfEmployment: Double,
+                                        incomeFromSelfAssessment: Double)
+
+object SelfAssessmentResponseReturn {
+  def apply(utr: SaUtr, registrationDate: LocalDate, selfAssessmentTaxReturn: SelfAssessmentTaxReturn): SelfAssessmentResponseReturn = {
+    SelfAssessmentResponseReturn(
+      utr,
+      registrationDate,
+      selfAssessmentTaxReturn.submissionDate,
+      selfAssessmentTaxReturn.employmentsIncome,
+      selfAssessmentTaxReturn.selfEmploymentProfit,
+      selfAssessmentTaxReturn.totalIncome
+    )
+  }
+}
+
+case class SelfAssessmentResponse(taxYear: String, returnList: Seq[SelfAssessmentResponseReturn])
 
 object SelfAssessmentResponse {
-  def apply(selfAssessment: SelfAssessment): SelfAssessmentResponse = {
-    SelfAssessmentResponse(selfAssessment.taxYear.endYr, selfAssessment.saReturns.map(SelfAssessmentResponseReturnData(_)))
+  def apply(utr: SaUtr, registrationDate: LocalDate, selfAssessmentTaxReturn: SelfAssessmentTaxReturn): SelfAssessmentResponse = {
+    SelfAssessmentResponse(selfAssessmentTaxReturn.taxYear.endYr,
+      Seq(SelfAssessmentResponseReturn(utr, registrationDate, selfAssessmentTaxReturn)))
   }
 }
 

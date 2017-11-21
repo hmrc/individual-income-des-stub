@@ -16,39 +16,52 @@
 
 package component.uk.gov.hmrc.individualincomedesstub
 
+import component.uk.gov.hmrc.individualincomedesstub.stubs.ApiPlatformTestUserStub
 import org.joda.time.LocalDate
 import play.api.http.Status._
 import play.api.libs.json.Json
-import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.individualincomedesstub.domain.{SelfAssessment, SelfAssessmentReturn, TaxYear}
+import uk.gov.hmrc.domain.{Nino, SaUtr}
+import uk.gov.hmrc.individualincomedesstub.domain.{SelfAssessment, SelfAssessmentTaxReturn, TaxYear, TestIndividual}
 
 import scalaj.http.Http
 
 class SelfAssessmentIncomeSpec extends BaseSpec {
 
-  val taxYearString = "2014-15"
-  val ninoString = "AB123456A"
-  val taxYear = TaxYear(taxYearString)
-  val nino = Nino(ninoString)
+  val nino = Nino("AB123456A")
+  val utr = SaUtr("2432552635")
+  val taxYear = TaxYear("2014-15")
 
   feature("Retrieve DES stubbed self assessment income") {
 
     scenario("Fetch self assessment income when there is income associated to a given tax year range") {
 
-      Given("Self assessment income exist for a given period")
+      Given("A test individual")
+      ApiPlatformTestUserStub.getByNinoReturnsTestIndividual(nino, TestIndividual(Some(utr)))
+
+      And("Self assessment income exist for a given period")
       selfAssessmentRepository.create(
         SelfAssessment(
-          nino,
-          TaxYear("2013-14"),
-          Seq(SelfAssessmentReturn(Some(LocalDate.parse("2013-01-01")), LocalDate.parse("2014-01-1"), 100.15, 100.15, 200.15))))
-      selfAssessmentRepository.create(
-        SelfAssessment(
-          nino,
-          TaxYear("2014-15"),
-          Seq(SelfAssessmentReturn(Some(LocalDate.parse("2013-01-01")), LocalDate.parse("2015-01-1"), 200.20, 300.35, 100.15))))
+          saUtr = utr,
+          registrationDate = LocalDate.parse("2013-01-01"),
+          taxReturns = Seq(
+            SelfAssessmentTaxReturn(
+              taxYear = TaxYear("2013-14"),
+              submissionDate = LocalDate.parse("2014-06-01"),
+              employmentsIncome = 100.15,
+              selfEmploymentProfit = 100.15,
+              totalIncome = 400.30
+            ),
+            SelfAssessmentTaxReturn(
+              taxYear = TaxYear("2014-15"),
+              submissionDate = LocalDate.parse("2015-07-01"),
+              employmentsIncome = 200.20,
+              selfEmploymentProfit = 300.35,
+              totalIncome = 600.15
+            )
+          )))
 
       When("I fetch self assessment income for that period")
-      val response = fetchSelfAssessmentIncome(nino, "2014", "2015")
+      val response = fetchSelfAssessmentIncome(nino, "2013", "2014")
 
       Then("The response code should be 200 (Ok)")
       response.code shouldBe OK
@@ -61,31 +74,23 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
                   "taxYear": "2014",
                   "returnList": [
                       {
+                          "utr": "2432552635",
                           "caseStartDate": "2013-01-01",
-                          "receivedDate": "2014-01-01",
-                          "incomeFromSelfAssessment": 100.15,
+                          "receivedDate": "2014-06-01",
                           "incomeFromAllEmployments": 100.15,
-                          "profitFromSelfEmployment": 200.15
+                          "profitFromSelfEmployment": 100.15,
+                          "incomeFromSelfAssessment": 400.30
                       }
                   ]
-               },
-               {
-                   "taxYear": "2015",
-                   "returnList": [
-                      {
-                          "caseStartDate": "2013-01-01",
-                          "receivedDate": "2015-01-01",
-                          "incomeFromSelfAssessment": 200.20,
-                          "incomeFromAllEmployments": 300.35,
-                          "profitFromSelfEmployment": 100.15
-                      }
-                  ]
-              }
+               }
           ]
         """)
     }
 
     scenario("Fetch self assessment income when there is no income associated to a given tax year range") {
+
+      Given("A test individual")
+      ApiPlatformTestUserStub.getByNinoReturnsTestIndividual(nino, TestIndividual(Some(utr)))
 
       When("I fetch self assessment income for a period with no income")
       val response = fetchSelfAssessmentIncome(nino, "2014", "2015")

@@ -20,7 +20,7 @@ import javax.inject.{Inject, Singleton}
 
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, BodyParsers}
-import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.domain.{SelfAssessmentCreateRequest, TaxYear}
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentService
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
@@ -30,9 +30,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class SelfAssessmentController @Inject()(selfAssessmentService: SelfAssessmentService) extends CommonController {
 
-  def create(nino: Nino, taxYear: TaxYear)  = Action.async(BodyParsers.parse.json) { implicit request =>
+  def create(utr: SaUtr)  = Action.async(BodyParsers.parse.json) { implicit request =>
     withJsonBody[SelfAssessmentCreateRequest] { createRequest =>
-      selfAssessmentService.create(nino, taxYear, createRequest) map (e => Created(toJson(e)))
+      selfAssessmentService.create(utr, createRequest) map (e => Created(toJson(e)))
     } recover recovery
   }
 }

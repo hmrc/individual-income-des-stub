@@ -1,52 +1,57 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "description": "self assessment request",
+  "description": "Self assessment request",
   "type": "object",
   "properties": {
-    "saReturns": {
-      "description": "The self assessment returns",
+    "registrationDate": {
+      "description": "The self assessment registration date",
+      "type": "string",
+      "format": "date",
+      "example": "2015-01-28"
+    },
+    "taxReturns": {
+      "description": "The self assessment tax returns",
       "type": "array",
       "items": {
           "additionalProperties": false,
-          "id": "/properties/saReturns/items",
+          "id": "/properties/taxReturns/items",
           "properties": {
-            "selfEmploymentStartDate": {
-              "id": "/properties/saReturns/items/selfEmploymentStartDate",
+            "taxYear": {
+              "id": "/properties/taxReturns/items/taxYear",
+              "type": "string",
+              "description": "The return tax year",
+              "example": "2015-16"
+            },
+            "submissionDate": {
+              "id": "/properties/taxReturns/items/submissionDate",
               "type": "string",
               "format": "date",
-              "description": "The self employment start date",
-              "example": "2015-01-28"
+              "description": "The date on which the tax return was submitted",
+              "example": "2016-06-01"
             },
-            "saReceivedDate": {
-              "id": "/properties/saReturns/items/saReceivedDate",
-              "type": "string",
-              "format": "date",
-              "description": "The date on which the self assessment was submitted",
-              "example": "2016-01-01"
-            },
-            "selfAssessmentIncome": {
-              "id": "/properties/saReturns/items/selfAssessmentIncome",
+            "selfEmploymentProfit": {
+              "id": "/properties/taxReturns/items/selfEmploymentProfit",
               "type": "number",
-              "description": "The total income declared in self assessment",
+              "description": "The profit obtained for the self employment",
               "example": "1233.33"
             },
             "employmentsIncome": {
-              "id": "/properties/saReturns/items/employmentsIncome",
+              "id": "/properties/taxReturns/items/employmentsIncome",
               "type": "number",
               "description": "The total employments income obtained during the tax year",
               "example": "13567.77"
             },
-            "selfEmploymentProfit": {
-              "id": "/properties/saReturns/items/selfEmploymentProfit",
+            "totalIncome": {
+              "id": "/properties/taxReturns/items/totalIncome",
               "type": "number",
-              "description": "The profit obtained for the self employment",
-              "example": "1233.33"
+              "description": "The total income declared in the tax return",
+              "example": "21233.33"
             }
           },
-          "required": ["saReceivedDate"],
+          "required": ["taxYear", "submissionDate"],
           "type": "object"
       }
     }
   },
-  "required": ["saReturns"]
+  "required": ["registrationDate", "taxReturns"]
 }

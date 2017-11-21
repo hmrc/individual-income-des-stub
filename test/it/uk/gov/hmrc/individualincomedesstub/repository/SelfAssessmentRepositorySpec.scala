@@ -21,7 +21,7 @@ import org.joda.time.LocalDate.parse
 import org.scalatest.BeforeAndAfterEach
 import play.api.inject.guice.GuiceApplicationBuilder
 import reactivemongo.api.indexes.IndexType.Ascending
-import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
@@ -38,8 +38,9 @@ class SelfAssessmentRepositorySpec  extends UnitSpec with WithFakeApplication wi
 
   val repository = fakeApplication.injector.instanceOf[SelfAssessmentRepository]
 
-  val taxYear = TaxYear("2014-15")
-  val nino = Nino("AB123456A")
+  val utr = SaUtr("2432552635")
+  val selfAssessment = SelfAssessment(utr, LocalDate.parse("2014-01-01"), Seq(
+    SelfAssessmentTaxReturn(TaxYear("2014-15"), parse("2015-01-01"), 13567.77, 1233.33, 22345)))
 
   override def beforeEach() {
     await(repository.drop)
@@ -51,10 +52,10 @@ class SelfAssessmentRepositorySpec  extends UnitSpec with WithFakeApplication wi
   }
 
   "collection" should {
-    "have a unique compound index on nino and taxYear" in {
+    "have a unique index on saUtr" in {
       await(repository.collection.indexesManager.list()).find({ i =>
-        i.name == Some("ninoAndTaxYearIndex") &&
-          i.key == Seq("nino" -> Ascending, "taxYear" -> Ascending) &&
+        i.name.contains("saUtrIndex") &&
+          i.key == Seq("saUtr" -> Ascending) &&
           i.background &&
           i.unique
       }) should not be None
@@ -63,44 +64,29 @@ class SelfAssessmentRepositorySpec  extends UnitSpec with WithFakeApplication wi
 
   "create" should {
     "create a self assessment" in {
-      val sa = selfAssessment()
-      val result = await(repository.create(sa))
-      result shouldBe sa
+      val result = await(repository.create(selfAssessment))
+
+      result shouldBe selfAssessment
     }
 
     "fail to create a duplicate self assessment" in {
-      val sa = selfAssessment()
-      await(repository.create(sa))
+      await(repository.create(selfAssessment))
 
-      intercept[DuplicateSelfAssessmentException](await(repository.create(sa)))
+      intercept[DuplicateSelfAssessmentException](await(repository.create(selfAssessment)))
     }
   }
 
-  "find by nino" should {
-    "return an empty sequence when there are no self assessments for a given nino" in {
-      await(repository.findByNino(nino)) shouldBe Seq.empty
+  "find by utr" should {
+    "return None when there are no self assessments for a given utr" in {
+      await(repository.findByUtr(utr)) shouldBe None
     }
 
-    "return self assessments for a given nino" in {
-      val sa = selfAssessment()
-      await(repository.create(sa))
+    "return the self assessment" in {
+      await(repository.create(selfAssessment))
 
-      val result = await(repository.findByNino(nino))
+      val result = await(repository.findByUtr(utr))
 
-      result shouldBe Seq(sa)
+      result shouldBe Some(selfAssessment)
     }
-  }
-
-  def selfAssessmentReturn(selfEmploymentStartDate: Option[LocalDate] = Some(parse("2015-01-01")),
-                           selfAssessmentIncome: Double = 1233.33,
-                           employmentsIncome: Double = 13567.77,
-                           saReceivedDate: LocalDate = parse("2016-01-01"),
-                           selfEmploymentProfit: Double = 1233.33
-                          ) = {
-    SelfAssessmentReturn(selfEmploymentStartDate, saReceivedDate, selfAssessmentIncome, employmentsIncome, selfEmploymentProfit)
-  }
-
-  def selfAssessment(saReturns: Seq[SelfAssessmentReturn] = Seq(selfAssessmentReturn())) = {
-    SelfAssessment(nino, taxYear, saReturns)
   }
 }

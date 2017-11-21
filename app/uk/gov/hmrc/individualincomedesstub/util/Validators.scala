@@ -18,7 +18,7 @@ package uk.gov.hmrc.individualincomedesstub.util
 
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.{Interval, LocalDate}
-import uk.gov.hmrc.individualincomedesstub.domain.{EmploymentPayFrequency, ValidationException}
+import uk.gov.hmrc.individualincomedesstub.domain.{EmploymentPayFrequency, TaxYear, ValidationException}
 
 import scala.util.Try
 
@@ -39,5 +39,9 @@ object Validators {
 
   def validPayFrequency(string: String, errorMessage: String): Unit = {
     valid(Try(EmploymentPayFrequency.withName(string)).isSuccess, errorMessage)
+  }
+
+  def validTaxYear(string: String): Unit = {
+    valid(Try(TaxYear(string)).isSuccess, "taxYear: invalid tax year format")
   }
 }

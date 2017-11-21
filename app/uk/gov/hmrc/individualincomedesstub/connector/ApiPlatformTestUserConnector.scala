@@ -19,15 +19,15 @@ package uk.gov.hmrc.individualincomedesstub.connector
 import javax.inject.Singleton
 
 import play.api.Logger
-import uk.gov.hmrc.domain.EmpRef
+import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.WSHttp
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
-import uk.gov.hmrc.individualincomedesstub.domain.TestOrganisation
+import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, TestIndividual, TestOrganisation}
 import uk.gov.hmrc.play.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import uk.gov.hmrc.http.{ HeaderCarrier, HttpGet, NotFoundException }
+import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, NotFoundException}
 
 @Singleton
 class ApiPlatformTestUserConnector extends ServicesConfig {
@@ -42,4 +42,13 @@ class ApiPlatformTestUserConnector extends ServicesConfig {
       Logger.warn(s"unable to retrieve employer with empRef: ${empRef.value}. ${e.getMessage}")
       None
   }
+
+  def getIndividualByNino(nino: Nino)(implicit hc: HeaderCarrier): Future[TestIndividual] = {
+    http.GET[TestIndividual](s"$serviceUrl/individuals/nino/${nino.value}")
+  } recover {
+    case e: NotFoundException =>
+      Logger.warn(s"unable to retrieve individual with nino: ${nino.value}. ${e.getMessage}")
+      throw new RecordNotFoundException()
+  }
+
 }

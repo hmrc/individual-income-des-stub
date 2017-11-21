@@ -16,10 +16,12 @@
 
 package uk.gov.hmrc.individualincomedesstub.util
 
-import uk.gov.hmrc.individualincomedesstub.domain.TaxYear
+import uk.gov.hmrc.domain.SaUtr
 
-class TaxYearStringBinder extends AbstractPathStringBindable[TaxYear] {
-  override def bind(key: String, value: String) = bind("Malformed tax year submitted", TaxYear(value))
+class SaUtrPathStringBinder extends AbstractPathStringBindable[SaUtr] {
 
-  override def unbind(key: String, value: TaxYear) = value.ty
+  override def bind(key: String, value: String): Either[String, SaUtr] =
+    bind("Malformed utr submitted", SaUtr(value))
+
+  override def unbind(key: String, value: SaUtr): String = value.utr
 }
