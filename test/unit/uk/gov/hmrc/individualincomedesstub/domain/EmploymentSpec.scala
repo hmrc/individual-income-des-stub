@@ -45,7 +45,7 @@ class EmploymentSpec extends FreeSpec with Matchers {
 
   "An employment should determine whether it contains a payment within a given time interval" in new TableDrivenPropertyChecks {
     val payment = HmrcPayment("2017-01-10", 123.45)
-    val employment = Employment(EmpRef("123", "AB12345"), Nino("AB123456C"), Option("2017-02-01"), Option("2017-02-28"), Seq(payment))
+    val employment = Employment(EmpRef("123", "AB12345"), Nino("AB123456C"), None, None, Seq(payment))
 
     val fixtures = Table(("interval example", "expected result"),
       (toInterval(parse("2017-01-09T00:00:00.000"), parse("2017-01-09T23:59:59.999")), false),
@@ -53,7 +53,50 @@ class EmploymentSpec extends FreeSpec with Matchers {
       (toInterval(parse("2017-01-11T00:00:00.000"), parse("2017-01-11T23:59:59.999")), false))
 
     forAll(fixtures) { (exampleInterval, expectedResult) =>
-      employment.containsPaymentWithin(exampleInterval) shouldBe expectedResult
+      employment.isWithin(exampleInterval) shouldBe expectedResult
+    }
+  }
+
+  "An employment with start/end dates should determine whether it falls within a given time interval" in new TableDrivenPropertyChecks {
+    val employment = Employment(EmpRef("123", "AB12345"), Nino("AB123456C"), Option("2017-02-01"), Option("2017-02-27"), Seq.empty)
+
+    val fixtures = Table(("interval example", "expected result"),
+      (toInterval(parse("2017-01-09T00:00:00.000"), parse("2017-01-31T23:59:59.999")), false),
+      (toInterval(parse("2017-02-28T00:00:00.000"), parse("2017-03-02T23:59:59.999")), false),
+      (toInterval(parse("2017-01-01T00:00:00.000"), parse("2017-02-01T00:00:00.001")), true),
+      (toInterval(parse("2017-02-10T00:00:00.000"), parse("2017-02-15T23:59:59.999")), true),
+      (toInterval(parse("2017-02-27T00:00:00.000"), parse("2017-03-01T23:59:59.999")), true))
+
+    forAll(fixtures) { (exampleInterval, expectedResult) =>
+      employment.isWithin(exampleInterval) shouldBe expectedResult
+    }
+  }
+
+  "An employment with only start date should determine whether it falls within a given time interval" in new TableDrivenPropertyChecks {
+    val employment = Employment(EmpRef("123", "AB12345"), Nino("AB123456C"), Option("2017-02-01"), None, Seq.empty)
+
+    val fixtures = Table(("interval example", "expected result"),
+      (toInterval(parse("2016-12-01T00:00:00.000"), parse("2017-01-31T23:59:59.999")), false),
+      (toInterval(parse("2017-03-01T00:00:00.000"), parse("2017-05-31T23:59:59.999")), true),
+      (toInterval(parse("2017-02-01T00:00:00.000"), parse("2017-03-02T23:59:59.999")), true),
+      (toInterval(parse("2017-01-01T00:00:00.000"), parse("2017-02-01T00:00:00.001")), true))
+
+    forAll(fixtures) { (exampleInterval, expectedResult) =>
+      employment.isWithin(exampleInterval) shouldBe expectedResult
+    }
+  }
+
+  "An employment with only end date should determine whether it falls within a given time interval" in new TableDrivenPropertyChecks {
+    val employment = Employment(EmpRef("123", "AB12345"), Nino("AB123456C"), None, Option("2017-02-01"), Seq.empty)
+
+    val fixtures = Table(("interval example", "expected result"),
+      (toInterval(parse("2017-02-02T00:00:00.000"), parse("2017-05-31T23:59:59.999")), false),
+      (toInterval(parse("2017-02-01T00:00:00.000"), parse("2017-03-02T23:59:59.999")), true),
+      (toInterval(parse("2016-12-01T00:00:00.000"), parse("2017-02-01T23:59:59.999")), true),
+      (toInterval(parse("2017-01-01T00:00:00.000"), parse("2017-01-31T00:00:00.001")), true))
+
+    forAll(fixtures) { (exampleInterval, expectedResult) =>
+      employment.isWithin(exampleInterval) shouldBe expectedResult
     }
   }
 

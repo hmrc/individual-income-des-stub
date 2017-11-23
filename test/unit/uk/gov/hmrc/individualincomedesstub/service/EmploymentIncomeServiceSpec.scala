@@ -89,6 +89,37 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
         await(employmentIncomeService.employments(nino, exampleInterval)) shouldBe (expectedResult map (incomeResponse(_)))
       }
     }
+
+    "return a populated filtered sequence when corresponding employments without payments exist" in new TableDrivenPropertyChecks {
+      def incomeResponse(employment: Employment) = {
+        new EmploymentIncomeResponse(None, None, Some(employment.employerPayeReference.taxOfficeNumber),
+          Some(employment.employerPayeReference.taxOfficeReference), employment.startDate.map(parse),
+          employment.endDate.map(parse), None, employment.payments.map(DesPayment(_)))
+      }
+
+      val employmentFinishingEndOfMar = Employment(EmpRef("101", "AB10001"), nino, Some("2017-01-01"), Some("2017-03-31"), Seq.empty)
+      val employmentFinishingEndOfJun = Employment(EmpRef("102", "AB10002"), nino, Some("2017-04-01"), Some("2017-06-30"), Seq.empty)
+      val employmentFinishingEndOfSep = Employment(EmpRef("103", "AB10003"), nino, Some("2017-07-01"), Some("2017-09-30"), Seq.empty)
+      val employmentFinishingEndOfDec = Employment(EmpRef("104", "AB10004"), nino, Some("2017-10-01"), Some("2017-12-31"), Seq.empty)
+      val employments = Seq(employmentFinishingEndOfMar, employmentFinishingEndOfJun, employmentFinishingEndOfSep, employmentFinishingEndOfDec)
+
+      mockEmploymentRepositoryFindByNino(nino, successful(employments))
+      mockTestUserConnectorGetOrganisationByEmpRef(Future.successful(None))
+
+      val fixtures = Table(
+        ("interval", "employments"),
+        (toInterval(parse("2016-01-01"), parse("2016-12-31")), Seq.empty),
+        (toInterval(parse("2017-01-01"), parse("2017-03-31")), Seq(employmentFinishingEndOfMar)),
+        (toInterval(parse("2017-01-01"), parse("2017-06-30")), Seq(employmentFinishingEndOfMar, employmentFinishingEndOfJun)),
+        (toInterval(parse("2017-01-01"), parse("2017-09-30")), Seq(employmentFinishingEndOfMar, employmentFinishingEndOfJun, employmentFinishingEndOfSep)),
+        (toInterval(parse("2017-01-01"), parse("2017-12-31")), Seq(employmentFinishingEndOfMar, employmentFinishingEndOfJun, employmentFinishingEndOfSep, employmentFinishingEndOfDec)),
+        (toInterval(parse("2018-01-01"), parse("2018-12-31")), Seq.empty)
+      )
+
+      forAll(fixtures) { (exampleInterval, expectedResult) =>
+        await(employmentIncomeService.employments(nino, exampleInterval)) shouldBe (expectedResult map (incomeResponse(_)))
+      }
+    }
   }
 }
 
