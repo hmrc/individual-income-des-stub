@@ -23,6 +23,7 @@ import org.scalatest.mockito.MockitoSugar
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpecLike}
 import uk.gov.hmrc.domain.{EmpRef, Nino}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualincomedesstub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
@@ -32,7 +33,6 @@ import uk.gov.hmrc.individualincomedesstub.util.Dates.toInterval
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 import scala.language.postfixOps
-import uk.gov.hmrc.http.HeaderCarrier
 
 class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with MockitoSugar with BeforeAndAfterEach {
 
@@ -58,14 +58,6 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
     }
 
     "return a populated filtered sequence when corresponding employments with payments exist" in new TableDrivenPropertyChecks {
-      def incomeResponse(employment: Employment) = {
-        new EmploymentIncomeResponse(None, None, Some(employment.employerPayeReference.taxOfficeNumber),
-          Some(employment.employerPayeReference.taxOfficeReference), employment.startDate.map(parse),
-          employment.endDate.map(parse), None, employment.payments.map(DesPayment(_)))
-      }
-
-      def payment(paymentDate: String) = HmrcPayment(paymentDate, 123.45)
-
       val employmentWithPaymentAtEndOfMar = Employment(EmpRef("101", "AB10001"), nino, None, None, Seq(payment("2017-03-31")))
       val employmentWithPaymentAtEndOfJun = Employment(EmpRef("102", "AB10002"), nino, None, None, Seq(payment("2017-06-30")))
       val employmentWithPaymentAtEndOfSep = Employment(EmpRef("103", "AB10003"), nino, None, None, Seq(payment("2017-09-30")))
@@ -90,13 +82,31 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
       }
     }
 
-    "return a populated filtered sequence when corresponding employments without payments exist" in new TableDrivenPropertyChecks {
-      def incomeResponse(employment: Employment) = {
-        new EmploymentIncomeResponse(None, None, Some(employment.employerPayeReference.taxOfficeNumber),
-          Some(employment.employerPayeReference.taxOfficeReference), employment.startDate.map(parse),
-          employment.endDate.map(parse), None, employment.payments.map(DesPayment(_)))
-      }
+    "return a populated filtered sequence when corresponding employments with payments outside the given interval exist" in new TableDrivenPropertyChecks {
+      val employment = Employment(
+        EmpRef("101", "AB10001"),
+        nino,
+        Some("2017-02-01"),
+        Some("2017-03-31"),
+        Seq(payment("2017-02-28"), payment("2017-03-28")))
 
+      mockEmploymentRepositoryFindByNino(nino, successful(Seq(employment)))
+      mockTestUserConnectorGetOrganisationByEmpRef(Future.successful(None))
+
+      val fixtures = Table(
+        ("interval", "employments"),
+        (toInterval(parse("2017-01-01"), parse("2017-02-15")), Seq(employment.copy(payments = Seq.empty))),
+        (toInterval(parse("2017-04-01"), parse("2017-05-28")), Seq.empty),
+        (toInterval(parse("2017-03-01"), parse("2017-06-30")), Seq(employment.copy(payments = Seq(payment("2017-03-28"))))),
+        (toInterval(parse("2017-03-30"), parse("2017-06-30")), Seq(employment.copy(payments = Seq.empty)))
+      )
+
+      forAll(fixtures) { (exampleInterval, expectedResult) =>
+        await(employmentIncomeService.employments(nino, exampleInterval)) shouldBe (expectedResult map (incomeResponse(_)))
+      }
+    }
+
+    "return a populated filtered sequence when corresponding employments without payments exist" in new TableDrivenPropertyChecks {
       val employmentFinishingEndOfMar = Employment(EmpRef("101", "AB10001"), nino, Some("2017-01-01"), Some("2017-03-31"), Seq.empty)
       val employmentFinishingEndOfJun = Employment(EmpRef("102", "AB10002"), nino, Some("2017-04-01"), Some("2017-06-30"), Seq.empty)
       val employmentFinishingEndOfSep = Employment(EmpRef("103", "AB10003"), nino, Some("2017-07-01"), Some("2017-09-30"), Seq.empty)
@@ -120,6 +130,14 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
         await(employmentIncomeService.employments(nino, exampleInterval)) shouldBe (expectedResult map (incomeResponse(_)))
       }
     }
+  }
+
+  def payment(paymentDate: String) = HmrcPayment(paymentDate, 123.45)
+
+  private def incomeResponse(employment: Employment) = {
+    new EmploymentIncomeResponse(None, None, Some(employment.employerPayeReference.taxOfficeNumber),
+      Some(employment.employerPayeReference.taxOfficeReference), employment.startDate.map(parse),
+      employment.endDate.map(parse), None, employment.payments.map(DesPayment(_)))
   }
 }
 
