@@ -44,7 +44,8 @@ class EmploymentIncomeService @Inject()(employmentRepository: EmploymentReposito
       employers <- getEmployers(employerPayeReferences)
       maybeEmployers = employments map (employment => employers find (_.empRef.exists(_ == employment.employerPayeReference)))
     } yield employments zip maybeEmployers map { case (employment, employer) =>
-      EmploymentIncomeResponse(employment, employer)
+      val paymentsWithinInterval = employment.payments.filter(_.isPaidWithin(interval))
+      EmploymentIncomeResponse(employment.copy(payments = paymentsWithinInterval), employer)
     }
 
 }
