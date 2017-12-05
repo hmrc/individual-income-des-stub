@@ -71,7 +71,7 @@ class EmploymentIncomeSpec extends BaseSpec {
                    "employerSchemeReference":"${empRef.taxOfficeReference}",
                    "employmentStartDate":"2016-01-01",
                    "employmentLeavingDate":"2016-06-01",
-                   "payFrequency":"M1",
+                   "employmentPayFrequency":"M1",
                    "payments":[
                       {
                          "paymentDate":"2016-05-30",
@@ -110,7 +110,7 @@ class EmploymentIncomeSpec extends BaseSpec {
                     "employerSchemeReference":"AI45678",
                     "employmentStartDate":"2016-01-01",
                     "employmentLeavingDate":"2016-06-01",
-                    "payFrequency":"M1",
+                    "employmentPayFrequency":"M1",
                     "payments":[
                        {
                           "paymentDate":"2016-05-30",

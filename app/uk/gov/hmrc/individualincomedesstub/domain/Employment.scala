@@ -106,7 +106,7 @@ case class EmploymentIncomeResponse
  employerSchemeReference: Option[String],
  employmentStartDate: Option[LocalDate],
  employmentLeavingDate: Option[LocalDate],
- payFrequency: Option[DesEmploymentPayFrequency.Value],
+ employmentPayFrequency: Option[DesEmploymentPayFrequency.Value],
  payments: Seq[DesPayment])
 
 object EmploymentIncomeResponse {
