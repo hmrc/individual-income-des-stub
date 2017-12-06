@@ -5,7 +5,7 @@
   ],
   "api" : {
     "name" : "Individuals Income Test Support",
-    "description" : "Test Support for the Individuals API",
+    "description" : "Allows you to create employment and income test data, for PAYE and for SA. This is only for the Individuals Employments API and the Individuals Income API",
     "context" : "individuals-income-test-support",
     "isTestSupport": true,
     "versions" : [
