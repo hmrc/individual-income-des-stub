@@ -51,6 +51,12 @@
             "type": "number",
             "description": "The total income declared in the tax return",
             "example": "21233.33"
+          },
+          "trustsIncome": {
+            "id": "/properties/taxReturns/items/trustsIncome",
+            "type": "number",
+            "description": "The total trusts income declared in the tax return",
+            "example": "500.25"
           }
         },
         "required": ["taxYear", "submissionDate"],

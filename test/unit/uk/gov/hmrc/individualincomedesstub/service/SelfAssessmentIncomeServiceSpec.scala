@@ -54,7 +54,8 @@ class SelfAssessmentIncomeServiceSpec extends UnitSpec with MockitoSugar {
         submissionDate = parse("2015-06-01"),
         employmentsIncome = 13567.77,
         selfEmploymentProfit = 1233.33,
-        totalIncome = 21233.33)))
+        totalIncome = 21233.33,
+        trustsIncome = 500.25)))
 
   "income" should {
 
@@ -74,7 +75,8 @@ class SelfAssessmentIncomeServiceSpec extends UnitSpec with MockitoSugar {
             receivedDate = parse("2015-06-01"),
             incomeFromAllEmployments = 13567.77,
             profitFromSelfEmployment = 1233.33,
-            incomeFromSelfAssessment = 21233.33
+            incomeFromSelfAssessment = 21233.33,
+            incomeFromTrust = 500.25
           ))))
     }
 

@@ -49,14 +49,16 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
               submissionDate = LocalDate.parse("2014-06-01"),
               employmentsIncome = 100.15,
               selfEmploymentProfit = 100.15,
-              totalIncome = 400.30
+              totalIncome = 400.30,
+              trustsIncome = 500.25
             ),
             SelfAssessmentTaxReturn(
               taxYear = TaxYear("2014-15"),
               submissionDate = LocalDate.parse("2015-07-01"),
               employmentsIncome = 200.20,
               selfEmploymentProfit = 300.35,
-              totalIncome = 600.15
+              totalIncome = 600.15,
+              trustsIncome = 400.45
             )
           )))
 
@@ -79,7 +81,8 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
                           "receivedDate": "2014-06-01",
                           "incomeFromAllEmployments": 100.15,
                           "profitFromSelfEmployment": 100.15,
-                          "incomeFromSelfAssessment": 400.30
+                          "incomeFromSelfAssessment": 400.30,
+                          "incomeFromTrust": 500.25
                       }
                   ]
                }

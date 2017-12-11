@@ -37,7 +37,7 @@ class SelfAssessmentControllerSpec extends UnitSpec with MockitoSugar with Scala
   implicit lazy val materializer = fakeApplication.materializer
 
   val utr = SaUtr("2432552635")
-  val saReturn = SelfAssessmentTaxReturnData("2014-15", "2015-06-01", Some(123), Some(456), Some(10456))
+  val saReturn = SelfAssessmentTaxReturnData("2014-15", "2015-06-01", Some(123), Some(456), Some(10456), Some(500.25))
   val request = SelfAssessmentCreateRequest("2014-01-01", Seq(saReturn))
   val selfAssessment = SelfAssessment(utr, request)
 
