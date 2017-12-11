@@ -5,7 +5,7 @@
 This is the stateful Stub of the Data Exchange Service (DES) for retrieving/storing test individual income details.
 It allows third party developers to create their own records for test individuals on the External Test Environment.
 
-It is a shared Stub for both openid-connect-userinfo and citizen-details.
+It is a shared Stub for both individuals-income-api and individuals-employments-api.
 
 ### Running tests
 
