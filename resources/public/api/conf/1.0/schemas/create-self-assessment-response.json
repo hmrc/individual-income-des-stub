@@ -37,13 +37,13 @@
           "selfEmploymentProfit": {
             "id": "/properties/taxReturns/items/selfEmploymentProfit",
             "type": "number",
-            "description": "The profit obtained for the self employment",
+            "description": "The self-employments profit declared in the tax return",
             "example": "1233.33"
           },
           "employmentsIncome": {
             "id": "/properties/taxReturns/items/employmentsIncome",
             "type": "number",
-            "description": "The total employments income obtained during the tax year",
+            "description": "The employments income declared in the tax return",
             "example": "13567.77"
           },
           "totalIncome": {
@@ -51,6 +51,12 @@
             "type": "number",
             "description": "The total income declared in the tax return",
             "example": "21233.33"
+          },
+          "trustsIncome": {
+            "id": "/properties/taxReturns/items/trustsIncome",
+            "type": "number",
+            "description": "The trusts income declared in the tax return",
+            "example": "500.25"
           }
         },
         "required": ["taxYear", "submissionDate"],
