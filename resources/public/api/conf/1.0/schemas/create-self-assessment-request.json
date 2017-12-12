@@ -52,6 +52,12 @@
               "type": "number",
               "description": "The trusts income declared in the tax return",
               "example": "500.25"
+            },
+            "foreignIncome": {
+              "id": "/properties/taxReturns/items/foreignIncome",
+              "type": "number",
+              "description": "The foreign income declared in the tax return",
+              "example": "200.35"
             }
           },
           "required": ["taxYear", "submissionDate"],

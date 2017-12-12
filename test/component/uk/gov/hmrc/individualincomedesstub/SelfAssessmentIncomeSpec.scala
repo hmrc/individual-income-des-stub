@@ -50,7 +50,8 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
               employmentsIncome = 100.15,
               selfEmploymentProfit = 100.15,
               totalIncome = 400.30,
-              trustsIncome = 500.25
+              trustsIncome = 500.25,
+              foreignIncome = 200.35
             ),
             SelfAssessmentTaxReturn(
               taxYear = TaxYear("2014-15"),
@@ -58,7 +59,8 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
               employmentsIncome = 200.20,
               selfEmploymentProfit = 300.35,
               totalIncome = 600.15,
-              trustsIncome = 400.45
+              trustsIncome = 400.45,
+              foreignIncome = 250.45
             )
           )))
 
@@ -82,7 +84,8 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
                           "incomeFromAllEmployments": 100.15,
                           "profitFromSelfEmployment": 100.15,
                           "incomeFromSelfAssessment": 400.30,
-                          "incomeFromTrust": 500.25
+                          "incomeFromTrust": 500.25,
+                          "incomeFromForeign4Sources": 200.35
                       }
                   ]
                }
