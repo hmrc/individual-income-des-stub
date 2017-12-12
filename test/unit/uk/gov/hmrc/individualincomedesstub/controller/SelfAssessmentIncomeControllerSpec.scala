@@ -57,7 +57,8 @@ class SelfAssessmentIncomeControllerSpec extends UnitSpec with MockitoSugar with
         incomeFromAllEmployments = 100.15,
         profitFromSelfEmployment = 2000.55,
         incomeFromSelfAssessment = 12300.15,
-        incomeFromTrust = 500.25)))
+        incomeFromTrust = 500.25,
+        incomeFromForeign4Sources = 200.25)))
 
   "fetch self assessment income" should {
     "retrieve self assessment income for a given period" in new Setup {

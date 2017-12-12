@@ -29,7 +29,8 @@ case class SelfAssessmentTaxReturn(taxYear: TaxYear,
                                    employmentsIncome: Double,
                                    selfEmploymentProfit: Double,
                                    totalIncome: Double,
-                                   trustsIncome: Double) {
+                                   trustsIncome: Double,
+                                   foreignIncome: Double) {
 
   def isIn(startYear: Int, endYear: Int) = taxYear.endYr.toInt >= startYear && taxYear.endYr.toInt <= endYear
 }
@@ -42,7 +43,8 @@ object SelfAssessmentTaxReturn {
       saTaxReturnData.employmentsIncome.getOrElse(0.0),
       saTaxReturnData.selfEmploymentProfit.getOrElse(0.0),
       saTaxReturnData.totalIncome.getOrElse(0.0),
-      saTaxReturnData.trustsIncome.getOrElse(0.0)
+      saTaxReturnData.trustsIncome.getOrElse(0.0),
+      saTaxReturnData.foreignIncome.getOrElse(0.0)
     )
   }
 }
@@ -66,7 +68,8 @@ case class SelfAssessmentTaxReturnData(taxYear: String,
                                        employmentsIncome: Option[Double],
                                        selfEmploymentProfit: Option[Double],
                                        totalIncome: Option[Double],
-                                       trustsIncome: Option[Double])
+                                       trustsIncome: Option[Double],
+                                       foreignIncome: Option[Double])
 
 case class SelfAssessmentCreateRequest(registrationDate: String, taxReturns: Seq[SelfAssessmentTaxReturnData]) {
   validDate("registrationDate", registrationDate)
@@ -82,7 +85,8 @@ case class SelfAssessmentResponseReturn(utr: SaUtr,
                                         incomeFromAllEmployments: Double,
                                         profitFromSelfEmployment: Double,
                                         incomeFromSelfAssessment: Double,
-                                        incomeFromTrust: Double)
+                                        incomeFromTrust: Double,
+                                        incomeFromForeign4Sources: Double)
 
 object SelfAssessmentResponseReturn {
   def apply(utr: SaUtr, registrationDate: LocalDate, selfAssessmentTaxReturn: SelfAssessmentTaxReturn): SelfAssessmentResponseReturn = {
@@ -93,7 +97,8 @@ object SelfAssessmentResponseReturn {
       selfAssessmentTaxReturn.employmentsIncome,
       selfAssessmentTaxReturn.selfEmploymentProfit,
       selfAssessmentTaxReturn.totalIncome,
-      selfAssessmentTaxReturn.trustsIncome
+      selfAssessmentTaxReturn.trustsIncome,
+      selfAssessmentTaxReturn.foreignIncome
     )
   }
 }
