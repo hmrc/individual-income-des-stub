@@ -58,6 +58,12 @@
               "type": "number",
               "description": "The foreign income declared in the tax return",
               "example": "200.35"
+            },
+            "partnershipsProfit": {
+              "id": "/properties/taxReturns/items/partnershipsProfit",
+              "type": "number",
+              "description": "The partnerships profit declared in the tax return",
+              "example": "34.35"
             }
           },
           "required": ["taxYear", "submissionDate"],
