@@ -31,7 +31,10 @@ case class SelfAssessmentTaxReturn(taxYear: TaxYear,
                                    totalIncome: Double,
                                    trustsIncome: Double,
                                    foreignIncome: Double,
-                                   partnershipsProfit: Double) {
+                                   partnershipsProfit: Double,
+                                   ukInterestsIncome: Double,
+                                   foreignDividendsIncome: Double,
+                                   ukDividendsIncome: Double) {
 
   def isIn(startYear: Int, endYear: Int) = taxYear.endYr.toInt >= startYear && taxYear.endYr.toInt <= endYear
 }
@@ -46,7 +49,10 @@ object SelfAssessmentTaxReturn {
       saTaxReturnData.totalIncome.getOrElse(0.0),
       saTaxReturnData.trustsIncome.getOrElse(0.0),
       saTaxReturnData.foreignIncome.getOrElse(0.0),
-      saTaxReturnData.partnershipsProfit.getOrElse(0.0)
+      saTaxReturnData.partnershipsProfit.getOrElse(0.0),
+      saTaxReturnData.ukInterestsIncome.getOrElse(0.0),
+      saTaxReturnData.foreignDividendsIncome.getOrElse(0.0),
+      saTaxReturnData.ukDividendsIncome.getOrElse(0.0)
     )
   }
 }
@@ -72,7 +78,10 @@ case class SelfAssessmentTaxReturnData(taxYear: String,
                                        totalIncome: Option[Double],
                                        trustsIncome: Option[Double],
                                        foreignIncome: Option[Double],
-                                       partnershipsProfit: Option[Double])
+                                       partnershipsProfit: Option[Double],
+                                       ukInterestsIncome: Option[Double],
+                                       foreignDividendsIncome: Option[Double],
+                                       ukDividendsIncome: Option[Double])
 
 case class SelfAssessmentCreateRequest(registrationDate: String, taxReturns: Seq[SelfAssessmentTaxReturnData]) {
   validDate("registrationDate", registrationDate)
@@ -90,7 +99,10 @@ case class SelfAssessmentResponseReturn(utr: SaUtr,
                                         incomeFromSelfAssessment: Double,
                                         incomeFromTrust: Double,
                                         incomeFromForeign4Sources: Double,
-                                        profitFromPartnerships: Double
+                                        profitFromPartnerships: Double,
+                                        incomeFromUkInterest: Double,
+                                        incomeFromForeignDividends: Double,
+                                        incomeFromInterestNDividendsFromUKCompaniesNTrusts: Double
                                        )
 
 object SelfAssessmentResponseReturn {
@@ -104,7 +116,10 @@ object SelfAssessmentResponseReturn {
       selfAssessmentTaxReturn.totalIncome,
       selfAssessmentTaxReturn.trustsIncome,
       selfAssessmentTaxReturn.foreignIncome,
-      selfAssessmentTaxReturn.partnershipsProfit
+      selfAssessmentTaxReturn.partnershipsProfit,
+      selfAssessmentTaxReturn.ukInterestsIncome,
+      selfAssessmentTaxReturn.foreignDividendsIncome,
+      selfAssessmentTaxReturn.ukDividendsIncome
     )
   }
 }

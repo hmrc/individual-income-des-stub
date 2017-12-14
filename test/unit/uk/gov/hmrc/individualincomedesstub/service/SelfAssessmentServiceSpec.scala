@@ -42,7 +42,10 @@ class SelfAssessmentServiceSpec extends UnitSpec with MockitoSugar {
     totalIncome = Some(15777.77),
     trustsIncome = Some(500.25),
     foreignIncome = Some(200.35),
-    partnershipsProfit = Some(23.45)
+    partnershipsProfit = Some(23.45),
+    ukInterestsIncome = Some(15.65),
+    foreignDividendsIncome = Some(12.53),
+    ukDividendsIncome = Some(23.75)
   )
 
   val request = SelfAssessmentCreateRequest(registrationDate = "2015-06-06", taxReturns = Seq(taxReturn))
@@ -68,7 +71,10 @@ class SelfAssessmentServiceSpec extends UnitSpec with MockitoSugar {
             totalIncome = 15777.77,
             trustsIncome = 500.25,
             foreignIncome = 200.35,
-            partnershipsProfit = 23.45
+            partnershipsProfit = 23.45,
+            ukInterestsIncome = 15.65,
+            foreignDividendsIncome = 12.53,
+            ukDividendsIncome = 23.75
           ))
       )
 
@@ -85,7 +91,10 @@ class SelfAssessmentServiceSpec extends UnitSpec with MockitoSugar {
         totalIncome = None,
         trustsIncome = None,
         foreignIncome = None,
-        partnershipsProfit = None
+        partnershipsProfit = None,
+        ukInterestsIncome = None,
+        foreignDividendsIncome = None,
+        ukDividendsIncome = None
       )
       val requestWithoutAmounts = request.copy(taxReturns = Seq(taxReturnWithoutAmounts))
 
@@ -99,7 +108,10 @@ class SelfAssessmentServiceSpec extends UnitSpec with MockitoSugar {
         totalIncome = 0,
         trustsIncome = 0,
         foreignIncome = 0,
-        partnershipsProfit = 0
+        partnershipsProfit = 0,
+        ukInterestsIncome = 0,
+        foreignDividendsIncome = 0,
+        ukDividendsIncome = 0
       ))
     }
 

@@ -9,7 +9,10 @@
       "totalIncome": 21233.33,
       "trustsIncome": 500.25,
       "foreignIncome": 200.35,
-      "partnershipsProfit": 34.35
+      "partnershipsProfit": 34.35,
+      "ukInterestsIncome": 26.43,
+      "foreignDividendsIncome": 14.74,
+      "ukDividendsIncome": 17.85
     }
   ]
 }
