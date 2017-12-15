@@ -58,6 +58,30 @@
               "type": "number",
               "description": "The foreign income declared in the tax return",
               "example": "200.35"
+            },
+            "partnershipsProfit": {
+              "id": "/properties/taxReturns/items/partnershipsProfit",
+              "type": "number",
+              "description": "The partnerships profit declared in the tax return",
+              "example": "34.35"
+            },
+            "ukInterestsIncome": {
+              "id": "/properties/taxReturns/items/ukInterestsIncome",
+              "type": "number",
+              "description": "The interests income declared in the tax return",
+              "example": "26.43"
+            },
+            "foreignDividendsIncome": {
+              "id": "/properties/taxReturns/items/foreignDividendsIncome",
+              "type": "number",
+              "description": "The foreign dividends income declared in the tax return",
+              "example": "14.74"
+            },
+            "ukDividendsIncome": {
+              "id": "/properties/taxReturns/items/ukDividendsIncome",
+              "type": "number",
+              "description": "The uk dividends income declared in the tax return",
+              "example": "17.85"
             }
           },
           "required": ["taxYear", "submissionDate"],

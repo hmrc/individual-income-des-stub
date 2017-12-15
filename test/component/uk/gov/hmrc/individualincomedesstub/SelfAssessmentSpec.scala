@@ -33,7 +33,19 @@ class SelfAssessmentSpec extends BaseSpec {
 
   val utr = SaUtr("2432552635")
   val selfAssessment = SelfAssessment(utr, LocalDate.parse("2014-01-01"), Seq(
-    SelfAssessmentTaxReturn(TaxYear("2014-15"), parse("2016-01-01"), 13567.77, 1233.33, 22345, 12345.55, 500.25)))
+    SelfAssessmentTaxReturn(
+      taxYear = TaxYear("2014-15"),
+      submissionDate = parse("2016-01-01"),
+      employmentsIncome = 13567.77,
+      selfEmploymentProfit = 1233.33,
+      totalIncome = 22345,
+      trustsIncome = 12345.55,
+      foreignIncome = 500.25,
+      partnershipsProfit = 23.45,
+      ukInterestsIncome = 14.74,
+      foreignDividendsIncome = 11.46,
+      ukDividendsIncome = 10.32
+    )))
 
   feature("Create self assessment") {
 
@@ -52,7 +64,11 @@ class SelfAssessmentSpec extends BaseSpec {
                 "selfEmploymentProfit": 1233.33,
                 "totalIncome": 22345,
                 "trustsIncome": 12345.55,
-                "foreignIncome": 500.25
+                "foreignIncome": 500.25,
+                "partnershipsProfit": 23.45,
+                "ukInterestsIncome": 14.74,
+                "foreignDividendsIncome": 11.46,
+                "ukDividendsIncome": 10.32
              }
            ]
           }
@@ -73,7 +89,7 @@ class SelfAssessmentSpec extends BaseSpec {
     }
 
     scenario("Self assessment successfully created with default income values") {
-      val expectedReturn = SelfAssessmentTaxReturn(TaxYear("2014-15"), parse("2016-01-01"), 0, 0, 0, 0, 0)
+      val expectedReturn = SelfAssessmentTaxReturn(TaxYear("2014-15"), parse("2016-01-01"), 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
       Given("A valid create self assessment request with no income values")
       val request = Json.parse(
