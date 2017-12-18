@@ -77,6 +77,12 @@
               "description": "The partnerships profit declared in the tax return",
               "example": "34.35"
             },
+            "pensionsAndStateBenefitsIncome": {
+              "id": "/properties/taxReturns/items/pensionsAndStateBenefitsIncome",
+              "type": "number",
+              "description": "The pensions and state benefits income declared in the tax return",
+              "example": "26.85"
+            },
             "ukInterestsIncome": {
               "id": "/properties/taxReturns/items/ukInterestsIncome",
               "type": "number",
