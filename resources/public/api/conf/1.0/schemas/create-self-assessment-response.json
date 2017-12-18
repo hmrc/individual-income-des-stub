@@ -91,7 +91,7 @@
           "ukPropertiesProfit": {
             "id": "/properties/taxReturns/items/ukPropertiesProfit",
             "type": "number",
-            "description": "The uk properties income declared in the tax return",
+            "description": "The uk properties profit declared in the tax return",
             "example": "24.15"
           }
         },
