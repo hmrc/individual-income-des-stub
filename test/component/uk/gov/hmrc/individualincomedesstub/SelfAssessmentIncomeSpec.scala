@@ -56,7 +56,9 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
               ukInterestsIncome = 25.76,
               foreignDividendsIncome = 27.54,
               ukDividendsIncome = 62.13,
-              ukPropertiesProfit = 55.24
+              ukPropertiesProfit = 55.24,
+              gainsOnLifePolicies = 12.53,
+              sharesOptionsIncome = 42.34
             ),
             SelfAssessmentTaxReturn(
               taxYear = TaxYear("2014-15"),
@@ -70,7 +72,9 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
               ukInterestsIncome = 36.32,
               foreignDividendsIncome = 12.73,
               ukDividendsIncome = 29.06,
-              ukPropertiesProfit = 22.25
+              ukPropertiesProfit = 22.25,
+              gainsOnLifePolicies = 16.21,
+              sharesOptionsIncome = 13.75
             )
           )))
 
@@ -100,7 +104,9 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
                           "incomeFromUkInterest": 25.76,
                           "incomeFromForeignDividends": 27.54,
                           "incomeFromInterestNDividendsFromUKCompaniesNTrusts": 62.13,
-                          "incomeFromProperty": 55.24
+                          "incomeFromProperty": 55.24,
+                          "incomeFromGainsOnLifePolicies": 12.53,
+                          "incomeFromSharesOptions": 42.34
                       }
                   ]
                }

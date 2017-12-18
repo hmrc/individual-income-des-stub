@@ -46,6 +46,18 @@
             "description": "The employments income declared in the tax return",
             "example": "13567.77"
           },
+          "gainsOnLifePolicies": {
+            "id": "/properties/taxReturns/items/gainsOnLifePolicies",
+            "type": "number",
+            "description": "The gains on life policies declared in the tax return",
+            "example": "123.77"
+          },
+          "sharesOptionsIncome": {
+            "id": "/properties/taxReturns/items/sharesOptionsIncome",
+            "type": "number",
+            "description": "The shares options income declared in the tax return",
+            "example": "54.77"
+          },
           "totalIncome": {
             "id": "/properties/taxReturns/items/totalIncome",
             "type": "number",
