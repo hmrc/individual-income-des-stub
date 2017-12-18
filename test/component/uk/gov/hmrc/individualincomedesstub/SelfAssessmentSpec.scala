@@ -44,7 +44,8 @@ class SelfAssessmentSpec extends BaseSpec {
       partnershipsProfit = 23.45,
       ukInterestsIncome = 14.74,
       foreignDividendsIncome = 11.46,
-      ukDividendsIncome = 10.32
+      ukDividendsIncome = 10.32,
+      ukPropertiesProfit = 55.24
     )))
 
   feature("Create self assessment") {
@@ -68,7 +69,8 @@ class SelfAssessmentSpec extends BaseSpec {
                 "partnershipsProfit": 23.45,
                 "ukInterestsIncome": 14.74,
                 "foreignDividendsIncome": 11.46,
-                "ukDividendsIncome": 10.32
+                "ukDividendsIncome": 10.32,
+                "ukPropertiesProfit": 55.24
              }
            ]
           }
@@ -89,7 +91,7 @@ class SelfAssessmentSpec extends BaseSpec {
     }
 
     scenario("Self assessment successfully created with default income values") {
-      val expectedReturn = SelfAssessmentTaxReturn(TaxYear("2014-15"), parse("2016-01-01"), 0, 0, 0, 0, 0, 0, 0, 0, 0)
+      val expectedReturn = SelfAssessmentTaxReturn(TaxYear("2014-15"), parse("2016-01-01"), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
       Given("A valid create self assessment request with no income values")
       val request = Json.parse(
