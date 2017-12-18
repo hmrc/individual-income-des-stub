@@ -87,6 +87,12 @@
             "type": "number",
             "description": "The uk dividends income declared in the tax return",
             "example": "17.85"
+          },
+          "ukPropertiesProfit": {
+            "id": "/properties/taxReturns/items/ukPropertiesProfit",
+            "type": "number",
+            "description": "The uk properties income declared in the tax return",
+            "example": "24.15"
           }
         },
         "required": ["taxYear", "submissionDate"],

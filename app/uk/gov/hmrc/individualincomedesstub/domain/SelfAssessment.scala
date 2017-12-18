@@ -34,7 +34,8 @@ case class SelfAssessmentTaxReturn(taxYear: TaxYear,
                                    partnershipsProfit: Double,
                                    ukInterestsIncome: Double,
                                    foreignDividendsIncome: Double,
-                                   ukDividendsIncome: Double) {
+                                   ukDividendsIncome: Double,
+                                   ukPropertiesProfit: Double) {
 
   def isIn(startYear: Int, endYear: Int) = taxYear.endYr.toInt >= startYear && taxYear.endYr.toInt <= endYear
 }
@@ -52,7 +53,8 @@ object SelfAssessmentTaxReturn {
       saTaxReturnData.partnershipsProfit.getOrElse(0.0),
       saTaxReturnData.ukInterestsIncome.getOrElse(0.0),
       saTaxReturnData.foreignDividendsIncome.getOrElse(0.0),
-      saTaxReturnData.ukDividendsIncome.getOrElse(0.0)
+      saTaxReturnData.ukDividendsIncome.getOrElse(0.0),
+      saTaxReturnData.ukPropertiesProfit.getOrElse(0.0)
     )
   }
 }
@@ -81,7 +83,8 @@ case class SelfAssessmentTaxReturnData(taxYear: String,
                                        partnershipsProfit: Option[Double],
                                        ukInterestsIncome: Option[Double],
                                        foreignDividendsIncome: Option[Double],
-                                       ukDividendsIncome: Option[Double])
+                                       ukDividendsIncome: Option[Double],
+                                       ukPropertiesProfit: Option[Double])
 
 case class SelfAssessmentCreateRequest(registrationDate: String, taxReturns: Seq[SelfAssessmentTaxReturnData]) {
   validDate("registrationDate", registrationDate)
@@ -102,7 +105,8 @@ case class SelfAssessmentResponseReturn(utr: SaUtr,
                                         profitFromPartnerships: Double,
                                         incomeFromUkInterest: Double,
                                         incomeFromForeignDividends: Double,
-                                        incomeFromInterestNDividendsFromUKCompaniesNTrusts: Double
+                                        incomeFromInterestNDividendsFromUKCompaniesNTrusts: Double,
+                                        incomeFromProperty: Double
                                        )
 
 object SelfAssessmentResponseReturn {
@@ -119,7 +123,8 @@ object SelfAssessmentResponseReturn {
       selfAssessmentTaxReturn.partnershipsProfit,
       selfAssessmentTaxReturn.ukInterestsIncome,
       selfAssessmentTaxReturn.foreignDividendsIncome,
-      selfAssessmentTaxReturn.ukDividendsIncome
+      selfAssessmentTaxReturn.ukDividendsIncome,
+      selfAssessmentTaxReturn.ukPropertiesProfit
     )
   }
 }
