@@ -38,7 +38,8 @@ case class SelfAssessmentTaxReturn(taxYear: TaxYear,
                                    ukPropertiesProfit: Double,
                                    gainsOnLifePolicies: Double,
                                    sharesOptionsIncome: Double,
-                                   pensionsAndStateBenefitsIncome: Double
+                                   pensionsAndStateBenefitsIncome: Double,
+                                   otherIncome: Double
                                   ) {
 
   def isIn(startYear: Int, endYear: Int) = taxYear.endYr.toInt >= startYear && taxYear.endYr.toInt <= endYear
@@ -61,7 +62,8 @@ object SelfAssessmentTaxReturn {
       saTaxReturnData.ukPropertiesProfit.getOrElse(0.0),
       saTaxReturnData.gainsOnLifePolicies.getOrElse(0.0),
       saTaxReturnData.sharesOptionsIncome.getOrElse(0.0),
-      saTaxReturnData.pensionsAndStateBenefitsIncome.getOrElse(0.0)
+      saTaxReturnData.pensionsAndStateBenefitsIncome.getOrElse(0.0),
+      saTaxReturnData.otherIncome.getOrElse(0.0)
     )
   }
 }
@@ -94,7 +96,8 @@ case class SelfAssessmentTaxReturnData(taxYear: String,
                                        ukPropertiesProfit: Option[Double],
                                        gainsOnLifePolicies: Option[Double],
                                        sharesOptionsIncome: Option[Double],
-                                       pensionsAndStateBenefitsIncome: Option[Double])
+                                       pensionsAndStateBenefitsIncome: Option[Double],
+                                       otherIncome: Option[Double])
 
 case class SelfAssessmentCreateRequest(registrationDate: String, taxReturns: Seq[SelfAssessmentTaxReturnData]) {
   validDate("registrationDate", registrationDate)
@@ -119,7 +122,8 @@ case class SelfAssessmentResponseReturn(utr: SaUtr,
                                         incomeFromProperty: Double,
                                         incomeFromGainsOnLifePolicies: Double,
                                         incomeFromSharesOptions: Double,
-                                        incomeFromPensions: Double
+                                        incomeFromPensions: Double,
+                                        incomeFromOther: Double
                                        )
 
 object SelfAssessmentResponseReturn {
@@ -140,7 +144,8 @@ object SelfAssessmentResponseReturn {
       selfAssessmentTaxReturn.ukPropertiesProfit,
       selfAssessmentTaxReturn.gainsOnLifePolicies,
       selfAssessmentTaxReturn.sharesOptionsIncome,
-      selfAssessmentTaxReturn.pensionsAndStateBenefitsIncome
+      selfAssessmentTaxReturn.pensionsAndStateBenefitsIncome,
+      selfAssessmentTaxReturn.otherIncome
     )
   }
 }

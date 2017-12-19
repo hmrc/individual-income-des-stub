@@ -111,6 +111,12 @@
             "type": "number",
             "description": "The UK properties profit declared in the tax return",
             "example": "24.15"
+          },
+          "otherIncome": {
+            "id": "/properties/taxReturns/items/otherIncome",
+            "type": "number",
+            "description": "The other income declared in the tax return",
+            "example": "123.45"
           }
         },
         "required": ["taxYear", "submissionDate"],
