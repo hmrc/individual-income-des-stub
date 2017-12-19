@@ -63,7 +63,8 @@ class SelfAssessmentIncomeServiceSpec extends UnitSpec with MockitoSugar {
         ukDividendsIncome = 18.54,
         ukPropertiesProfit= 55.24,
         gainsOnLifePolicies = 14.23,
-        sharesOptionsIncome = 12.34
+        sharesOptionsIncome = 12.34,
+        pensionsAndStateBenefitsIncome = 16.95
       )))
 
   "income" should {
@@ -93,7 +94,8 @@ class SelfAssessmentIncomeServiceSpec extends UnitSpec with MockitoSugar {
             incomeFromInterestNDividendsFromUKCompaniesNTrusts = 18.54,
             incomeFromProperty = 55.24,
             incomeFromGainsOnLifePolicies = 14.23,
-            incomeFromSharesOptions = 12.34
+            incomeFromSharesOptions = 12.34,
+            incomeFromPensions = 16.95
           ))))
     }
 
