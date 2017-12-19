@@ -49,7 +49,9 @@ class SelfAssessmentControllerSpec extends UnitSpec with MockitoSugar with Scala
     ukInterestsIncome = Some(12.53),
     foreignDividendsIncome = Some(41.46),
     ukDividendsIncome = Some(16.74),
-    ukPropertiesProfit = Some(55.24)
+    ukPropertiesProfit = Some(55.24),
+    gainsOnLifePolicies = Some(24.63),
+    sharesOptionsIncome = Some(42.12)
   )
   val request = SelfAssessmentCreateRequest("2014-01-01", Seq(saReturn))
   val selfAssessment = SelfAssessment(utr, request)

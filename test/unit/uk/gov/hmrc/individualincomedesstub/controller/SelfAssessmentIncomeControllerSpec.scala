@@ -63,7 +63,9 @@ class SelfAssessmentIncomeControllerSpec extends UnitSpec with MockitoSugar with
         incomeFromUkInterest = 13.53,
         incomeFromForeignDividends = 15.74,
         incomeFromInterestNDividendsFromUKCompaniesNTrusts = 13.64,
-        incomeFromProperty = 55.24
+        incomeFromProperty = 55.24,
+        incomeFromGainsOnLifePolicies = 13.53,
+        incomeFromSharesOptions = 24.54
       )))
 
   "fetch self assessment income" should {
