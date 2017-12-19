@@ -50,13 +50,13 @@
             "id": "/properties/taxReturns/items/gainsOnLifePolicies",
             "type": "number",
             "description": "The gains on life policies declared in the tax return",
-            "example": "123.77"
+            "example": "14.32"
           },
           "sharesOptionsIncome": {
             "id": "/properties/taxReturns/items/sharesOptionsIncome",
             "type": "number",
             "description": "The shares options income declared in the tax return",
-            "example": "54.77"
+            "example": "13.64"
           },
           "totalIncome": {
             "id": "/properties/taxReturns/items/totalIncome",
@@ -91,7 +91,7 @@
           "ukInterestsIncome": {
             "id": "/properties/taxReturns/items/ukInterestsIncome",
             "type": "number",
-            "description": "The interests income declared in the tax return",
+            "description": "The UK interests income declared in the tax return",
             "example": "26.43"
           },
           "foreignDividendsIncome": {
@@ -103,13 +103,13 @@
           "ukDividendsIncome": {
             "id": "/properties/taxReturns/items/ukDividendsIncome",
             "type": "number",
-            "description": "The uk dividends income declared in the tax return",
+            "description": "The UK dividends income declared in the tax return",
             "example": "17.85"
           },
           "ukPropertiesProfit": {
             "id": "/properties/taxReturns/items/ukPropertiesProfit",
             "type": "number",
-            "description": "The uk properties profit declared in the tax return",
+            "description": "The UK properties profit declared in the tax return",
             "example": "24.15"
           }
         },
