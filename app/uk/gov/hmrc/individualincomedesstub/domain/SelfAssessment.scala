@@ -39,7 +39,13 @@ case class SelfAssessmentTaxReturn(taxYear: TaxYear,
                                    gainsOnLifePolicies: Double,
                                    sharesOptionsIncome: Double,
                                    pensionsAndStateBenefitsIncome: Double,
-                                   otherIncome: Double
+                                   otherIncome: Double,
+                                   businessDescription: Option[String],
+                                   addressLine1: Option[String],
+                                   addressLine2: Option[String],
+                                   addressLine3: Option[String],
+                                   addressLine4: Option[String],
+                                   postalCode: Option[String]
                                   ) {
 
   def isIn(startYear: Int, endYear: Int) = taxYear.endYr.toInt >= startYear && taxYear.endYr.toInt <= endYear
@@ -63,7 +69,13 @@ object SelfAssessmentTaxReturn {
       saTaxReturnData.gainsOnLifePolicies.getOrElse(0.0),
       saTaxReturnData.sharesOptionsIncome.getOrElse(0.0),
       saTaxReturnData.pensionsAndStateBenefitsIncome.getOrElse(0.0),
-      saTaxReturnData.otherIncome.getOrElse(0.0)
+      saTaxReturnData.otherIncome.getOrElse(0.0),
+      saTaxReturnData.businessDescription,
+      saTaxReturnData.addressLine1,
+      saTaxReturnData.addressLine2,
+      saTaxReturnData.addressLine3,
+      saTaxReturnData.addressLine4,
+      saTaxReturnData.postalCode
     )
   }
 }
@@ -97,7 +109,14 @@ case class SelfAssessmentTaxReturnData(taxYear: String,
                                        gainsOnLifePolicies: Option[Double],
                                        sharesOptionsIncome: Option[Double],
                                        pensionsAndStateBenefitsIncome: Option[Double],
-                                       otherIncome: Option[Double])
+                                       otherIncome: Option[Double],
+                                       businessDescription: Option[String],
+                                       addressLine1: Option[String],
+                                       addressLine2: Option[String],
+                                       addressLine3: Option[String],
+                                       addressLine4: Option[String],
+                                       postalCode: Option[String]
+                                      )
 
 case class SelfAssessmentCreateRequest(registrationDate: String, taxReturns: Seq[SelfAssessmentTaxReturnData]) {
   validDate("registrationDate", registrationDate)
@@ -123,7 +142,12 @@ case class SelfAssessmentResponseReturn(utr: SaUtr,
                                         incomeFromGainsOnLifePolicies: Double,
                                         incomeFromSharesOptions: Double,
                                         incomeFromPensions: Double,
-                                        incomeFromOther: Double
+                                        incomeFromOther: Double,
+                                        businessDescription: Option[String],
+                                        addressLine1: Option[String],
+                                        addressLine2: Option[String],
+                                        addressLine3: Option[String],
+                                        postalCode: Option[String]
                                        )
 
 object SelfAssessmentResponseReturn {
@@ -145,7 +169,12 @@ object SelfAssessmentResponseReturn {
       selfAssessmentTaxReturn.gainsOnLifePolicies,
       selfAssessmentTaxReturn.sharesOptionsIncome,
       selfAssessmentTaxReturn.pensionsAndStateBenefitsIncome,
-      selfAssessmentTaxReturn.otherIncome
+      selfAssessmentTaxReturn.otherIncome,
+      selfAssessmentTaxReturn.businessDescription,
+      selfAssessmentTaxReturn.addressLine1,
+      selfAssessmentTaxReturn.addressLine2,
+      selfAssessmentTaxReturn.addressLine3,
+      selfAssessmentTaxReturn.postalCode
     )
   }
 }

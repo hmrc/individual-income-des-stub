@@ -56,6 +56,8 @@ case class Employment(employerPayeReference: EmpRef,
                       startDate: Option[String],
                       endDate: Option[String],
                       payments: Seq[HmrcPayment],
+                      employmentAddress: Option[DesAddress],
+                      payrollId: Option[String],
                       payFrequency: Option[String] = None) {
 
   private def containsPaymentWithin(interval: Interval) = payments.exists(_.isPaidWithin(interval))
@@ -69,7 +71,7 @@ case class Employment(employerPayeReference: EmpRef,
       case _ => false
     }
 
-    if (!employmentWithinInterval) containsPaymentWithin(interval) else true
+    employmentWithinInterval || containsPaymentWithin(interval)
   }
 }
 
@@ -82,6 +84,8 @@ object Employment {
 case class CreateEmploymentRequest(startDate: Option[String],
                                    endDate: Option[String],
                                    payments: Seq[HmrcPayment],
+                                   employeeAddress: Option[DesAddress],
+                                   payrollId: Option[String],
                                    payFrequency: Option[String]) {
 
   if (payFrequency.isDefined)
@@ -99,15 +103,16 @@ case class CreateEmploymentRequest(startDate: Option[String],
 }
 
 
-case class EmploymentIncomeResponse
-(employerName: Option[String],
- employerAddress: Option[DesAddress],
- employerDistrictNumber: Option[String],
- employerSchemeReference: Option[String],
- employmentStartDate: Option[LocalDate],
- employmentLeavingDate: Option[LocalDate],
- employmentPayFrequency: Option[DesEmploymentPayFrequency.Value],
- payments: Seq[DesPayment])
+case class EmploymentIncomeResponse(employerName: Option[String],
+                                    employerAddress: Option[DesAddress],
+                                    employerDistrictNumber: Option[String],
+                                    employerSchemeReference: Option[String],
+                                    employmentStartDate: Option[LocalDate],
+                                    employmentLeavingDate: Option[LocalDate],
+                                    employmentPayFrequency: Option[DesEmploymentPayFrequency.Value],
+                                    employeeAddress: Option[DesAddress],
+                                    payrollId: Option[String],
+                                    payments: Seq[DesPayment])
 
 object EmploymentIncomeResponse {
 
@@ -115,19 +120,32 @@ object EmploymentIncomeResponse {
 
   def apply(employment: Employment, maybeEmployer: Option[TestOrganisation]): EmploymentIncomeResponse = {
 
-    val desPayFrequency = employment.payFrequency.flatMap(DesEmploymentPayFrequency.from(_))
+    val desPayFrequency = employment.payFrequency.flatMap(DesEmploymentPayFrequency.from)
 
     maybeEmployer match {
       case Some(employer) => EmploymentIncomeResponse(
-        Option(employer.organisationDetails.name),
-        Option(DesAddress(employer.organisationDetails.address)),
+        Some(employer.organisationDetails.name),
+        Some(DesAddress(employer.organisationDetails.address)),
         Some(employment.employerPayeReference.taxOfficeNumber),
         Some(employment.employerPayeReference.taxOfficeReference),
-        employment.startDate.map(parse), employment.endDate.map(parse), desPayFrequency, employment.payments map (DesPayment(_))
+        employment.startDate.map(parse),
+        employment.endDate.map(parse),
+        desPayFrequency,
+        employment.employmentAddress,
+        employment.payrollId,
+        employment.payments map (DesPayment(_))
       )
       case _ => EmploymentIncomeResponse(
-        None, None, Some(employment.employerPayeReference.taxOfficeNumber), Some(employment.employerPayeReference.taxOfficeReference),
-        employment.startDate.map(parse), employment.endDate.map(parse), desPayFrequency, employment.payments map (DesPayment(_))
+        None,
+        None,
+        Some(employment.employerPayeReference.taxOfficeNumber),
+        Some(employment.employerPayeReference.taxOfficeReference),
+        employment.startDate.map(parse),
+        employment.endDate.map(parse),
+        desPayFrequency,
+        employment.employmentAddress,
+        employment.payrollId,
+        employment.payments map (DesPayment(_))
       )
     }
   }

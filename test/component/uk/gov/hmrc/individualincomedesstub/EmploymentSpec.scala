@@ -291,7 +291,7 @@ class EmploymentSpec extends BaseSpec {
                                        payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55), HmrcPayment("2016-02-28", 950.55)),
                                        payFrequency: EmploymentPayFrequency.Value = EmploymentPayFrequency.CALENDAR_MONTHLY) = {
 
-    CreateEmploymentRequest(startDate, endDate, payments, Some(payFrequency.toString))
+    CreateEmploymentRequest(startDate, endDate, payments, None, None, Some(payFrequency.toString))
   }
 
 
@@ -302,7 +302,7 @@ class EmploymentSpec extends BaseSpec {
                            payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55), HmrcPayment("2016-02-28", 950.55)),
                            payFrequency: EmploymentPayFrequency.Value = EmploymentPayFrequency.CALENDAR_MONTHLY) = {
 
-    Employment(employerPayeReference, nino, startDate, endDate, payments, Some(payFrequency.toString))
+    Employment(employerPayeReference, nino, startDate, endDate, payments, None, None, Some(payFrequency.toString))
   }
 
   private def requestCreateEmployment(request: String, reference: String = employerReferenceEncoded, nino: String = validNino) = {

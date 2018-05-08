@@ -33,7 +33,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 class EmploymentIncomeService @Inject()(employmentRepository: EmploymentRepository, apiPlatformTestUserConnector: ApiPlatformTestUserConnector) {
 
   def getEmployers(empRefs: Seq[EmpRef])(implicit hc: HeaderCarrier): Future[Seq[TestOrganisation]] = {
-    val futures = empRefs.map(apiPlatformTestUserConnector.getOrganisationByEmpRef(_))
+    val futures = empRefs.map(apiPlatformTestUserConnector.getOrganisationByEmpRef)
     Future.sequence(futures).map(_.flatten.toSeq)
   }
 
