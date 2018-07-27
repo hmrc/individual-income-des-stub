@@ -60,9 +60,9 @@ class EmploymentIncomeControllerSpec extends PlaySpec with Results with MockitoS
     }
 
     "return a http 200 (Ok) response with populated employment array when service returns employments" in {
-      val employment1 = Employment(EmpRef("101", "AB10001"), nino, Option("2017-01-01"), Option("2017-03-31"), Seq.empty)
-      val employment2 = Employment(EmpRef("102", "AB10002"), nino, Option("2017-04-01"), Option("2017-06-30"), Seq.empty)
-      val employment3 = Employment(EmpRef("103", "AB10003"), nino, Option("2017-07-01"), Option("2017-09-30"), Seq.empty)
+      val employment1 = Employment(EmpRef("101", "AB10001"), nino, Option("2017-01-01"), Option("2017-03-31"), Seq.empty, None, None)
+      val employment2 = Employment(EmpRef("102", "AB10002"), nino, Option("2017-04-01"), Option("2017-06-30"), Seq.empty, None, None)
+      val employment3 = Employment(EmpRef("103", "AB10003"), nino, Option("2017-07-01"), Option("2017-09-30"), Seq.empty, None, None)
 
       val employments = Seq(employment1, employment2, employment3)
       val employmentResponses = employments map (EmploymentIncomeResponse(_, None))
