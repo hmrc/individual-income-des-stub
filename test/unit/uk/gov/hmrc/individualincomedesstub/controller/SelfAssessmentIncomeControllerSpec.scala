@@ -28,7 +28,7 @@ import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualincomedesstub.controller.SelfAssessmentIncomeController
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.selfAssessmentResponseFormat
-import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, SelfAssessmentResponse, SelfAssessmentResponseReturn}
+import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, SaAddress, SelfAssessmentResponse, SelfAssessmentResponseReturn}
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentIncomeService
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
@@ -69,10 +69,16 @@ class SelfAssessmentIncomeControllerSpec extends UnitSpec with MockitoSugar with
         incomeFromPensions = 17.95,
         incomeFromOther = 134.56,
         businessDescription = None,
-        addressLine1 = None,
-        addressLine2 = None,
-        addressLine3 = None,
-        postalCode = None
+        address = SaAddress(
+          addressLine1 = None,
+          addressLine2 = None,
+          addressLine3 = None,
+          addressLine4 = None,
+          postalCode = None,
+          telephoneNumber = None,
+          baseAddressEffectiveDate = None,
+          addressTypeIndicator = None
+        )
       )))
 
   "fetch self assessment income" should {

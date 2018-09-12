@@ -16,6 +16,7 @@
 
 package unit.uk.gov.hmrc.individualincomedesstub.service
 
+import org.joda.time.LocalDate
 import org.joda.time.LocalDate.parse
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.when
@@ -47,11 +48,11 @@ class SelfAssessmentIncomeServiceSpec extends UnitSpec with MockitoSugar {
 
   val selfAssessment = SelfAssessment(
     saUtr = utr,
-    registrationDate = parse("2008-04-04"),
+    registrationDate = LocalDate.parse("2008-04-04"),
     taxReturns = Seq(
       SelfAssessmentTaxReturn(
         taxYear = TaxYear("2014-15"),
-        submissionDate = parse("2015-06-01"),
+        submissionDate = LocalDate.parse("2015-06-01"),
         employmentsIncome = 13567.77,
         selfEmploymentProfit = 1233.33,
         totalIncome = 21233.33,
@@ -67,12 +68,10 @@ class SelfAssessmentIncomeServiceSpec extends UnitSpec with MockitoSugar {
         pensionsAndStateBenefitsIncome = 16.95,
         otherIncome = 134.56,
         businessDescription = None,
-        addressLine1 = None,
-        addressLine2 = None,
-        addressLine3 = None,
-        addressLine4 = None,
-        postalCode = None
-      )))
+        address = None
+      )
+    )
+  )
 
   "income" should {
 
@@ -105,11 +104,19 @@ class SelfAssessmentIncomeServiceSpec extends UnitSpec with MockitoSugar {
             incomeFromPensions = 16.95,
             incomeFromOther = 134.56,
             businessDescription = None,
-            addressLine1 = None,
-            addressLine2 = None,
-            addressLine3 = None,
-            postalCode = None
-          ))))
+            address = SaAddress(
+              addressLine1 = None,
+              addressLine2 = None,
+              addressLine3 = None,
+              addressLine4 = None,
+              postalCode = None,
+              telephoneNumber = None,
+              baseAddressEffectiveDate = None,
+              addressTypeIndicator = None
+            )
+          ))
+        )
+      )
     }
 
     "fail with RecordNotFoundException when there is no individual matching the nino" in new Setup {

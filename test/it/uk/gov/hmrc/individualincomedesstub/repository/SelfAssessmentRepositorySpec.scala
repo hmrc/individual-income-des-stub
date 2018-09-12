@@ -40,7 +40,26 @@ class SelfAssessmentRepositorySpec  extends UnitSpec with WithFakeApplication wi
 
   val utr = SaUtr("2432552635")
   val selfAssessment = SelfAssessment(utr, LocalDate.parse("2014-01-01"), Seq(
-    SelfAssessmentTaxReturn(TaxYear("2014-15"), parse("2015-01-01"), 13567.77, 1233.33, 22345, 500.25, 200.35, 12.45, 21.23, 52.34, 6.34, 55.24, 4.34, 5.43, 5.32, 134.56, None, None, None, None, None, None)))
+    SelfAssessmentTaxReturn(
+      taxYear = TaxYear("2014-15"),
+      submissionDate = LocalDate.parse("2015-01-01"),
+      employmentsIncome = 13567.77,
+      selfEmploymentProfit = 1233.33,
+      totalIncome = 22345,
+      trustsIncome = 500.25,
+      foreignIncome = 200.35,
+      partnershipsProfit = 12.45,
+      ukInterestsIncome = 21.23,
+      foreignDividendsIncome = 52.34,
+      ukDividendsIncome = 6.34,
+      ukPropertiesProfit = 55.24,
+      gainsOnLifePolicies = 4.34,
+      sharesOptionsIncome = 5.43,
+      pensionsAndStateBenefitsIncome = 5.32,
+      otherIncome = 134.56,
+      businessDescription = None,
+      address = None
+    )))
 
   override def beforeEach() {
     await(repository.drop)

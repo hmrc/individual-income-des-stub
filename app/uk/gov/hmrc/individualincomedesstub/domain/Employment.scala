@@ -45,10 +45,24 @@ object DesPayment {
       hmrcPayment.monthPayNumber, hmrcPayment.weekPayNumber)
 }
 
-case class DesAddress(line1: String, line2: Option[String], postalCode: String)
+case class DesAddress(line1: Option[String],
+                      line2: Option[String],
+                      line3: Option[String],
+                      line4: Option[String],
+                      line5: Option[String],
+                      postalCode: Option[String])
 
 object DesAddress {
-  def apply(address: TestAddress): DesAddress = DesAddress(address.line1, Some(address.line2), address.postcode)
+  def apply(address: TestAddress): DesAddress = {
+    DesAddress(
+      line1 = Some(address.line1),
+      line2 = Some(address.line2),
+      line3 = None,
+      line4 = None,
+      line5 = None,
+      postalCode = Some(address.postcode)
+    )
+  }
 }
 
 case class Employment(employerPayeReference: EmpRef,

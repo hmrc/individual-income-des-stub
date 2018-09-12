@@ -62,11 +62,7 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
               pensionsAndStateBenefitsIncome = 27.42,
               otherIncome = 134.56,
               businessDescription = None,
-              addressLine1 = None,
-              addressLine2 = None,
-              addressLine3 = None,
-              addressLine4 = None,
-              postalCode = None
+              address = None
             ),
             SelfAssessmentTaxReturn(
               taxYear = TaxYear("2014-15"),
@@ -86,11 +82,7 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
               pensionsAndStateBenefitsIncome = 71.24,
               otherIncome = 34.56,
               businessDescription = None,
-              addressLine1 = None,
-              addressLine2 = None,
-              addressLine3 = None,
-              addressLine4 = None,
-              postalCode = None
+              address = None
             )
           )))
 

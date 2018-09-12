@@ -44,9 +44,7 @@ object JsonFormatters {
 
   implicit val selfAssessmentTaxReturnFormat = Json.format[SelfAssessmentTaxReturn]
   implicit val selfAssessmentFormat = Json.format[SelfAssessment]
-  implicit val selfAssessmentTaxReturnData = Json.format[SelfAssessmentTaxReturnData]
   implicit val selfAssessmentCreateRequestFormat = Json.format[SelfAssessmentCreateRequest]
-  implicit val selfAssessmentResponseReturnFormat = Json.format[SelfAssessmentResponseReturn]
   implicit val selfAssessmentResponseFormat = Json.format[SelfAssessmentResponse]
 
   implicit val errorInvalidRequestFormat = new Format[ErrorInvalidRequest] {

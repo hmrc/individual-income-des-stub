@@ -16,9 +16,11 @@
 
 package unit.uk.gov.hmrc.individualincomedesstub.controller
 
+import akka.stream.Materializer
 import org.mockito.BDDMockito.given
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
+import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.Json.toJson
 import play.api.libs.json.{JsObject, Json}
@@ -34,7 +36,7 @@ import scala.concurrent.Future.failed
 
 class SelfAssessmentControllerSpec extends UnitSpec with MockitoSugar with ScalaFutures with WithFakeApplication {
 
-  implicit lazy val materializer = fakeApplication.materializer
+  implicit lazy val materializer: Materializer = fakeApplication.materializer
 
   val utr = SaUtr("2432552635")
   val saReturn = SelfAssessmentTaxReturnData(
@@ -55,11 +57,7 @@ class SelfAssessmentControllerSpec extends UnitSpec with MockitoSugar with Scala
     pensionsAndStateBenefitsIncome = Some(27.26),
     otherIncome = Some(134.56),
     businessDescription = None,
-    addressLine1 = None,
-    addressLine2 = None,
-    addressLine3 = None,
-    addressLine4 = None,
-    postalCode = None
+    address = None
   )
   val request = SelfAssessmentCreateRequest("2014-01-01", Seq(saReturn))
   val selfAssessment = SelfAssessment(utr, request)
@@ -74,6 +72,8 @@ class SelfAssessmentControllerSpec extends UnitSpec with MockitoSugar with Scala
 
     "return a 201 (Created) when self assessment data is created successfully" in new Setup {
       given(selfAssessmentService.create(utr, request)).willReturn(selfAssessment)
+
+      Logger.info(Json.fromJson[SelfAssessmentCreateRequest](Json.toJson(request)).toString)
 
       val result = await(underTest.create(utr)(fakeRequest.withBody(toJson(request))))
 

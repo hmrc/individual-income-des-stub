@@ -52,11 +52,7 @@ class SelfAssessmentServiceSpec extends UnitSpec with MockitoSugar {
     pensionsAndStateBenefitsIncome = Some(16.85),
     otherIncome = Some(134.56),
     businessDescription = None,
-    addressLine1 = None,
-    addressLine2 = None,
-    addressLine3 = None,
-    addressLine4 = None,
-    postalCode = None
+    address = None
   )
 
   val request = SelfAssessmentCreateRequest(registrationDate = "2015-06-06", taxReturns = Seq(taxReturn))
@@ -92,11 +88,7 @@ class SelfAssessmentServiceSpec extends UnitSpec with MockitoSugar {
             pensionsAndStateBenefitsIncome = 16.85,
             otherIncome = 134.56,
             businessDescription = None,
-            addressLine1 = None,
-            addressLine2 = None,
-            addressLine3 = None,
-            addressLine4 = None,
-            postalCode = None
+            address = None
           ))
       )
 
@@ -145,11 +137,7 @@ class SelfAssessmentServiceSpec extends UnitSpec with MockitoSugar {
         pensionsAndStateBenefitsIncome = 0,
         otherIncome = 0,
         businessDescription = None,
-        addressLine1 = None,
-        addressLine2 = None,
-        addressLine3 = None,
-        addressLine4 = None,
-        postalCode = None
+        address = None
       ))
     }
 
