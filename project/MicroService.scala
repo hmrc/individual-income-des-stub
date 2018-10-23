@@ -4,7 +4,8 @@ import sbt._
 import play.routes.compiler.StaticRoutesGenerator
 import play.sbt.PlayImport.PlayKeys
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
-
+import uk.gov.hmrc.SbtArtifactory
+import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 trait MicroService {
 
@@ -14,9 +15,6 @@ trait MicroService {
   import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
   import uk.gov.hmrc.versioning.SbtGitVersioning
   import play.sbt.routes.RoutesKeys.routesGenerator
-
-
-  import TestPhases._
 
   val appName: String
 
@@ -29,7 +27,7 @@ trait MicroService {
   def componentFilter(name: String): Boolean = name startsWith "component"
 
   lazy val microservice = Project(appName, file("."))
-    .enablePlugins(Seq(play.sbt.PlayScala,SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin) ++ plugins : _*)
+    .enablePlugins(Seq(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory) ++ plugins: _*)
     .settings(playSettings : _*)
     .settings(scalaSettings: _*)
     .settings(publishingSettings: _*)
@@ -65,12 +63,11 @@ trait MicroService {
       Resolver.jcenterRepo
     ))
     .settings(PlayKeys.playDefaultPort := 9631)
-}
+    .settings(majorVersion := 0)
 
-private object TestPhases {
   lazy val ComponentTest = config("component") extend Test
 
-  def oneForkedJvmPerTest(tests: Seq[TestDefinition]) =
+  private def oneForkedJvmPerTest(tests: Seq[TestDefinition]) =
     tests map {
       test => Group(test.name, Seq(test), SubProcess(ForkOptions(runJVMOptions = Seq(s"-Dtest.name=${test.name}"))))
     }
