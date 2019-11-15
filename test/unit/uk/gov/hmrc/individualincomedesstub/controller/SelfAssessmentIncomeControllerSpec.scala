@@ -31,10 +31,11 @@ import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.selfAssessmentR
 import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, SaAddress, SelfAssessmentResponse, SelfAssessmentResponseReturn}
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentIncomeService
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
 import scala.concurrent.Future.{failed, successful}
 
-class SelfAssessmentIncomeControllerSpec extends UnitSpec with MockitoSugar with ScalaFutures with WithFakeApplication {
+class SelfAssessmentIncomeControllerSpec extends TestSupport with MockitoSugar with ScalaFutures {
 
   implicit lazy val materializer = fakeApplication.materializer
 

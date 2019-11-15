@@ -17,8 +17,8 @@
 package uk.gov.hmrc.individualincomedesstub.repository
 
 import javax.inject.{Inject, Singleton}
-
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
+import reactivemongo.api.Cursor
 import reactivemongo.play.json._
 import reactivemongo.api.indexes.Index
 import reactivemongo.api.indexes.IndexType.Ascending
@@ -53,8 +53,9 @@ class EmploymentRepository @Inject() (mongoConnectionProvider: MongoConnectionPr
   }
 
   def findByReferenceAndNino(employerPayeReference: EmpRef, nino: Nino) = {
-    collection.find(Json.obj("employerPayeReference" -> employerPayeReference, "nino" -> nino)).cursor[Employment]().collect[List]()
+    collection.find(Json.obj("employerPayeReference" -> employerPayeReference, "nino" -> nino)).cursor[Employment]().collect[List](
+      Int.MaxValue, Cursor.FailOnError[List[Employment]]())
   }
 
-  def findBy(nino: Nino) = collection.find(Json.obj("nino" -> nino)).cursor[Employment]().collect[Seq]()
+  def findBy(nino: Nino) = collection.find(Json.obj("nino" -> nino)).cursor[Employment]().collect[Seq](Int.MaxValue, Cursor.FailOnError[Seq[Employment]]())
 }

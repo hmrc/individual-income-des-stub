@@ -31,10 +31,11 @@ import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
 import uk.gov.hmrc.individualincomedesstub.domain.{DuplicateSelfAssessmentException, _}
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentService
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
 import scala.concurrent.Future.failed
 
-class SelfAssessmentControllerSpec extends UnitSpec with MockitoSugar with ScalaFutures with WithFakeApplication {
+class SelfAssessmentControllerSpec extends TestSupport with MockitoSugar with ScalaFutures  {
 
   implicit lazy val materializer: Materializer = fakeApplication.materializer
 

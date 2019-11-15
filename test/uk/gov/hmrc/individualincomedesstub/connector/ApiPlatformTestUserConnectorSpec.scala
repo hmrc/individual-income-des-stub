@@ -19,14 +19,21 @@ package uk.gov.hmrc.individualincomedesstub.connector
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
+import com.typesafe.config.ConfigFactory
 import org.scalatest.BeforeAndAfterEach
-import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, INTERNAL_SERVER_ERROR}
+import play.api.{Application, Configuration}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
+import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.domain.{EmpRef, Nino, SaUtr}
 import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
-class ApiPlatformTestUserConnectorSpec extends UnitSpec with BeforeAndAfterEach with WithFakeApplication {
+class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEach  {
+
+
 
   val stubPort = sys.env.getOrElse("WIREMOCK", "11121").toInt
   val stubHost = "localhost"
@@ -39,10 +46,12 @@ class ApiPlatformTestUserConnectorSpec extends UnitSpec with BeforeAndAfterEach 
   val nino = Nino("AB123456A")
   val utr = SaUtr("2432552635")
 
+  val http:HttpClient = fakeApplication.injector.instanceOf[HttpClient]
+  val config : Configuration = fakeApplication.injector.instanceOf[Configuration]
   trait Setup {
     implicit val hc = HeaderCarrier()
 
-    val underTest = new ApiPlatformTestUserConnector {
+    val underTest = new ApiPlatformTestUserConnector(config,http) {
       override val serviceUrl = s"http://$stubHost:$stubPort"
     }
   }
