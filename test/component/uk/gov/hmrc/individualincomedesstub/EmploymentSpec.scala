@@ -170,7 +170,7 @@ class EmploymentSpec extends BaseSpec {
 
       Then("The response code should be 400 (Bad Request)")
       response.code shouldBe BAD_REQUEST
-      response.body shouldBe """{"code":"INVALID_REQUEST","message":"Malformed nino submitted"}"""
+      response.body shouldBe """{"statusCode":400,"message":"Malformed nino submitted"}"""
     }
 
     scenario("Request fails for unencoded employer reference") {
@@ -194,7 +194,7 @@ class EmploymentSpec extends BaseSpec {
 
       Then("The response code should be 400 (Bad Request)")
       response.code shouldBe BAD_REQUEST
-      response.body shouldBe """{"code":"INVALID_REQUEST","message":"Invalid employer reference submitted"}"""
+      response.body shouldBe """{"statusCode":400,"message":"Invalid employer reference submitted"}"""
     }
 
     scenario("Request fails for invalid paymentDate format") {
@@ -233,7 +233,7 @@ class EmploymentSpec extends BaseSpec {
 
       Then("the response should be 400 (Bad Request)")
       httpResponse.code shouldBe BAD_REQUEST
-      httpResponse.body shouldBe """{"code":"INVALID_REQUEST","message":"Malformed nino submitted"}"""
+      httpResponse.body shouldBe """{"statusCode":400,"message":"Malformed nino submitted"}"""
     }
 
     scenario("request without a from date") {
@@ -245,7 +245,7 @@ class EmploymentSpec extends BaseSpec {
 
       Then("the response should be 400 (Bad Request)")
       httpResponse.code shouldBe BAD_REQUEST
-      httpResponse.body shouldBe """{"code":"INVALID_REQUEST","message":"from is required"}"""
+      httpResponse.body shouldBe """{"statusCode":400,"message":"from is required"}"""
     }
 
     scenario("request with a malformed from date") {
@@ -257,7 +257,7 @@ class EmploymentSpec extends BaseSpec {
 
       Then("the response should be 400 (Bad Request)")
       httpResponse.code shouldBe BAD_REQUEST
-      httpResponse.body shouldBe """{"code":"INVALID_REQUEST","message":"from: invalid date format"}"""
+      httpResponse.body shouldBe """{"statusCode":400,"message":"from: invalid date format"}"""
     }
 
     scenario("request with a malformed to date") {
@@ -269,7 +269,7 @@ class EmploymentSpec extends BaseSpec {
 
       Then("the response should be 400 (Bad Request)")
       httpResponse.code shouldBe BAD_REQUEST
-      httpResponse.body shouldBe """{"code":"INVALID_REQUEST","message":"to: invalid date format"}"""
+      httpResponse.body shouldBe """{"statusCode":400,"message":"to: invalid date format"}"""
     }
 
     scenario("request with an invalid date range") {
@@ -281,7 +281,7 @@ class EmploymentSpec extends BaseSpec {
 
       Then("the response should be 400 (Bad Request)")
       httpResponse.code shouldBe BAD_REQUEST
-      httpResponse.body shouldBe """{"code":"INVALID_REQUEST","message":"Invalid time period requested"}"""
+      httpResponse.body shouldBe """{"statusCode":400,"message":"Invalid time period requested"}"""
     }
 
   }

@@ -28,8 +28,9 @@ import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
 import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, EmploymentPayFrequency, HmrcPayment}
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentService
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
-class EmploymentControllerSpec extends UnitSpec with MockitoSugar with ScalaFutures with WithFakeApplication {
+class EmploymentControllerSpec extends TestSupport with MockitoSugar with ScalaFutures {
 
   implicit lazy val materializer = fakeApplication.materializer
 

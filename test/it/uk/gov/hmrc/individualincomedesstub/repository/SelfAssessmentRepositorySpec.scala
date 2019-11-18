@@ -19,6 +19,7 @@ package it.uk.gov.hmrc.individualincomedesstub.repository
 import org.joda.time.LocalDate
 import org.joda.time.LocalDate.parse
 import org.scalatest.BeforeAndAfterEach
+import play.api.Configuration
 import play.api.inject.guice.GuiceApplicationBuilder
 import reactivemongo.api.indexes.IndexType.Ascending
 import uk.gov.hmrc.domain.SaUtr
@@ -26,15 +27,13 @@ import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class SelfAssessmentRepositorySpec  extends UnitSpec with WithFakeApplication with MongoSpecSupport with BeforeAndAfterEach {
+class SelfAssessmentRepositorySpec  extends TestSupport with MongoSpecSupport with BeforeAndAfterEach {
 
-  override lazy val fakeApplication = new GuiceApplicationBuilder()
-    .configure("mongodb.uri" -> mongoUri)
-    .bindings(bindModules: _*)
-    .build()
+  override lazy val fakeApplication = buildFakeApplication(Configuration("mongodb.uri" -> mongoUri))
 
   val repository = fakeApplication.injector.instanceOf[SelfAssessmentRepository]
 

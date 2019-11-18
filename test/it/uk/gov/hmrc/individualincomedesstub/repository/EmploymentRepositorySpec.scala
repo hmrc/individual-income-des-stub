@@ -17,21 +17,20 @@
 package it.uk.gov.hmrc.individualincomedesstub.repository
 
 import org.scalatest.BeforeAndAfterEach
+import play.api.Configuration
 import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, EmploymentPayFrequency, HmrcPayment}
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class EmploymentRepositorySpec extends UnitSpec with WithFakeApplication with MongoSpecSupport with BeforeAndAfterEach {
+class EmploymentRepositorySpec extends TestSupport with MongoSpecSupport with BeforeAndAfterEach {
 
-  override lazy val fakeApplication = new GuiceApplicationBuilder()
-    .configure("mongodb.uri" -> mongoUri)
-    .bindings(bindModules: _*)
-    .build()
+  override lazy val fakeApplication = buildFakeApplication(Configuration("mongodb.uri" -> mongoUri))
 
   val employmentRepository = fakeApplication.injector.instanceOf[EmploymentRepository]
   val employerReference = EmpRef("123", "DI45678")

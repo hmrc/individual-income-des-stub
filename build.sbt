@@ -17,15 +17,15 @@ lazy val ComponentTest = config("component") extend Test
 
 val compile = Seq(
   ws,
-  hmrc %% "microservice-bootstrap" % "6.18.0",
-  hmrc %% "domain" % "4.1.0",
-  hmrc %% "play-hmrc-api" % "2.0.0",
-  hmrc %% "play-reactivemongo" % "6.1.0"
+  hmrc %% "bootstrap-play-25" % "5.1.0",
+  hmrc %% "domain" % "5.6.0-play-25",
+  hmrc %% "play-hmrc-api" % "3.6.0-play-25",
+  hmrc %% "simple-reactivemongo" % "7.20.0-play-25"
 )
 
 def test(scope: String = "test,it") = Seq(
-  hmrc %% "reactivemongo-test" % "2.0.0" % scope,
-  hmrc %% "hmrctest" % "2.3.0" % scope,
+  hmrc %% "reactivemongo-test" % "4.15.0-play-25" % scope,
+  hmrc %% "hmrctest" % "3.9.0-play-25" % scope,
   "org.scalatest" %% "scalatest" % "3.0.1" % scope,
   "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" %  scope,
   "org.pegdown" % "pegdown" % "1.6.0" % scope,
@@ -49,6 +49,7 @@ lazy val microservice = Project(appName, file("."))
     routesGenerator := StaticRoutesGenerator
   )
   .settings(unmanagedResourceDirectories in Compile += baseDirectory.value / "resources")
+
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(

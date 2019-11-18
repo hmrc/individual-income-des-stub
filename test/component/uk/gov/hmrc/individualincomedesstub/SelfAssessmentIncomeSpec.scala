@@ -145,7 +145,7 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
       response.code shouldBe BAD_REQUEST
 
       And("The correct error message in the response body")
-      Json.parse(response.body) shouldBe Json.parse("""{"code":"INVALID_REQUEST","message":"Invalid Request"}""")
+      Json.parse(response.body) shouldBe Json.parse("""{"statusCode":400,"message":"Invalid Request"}""")
     }
 
     scenario("Request fails for missing end year") {
@@ -157,7 +157,7 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
       response.code shouldBe BAD_REQUEST
 
       And("The correct error message in the response body")
-      Json.parse(response.body) shouldBe Json.parse("""{"code":"INVALID_REQUEST","message":"Invalid Request"}""")
+      Json.parse(response.body) shouldBe Json.parse("""{"statusCode":400,"message":"Invalid Request"}""")
     }
   }
 
