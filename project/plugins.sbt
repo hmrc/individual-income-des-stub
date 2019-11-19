@@ -10,6 +10,6 @@ addSbtPlugin("uk.gov.hmrc" % "sbt-distributables" % "1.1.0")
 
 addSbtPlugin("uk.gov.hmrc" % "sbt-artifactory" % "0.13.0")
 
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.12")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.19")
 
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.10.0-RC1")
