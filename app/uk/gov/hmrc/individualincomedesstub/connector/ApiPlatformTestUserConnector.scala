@@ -19,19 +19,19 @@ package uk.gov.hmrc.individualincomedesstub.connector
 import javax.inject.{Inject, Singleton}
 import play.api.{Configuration, Logger}
 import uk.gov.hmrc.domain.{EmpRef, Nino}
+import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
+import uk.gov.hmrc.individualincomedesstub.config.ConfigSupport
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
 import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, TestIndividual, TestOrganisation}
-import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import uk.gov.hmrc.http.{HeaderCarrier, HttpGet, NotFoundException}
-import uk.gov.hmrc.individualincomedesstub.config.ConfigSupport
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
 @Singleton
-class ApiPlatformTestUserConnector @Inject()(override val config : Configuration , http : HttpClient) extends ServicesConfig with ConfigSupport {
+class ApiPlatformTestUserConnector @Inject()(override val config : Configuration , http : HttpClient,servicesConfig: ServicesConfig) extends  ConfigSupport {
 
-  val serviceUrl = baseUrl("api-platform-test-user")
+  val serviceUrl = servicesConfig.baseUrl("api-platform-test-user")
   def getOrganisationByEmpRef(empRef: EmpRef)(implicit hc: HeaderCarrier): Future[Option[TestOrganisation]] = {
     http.GET[TestOrganisation](s"$serviceUrl/organisations/empref/${empRef.encodedValue}") map (Some(_))
   } recover {

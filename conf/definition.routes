@@ -1,3 +1,3 @@
-GET    /api/definition                              @uk.gov.hmrc.individualincomedesstub.controller.DocumentationController.definition()
-GET    /api/documentation/:version/:endpointName    @uk.gov.hmrc.individualincomedesstub.controller.DocumentationController.documentation(version,endpointName)
-GET    /api/conf/:version/*file                     @uk.gov.hmrc.individualincomedesstub.controller.DocumentationController.raml(version, file)
+GET    /api/definition                              uk.gov.hmrc.individualincomedesstub.controller.DocumentationController.definition()
+GET    /api/documentation/:version/:endpointName    uk.gov.hmrc.individualincomedesstub.controller.DocumentationController.documentation(version,endpointName)
+GET    /api/conf/:version/*file                     uk.gov.hmrc.individualincomedesstub.controller.DocumentationController.raml(version, file)

@@ -19,21 +19,19 @@ package uk.gov.hmrc.individualincomedesstub.connector
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
-import com.typesafe.config.ConfigFactory
 import org.scalatest.BeforeAndAfterEach
-import play.api.{Application, Configuration}
+import play.api.Configuration
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
-import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.domain.{EmpRef, Nino, SaUtr}
-import uk.gov.hmrc.individualincomedesstub.domain._
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier}
+import uk.gov.hmrc.individualincomedesstub.domain._
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
-class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEach  {
-
-
+class ApiPlatformTestUserConnectorSpec
+    extends TestSupport
+    with BeforeAndAfterEach {
 
   val stubPort = sys.env.getOrElse("WIREMOCK", "11121").toInt
   val stubHost = "localhost"
@@ -41,19 +39,25 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
   val empRef = EmpRef("123", "AI45678")
   val testOrganisation = TestOrganisation(
     Some(empRef),
-    TestOrganisationDetails("Disney Inc", TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
+    TestOrganisationDetails(
+      "Disney Inc",
+      TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
 
   val nino = Nino("AB123456A")
   val utr = SaUtr("2432552635")
 
-  val http:HttpClient = fakeApplication.injector.instanceOf[HttpClient]
-  val config : Configuration = fakeApplication.injector.instanceOf[Configuration]
+  val http: HttpClient = fakeApplication.injector.instanceOf[HttpClient]
+  val config: Configuration = fakeApplication.injector.instanceOf[Configuration]
+  val serviceConfig: ServicesConfig =
+    fakeApplication.injector.instanceOf[ServicesConfig]
+
   trait Setup {
     implicit val hc = HeaderCarrier()
 
-    val underTest = new ApiPlatformTestUserConnector(config,http) {
-      override val serviceUrl = s"http://$stubHost:$stubPort"
-    }
+    val underTest =
+      new ApiPlatformTestUserConnector(config, http, serviceConfig) {
+        override val serviceUrl = s"http://$stubHost:$stubPort"
+      }
   }
 
   override def beforeEach() {
@@ -68,10 +72,13 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
   "get organisation by empRef" should {
 
     "retrieve a test organisation by empRef" in new Setup {
-      stubFor(get(urlEqualTo(s"/organisations/empref/${empRef.encodedValue}"))
-        .willReturn(aResponse().withStatus(OK)
-          .withBody(
-            s"""
+      stubFor(
+        get(urlEqualTo(s"/organisations/empref/${empRef.encodedValue}"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(
+                s"""
                {
                  "empRef": "${empRef.value}",
                  "organisationDetails": {
@@ -84,7 +91,7 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
                  }
                }
              """
-          )))
+              )))
 
       val result = await(underTest.getOrganisationByEmpRef(empRef))
 
@@ -92,26 +99,32 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
     }
 
     "return nothing if the organisation cannot be found" in new Setup {
-      stubFor(get(urlEqualTo(s"/organisations/empref/${empRef.encodedValue}"))
-        .willReturn(aResponse().withStatus(NOT_FOUND)))
+      stubFor(
+        get(urlEqualTo(s"/organisations/empref/${empRef.encodedValue}"))
+          .willReturn(aResponse().withStatus(NOT_FOUND)))
 
       await(underTest.getOrganisationByEmpRef(empRef)) shouldBe None
     }
 
     "propagate errors" in new Setup {
-      stubFor(get(urlEqualTo(s"/organisations/empref/${empRef.encodedValue}"))
-        .willReturn(aResponse().withStatus(BAD_REQUEST)))
+      stubFor(
+        get(urlEqualTo(s"/organisations/empref/${empRef.encodedValue}"))
+          .willReturn(aResponse().withStatus(BAD_REQUEST)))
 
-      intercept[BadRequestException](await(underTest.getOrganisationByEmpRef(empRef)))
+      intercept[BadRequestException](
+        await(underTest.getOrganisationByEmpRef(empRef)))
     }
   }
 
   "getIndividualByNino" should {
 
     "retrieve the individual" in new Setup {
-      stubFor(get(urlEqualTo(s"/individuals/nino/$nino"))
-        .willReturn(aResponse().withStatus(OK)
-          .withBody(s"""{"saUtr": "${utr.value}"}""")))
+      stubFor(
+        get(urlEqualTo(s"/individuals/nino/$nino"))
+          .willReturn(
+            aResponse()
+              .withStatus(OK)
+              .withBody(s"""{"saUtr": "${utr.value}"}""")))
 
       val result = await(underTest.getIndividualByNino(nino))
 
@@ -119,17 +132,22 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
     }
 
     "fail with RecordNotFoundException when there is no individual matching the nino" in new Setup {
-      stubFor(get(urlEqualTo(s"/individuals/nino/$nino"))
-        .willReturn(aResponse().withStatus(NOT_FOUND)))
+      stubFor(
+        get(urlEqualTo(s"/individuals/nino/$nino"))
+          .willReturn(aResponse().withStatus(NOT_FOUND)))
 
-      intercept[RecordNotFoundException]{await(underTest.getIndividualByNino(nino))}
+      intercept[RecordNotFoundException] {
+        await(underTest.getIndividualByNino(nino))
+      }
     }
 
     "propagate errors" in new Setup {
-      stubFor(get(urlEqualTo(s"/individuals/nino/$nino"))
-        .willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR)))
+      stubFor(
+        get(urlEqualTo(s"/individuals/nino/$nino"))
+          .willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR)))
 
-      intercept[BadRequestException](await(underTest.getOrganisationByEmpRef(empRef)))
+      intercept[BadRequestException](
+        await(underTest.getOrganisationByEmpRef(empRef)))
     }
 
   }

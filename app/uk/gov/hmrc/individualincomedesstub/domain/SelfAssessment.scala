@@ -21,9 +21,10 @@ import org.joda.time.LocalDate.parse
 import play.api.libs.json._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.util.Validators.{validDate, validTaxYear}
-
 import scala.util.matching.Regex
 import scala.util.matching.Regex.Match
+import play.api.libs.json.JodaWrites._
+import play.api.libs.json.JodaReads._
 
 case class SelfAssessmentTaxReturn(taxYear: TaxYear,
                                    submissionDate: LocalDate,

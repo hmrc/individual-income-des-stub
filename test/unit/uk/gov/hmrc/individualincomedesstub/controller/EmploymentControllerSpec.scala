@@ -21,23 +21,34 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
 import play.api.http.Status.{BAD_REQUEST, CREATED}
 import play.api.libs.json.Json
+import play.api.mvc.ControllerComponents
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.controller.EmploymentController
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
-import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, EmploymentPayFrequency, HmrcPayment}
+import uk.gov.hmrc.individualincomedesstub.domain.{
+  CreateEmploymentRequest,
+  Employment,
+  EmploymentPayFrequency,
+  HmrcPayment
+}
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentService
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
-class EmploymentControllerSpec extends TestSupport with MockitoSugar with ScalaFutures {
+class EmploymentControllerSpec
+    extends TestSupport
+    with MockitoSugar
+    with ScalaFutures {
 
   implicit lazy val materializer = fakeApplication.materializer
+  val controllerComponents: ControllerComponents =
+    fakeApplication.injector.instanceOf[ControllerComponents]
 
   trait Setup {
     val fakeRequest = FakeRequest()
     val mockEmploymentService = mock[EmploymentService]
-    val underTest = new EmploymentController(mockEmploymentService)
+    val underTest =
+      new EmploymentController(mockEmploymentService, controllerComponents)
   }
 
   "Create employment" should {
@@ -49,9 +60,12 @@ class EmploymentControllerSpec extends TestSupport with MockitoSugar with ScalaF
       val request = aCreateEmploymentRequest()
       val employment = anEmployment(employerPayeReference, nino)
 
-      when(mockEmploymentService.create(employerPayeReference, nino, request)).thenReturn(employment)
+      when(mockEmploymentService.create(employerPayeReference, nino, request))
+        .thenReturn(employment)
 
-      val result = await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.toJson(request))))
+      val result = await(
+        underTest.create(employerPayeReference, nino)(
+          fakeRequest.withBody(Json.toJson(request))))
 
       status(result) shouldBe CREATED
       bodyOf(result) shouldBe Json.toJson(employment).toString
@@ -59,11 +73,15 @@ class EmploymentControllerSpec extends TestSupport with MockitoSugar with ScalaF
 
     "Successfully create an employment with no startDate" in new Setup {
       val request = aCreateEmploymentRequest(startDate = None)
-      val employment = anEmployment(employerPayeReference, nino, startDate = None)
+      val employment =
+        anEmployment(employerPayeReference, nino, startDate = None)
 
-      when(mockEmploymentService.create(employerPayeReference, nino, request)).thenReturn(employment)
+      when(mockEmploymentService.create(employerPayeReference, nino, request))
+        .thenReturn(employment)
 
-      val result = await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.toJson(request))))
+      val result = await(
+        underTest.create(employerPayeReference, nino)(
+          fakeRequest.withBody(Json.toJson(request))))
 
       status(result) shouldBe CREATED
       bodyOf(result) shouldBe Json.toJson(employment).toString
@@ -73,44 +91,67 @@ class EmploymentControllerSpec extends TestSupport with MockitoSugar with ScalaF
       val request = aCreateEmploymentRequest(endDate = None)
       val employment = anEmployment(employerPayeReference, nino, endDate = None)
 
-      when(mockEmploymentService.create(employerPayeReference, nino, request)).thenReturn(employment)
+      when(mockEmploymentService.create(employerPayeReference, nino, request))
+        .thenReturn(employment)
 
-      val result = await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.toJson(request))))
+      val result = await(
+        underTest.create(employerPayeReference, nino)(
+          fakeRequest.withBody(Json.toJson(request))))
 
       status(result) shouldBe CREATED
       bodyOf(result) shouldBe Json.toJson(employment).toString
     }
 
     "Fail with correct error message for missing payments field" in new Setup {
-      val result = await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.parse("""{"startDate": "2016-01-01", "endDate": "2017-03-01"}"""))))
+      val result = await(
+        underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json
+          .parse("""{"startDate": "2016-01-01", "endDate": "2017-03-01"}"""))))
       status(result) shouldBe BAD_REQUEST
       bodyOf(result) shouldBe """{"code":"INVALID_REQUEST","message":"payments is required"}"""
     }
 
     "Fail with correct error message for invalid payment" in new Setup {
-      val result = await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(
-        Json.parse("""{"startDate": "2016-01-01","endDate": "2017-03-01","payments":[{"taxablePayment": 1000.55}]}"""))))
+      val result = await(underTest.create(employerPayeReference, nino)(
+        fakeRequest.withBody(Json.parse(
+          """{"startDate": "2016-01-01","endDate": "2017-03-01","payments":[{"taxablePayment": 1000.55}]}"""))))
       status(result) shouldBe BAD_REQUEST
       bodyOf(result) shouldBe """{"code":"INVALID_REQUEST","message":"payments(0)/paymentDate is required"}"""
     }
   }
 
-  private def aCreateEmploymentRequest(startDate: Option[String] = Some("2016-01-01"),
-                                       endDate: Option[String] = Some("2017-03-01"),
-                                       payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55), HmrcPayment("2016-02-28", 950.55)),
-                                       payFrequency: EmploymentPayFrequency.Value = EmploymentPayFrequency.CALENDAR_MONTHLY) = {
+  private def aCreateEmploymentRequest(
+      startDate: Option[String] = Some("2016-01-01"),
+      endDate: Option[String] = Some("2017-03-01"),
+      payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55),
+                                       HmrcPayment("2016-02-28", 950.55)),
+      payFrequency: EmploymentPayFrequency.Value =
+        EmploymentPayFrequency.CALENDAR_MONTHLY) = {
 
-    CreateEmploymentRequest(startDate, endDate, payments, None, None, Some(payFrequency.toString))
+    CreateEmploymentRequest(startDate,
+                            endDate,
+                            payments,
+                            None,
+                            None,
+                            Some(payFrequency.toString))
   }
 
   private def anEmployment(employerPayeReference: EmpRef,
                            nino: Nino,
                            startDate: Option[String] = Some("2016-01-01"),
                            endDate: Option[String] = Some("2017-03-01"),
-                           payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55), HmrcPayment("2016-02-28", 950.55)),
-                           payFrequency: EmploymentPayFrequency.Value = EmploymentPayFrequency.CALENDAR_MONTHLY) = {
+                           payments: Seq[HmrcPayment] = Seq(
+                             HmrcPayment("2016-01-28", 1000.55),
+                             HmrcPayment("2016-02-28", 950.55)),
+                           payFrequency: EmploymentPayFrequency.Value =
+                             EmploymentPayFrequency.CALENDAR_MONTHLY) = {
 
-    Employment(employerPayeReference, nino, startDate, endDate, payments, None, None, Some(payFrequency.toString))
+    Employment(employerPayeReference,
+               nino,
+               startDate,
+               endDate,
+               payments,
+               None,
+               None,
+               Some(payFrequency.toString))
   }
 }
-

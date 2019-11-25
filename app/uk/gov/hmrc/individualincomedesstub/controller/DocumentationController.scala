@@ -16,15 +16,15 @@
 
 package uk.gov.hmrc.individualincomedesstub.controller
 
+import controllers.Assets
 import javax.inject.{Inject, Singleton}
-
 import play.api.Configuration
 import play.api.http.HttpErrorHandler
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.individualincomedesstub.views._
 
 @Singleton
-class DocumentationController @Inject()(httpErrorHandler: HttpErrorHandler, configuration: Configuration) extends uk.gov.hmrc.api.controllers.DocumentationController(httpErrorHandler) {
+class DocumentationController @Inject()(httpErrorHandler: HttpErrorHandler, configuration: Configuration,cc: ControllerComponents, assets: Assets) extends uk.gov.hmrc.api.controllers.DocumentationController(cc,assets,httpErrorHandler) {
 
   private lazy val whitelistedApplicationIds = configuration.getStringSeq("api.access.version-1.0.whitelistedApplicationIds").getOrElse(Seq.empty)
 
@@ -33,7 +33,7 @@ class DocumentationController @Inject()(httpErrorHandler: HttpErrorHandler, conf
   }
 
   def raml(version: String, file: String) = {
-    super.at(s"/public/api/conf/$version", file)
+    super.conf(s"/public/api/conf/$version", file)
   }
 
 }
