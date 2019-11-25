@@ -18,7 +18,7 @@ package uk.gov.hmrc.individualincomedesstub.controller
 
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json.toJson
-import play.api.mvc.{Action, BodyParsers}
+import play.api.mvc.{BodyParsers, ControllerComponents}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
 import uk.gov.hmrc.individualincomedesstub.domain.SelfAssessmentCreateRequest
@@ -27,11 +27,16 @@ import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentService
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class SelfAssessmentController @Inject()(selfAssessmentService: SelfAssessmentService) extends CommonController {
+class SelfAssessmentController @Inject()(
+    selfAssessmentService: SelfAssessmentService,
+    controllerComponents: ControllerComponents)
+    extends CommonController(controllerComponents) {
 
-  def create(utr: SaUtr)  = Action.async(BodyParsers.parse.json) { implicit request =>
-    withJsonBody[SelfAssessmentCreateRequest] { createRequest =>
-      selfAssessmentService.create(utr, createRequest) map (e => Created(toJson(e)))
-    } recover recovery
+  def create(utr: SaUtr) = Action.async(BodyParsers.parse.json) {
+    implicit request =>
+      withJsonBody[SelfAssessmentCreateRequest] { createRequest =>
+        selfAssessmentService.create(utr, createRequest) map (e =>
+          Created(toJson(e)))
+      } recover recovery
   }
 }

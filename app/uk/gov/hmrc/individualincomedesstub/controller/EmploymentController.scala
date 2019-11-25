@@ -17,18 +17,17 @@
 package uk.gov.hmrc.individualincomedesstub.controller
 
 import javax.inject.{Inject, Singleton}
-
 import play.api.libs.json.Json
-import play.api.mvc.{Action, BodyParsers}
+import play.api.mvc.{Action, BodyParsers, ControllerComponents}
 import uk.gov.hmrc.domain.{EmpRef, Nino}
-import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest}
+import uk.gov.hmrc.individualincomedesstub.domain.CreateEmploymentRequest
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class EmploymentController @Inject()(employmentService: EmploymentService) extends CommonController {
+class EmploymentController @Inject()(employmentService: EmploymentService, controllerComponents: ControllerComponents) extends CommonController(controllerComponents) {
 
   def create(employerReference: EmpRef, nino: Nino) = Action.async(BodyParsers.parse.json) { implicit request =>
     withJsonBody[CreateEmploymentRequest] { createEmployment =>

@@ -18,7 +18,7 @@ package uk.gov.hmrc.individualincomedesstub.domain
 
 import play.api.http.Status._
 import play.api.libs.json.Json
-import play.api.mvc.Results
+import play.api.mvc.{Result, Results}
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
 
 sealed abstract class ErrorResponse(
@@ -26,7 +26,7 @@ sealed abstract class ErrorResponse(
                                      val errorCode: String,
                                      val message: String) {
 
-  def toHttpResponse = Results.Status(httpStatusCode)(Json.toJson(this))
+  def toHttpResponse: Result = Results.Status(httpStatusCode)(Json.toJson(this))
 }
 
 case class ErrorInvalidRequest(errorMessage: String) extends ErrorResponse(BAD_REQUEST, "INVALID_REQUEST", errorMessage)

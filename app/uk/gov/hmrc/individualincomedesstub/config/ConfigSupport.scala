@@ -17,7 +17,7 @@
 package uk.gov.hmrc.individualincomedesstub.config
 
 import akka.actor.ActorSystem
-import play.api.Mode.Mode
+import play.api.Mode
 import play.api.{Application, Configuration, Play}
 
 trait ConfigSupport {

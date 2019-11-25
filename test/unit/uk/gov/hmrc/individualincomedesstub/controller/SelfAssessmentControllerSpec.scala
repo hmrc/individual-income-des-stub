@@ -24,27 +24,36 @@ import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.Json.toJson
 import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.ControllerComponents
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.controller.SelfAssessmentController
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
-import uk.gov.hmrc.individualincomedesstub.domain.{DuplicateSelfAssessmentException, _}
+import uk.gov.hmrc.individualincomedesstub.domain.{
+  DuplicateSelfAssessmentException,
+  _
+}
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentService
 import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
 import scala.concurrent.Future.failed
 
-class SelfAssessmentControllerSpec extends TestSupport with MockitoSugar with ScalaFutures  {
+class SelfAssessmentControllerSpec
+    extends TestSupport
+    with MockitoSugar
+    with ScalaFutures {
 
   implicit lazy val materializer: Materializer = fakeApplication.materializer
+  private val controllerComponents: ControllerComponents =
+    fakeApplication.injector.instanceOf[ControllerComponents]
 
   val utr = SaUtr("2432552635")
   val saReturn = SelfAssessmentTaxReturnData(
     taxYear = "2014-15",
     submissionDate = "2015-06-01",
     employmentsIncome = Some(123),
-    selfEmploymentProfit= Some(456),
+    selfEmploymentProfit = Some(456),
     totalIncome = Some(10456),
     trustsIncome = Some(500.25),
     foreignIncome = Some(200.35),
@@ -66,59 +75,84 @@ class SelfAssessmentControllerSpec extends TestSupport with MockitoSugar with Sc
   trait Setup {
     val fakeRequest = FakeRequest()
     val selfAssessmentService = mock[SelfAssessmentService]
-    val underTest = new SelfAssessmentController(selfAssessmentService)
+    val underTest =
+      new SelfAssessmentController(selfAssessmentService, controllerComponents)
   }
 
   "create self assessment" should {
 
     "return a 201 (Created) when self assessment data is created successfully" in new Setup {
-      given(selfAssessmentService.create(utr, request)).willReturn(selfAssessment)
+      given(selfAssessmentService.create(utr, request))
+        .willReturn(selfAssessment)
 
-      Logger.info(Json.fromJson[SelfAssessmentCreateRequest](Json.toJson(request)).toString)
+      Logger.info(
+        Json
+          .fromJson[SelfAssessmentCreateRequest](Json.toJson(request))
+          .toString)
 
-      val result = await(underTest.create(utr)(fakeRequest.withBody(toJson(request))))
+      val result =
+        await(underTest.create(utr)(fakeRequest.withBody(toJson(request))))
 
       status(result) shouldBe CREATED
       jsonBodyOf(result) shouldBe toJson(selfAssessment)
     }
 
     "return a 400 (BadRequest) when the registration date is invalid" in new Setup {
-      val result = await(underTest.create(utr)(fakeRequest.withBody(requestWithField("registrationDate", "11-11-1111"))))
+      val result = await(
+        underTest.create(utr)(fakeRequest.withBody(
+          requestWithField("registrationDate", "11-11-1111"))))
 
       status(result) shouldBe BAD_REQUEST
-      jsonBodyOf(result) shouldBe Json.obj("code" -> "INVALID_REQUEST", "message" -> "registrationDate: invalid date format")
+      jsonBodyOf(result) shouldBe Json.obj(
+        "code" -> "INVALID_REQUEST",
+        "message" -> "registrationDate: invalid date format")
     }
 
     "return a 400 (BadRequest) when the taxYear is invalid" in new Setup {
-      val result = await(underTest.create(utr)(fakeRequest.withBody(requestWithTaxReturnField("taxYear", "201516"))))
+      val result = await(
+        underTest.create(utr)(
+          fakeRequest.withBody(requestWithTaxReturnField("taxYear", "201516"))))
 
       status(result) shouldBe BAD_REQUEST
-      jsonBodyOf(result) shouldBe Json.obj("code" -> "INVALID_REQUEST", "message" -> "taxYear: invalid tax year format")
+      jsonBodyOf(result) shouldBe Json.obj(
+        "code" -> "INVALID_REQUEST",
+        "message" -> "taxYear: invalid tax year format")
     }
 
     "return a 400 (BadRequest) when the submissionDate is invalid" in new Setup {
-      val result = await(underTest.create(utr)(fakeRequest.withBody(requestWithTaxReturnField("submissionDate", "invalid"))))
+      val result = await(
+        underTest.create(utr)(fakeRequest.withBody(
+          requestWithTaxReturnField("submissionDate", "invalid"))))
 
       status(result) shouldBe BAD_REQUEST
-      jsonBodyOf(result) shouldBe Json.obj("code" -> "INVALID_REQUEST", "message" -> "submissionDate: invalid date format")
+      jsonBodyOf(result) shouldBe Json.obj(
+        "code" -> "INVALID_REQUEST",
+        "message" -> "submissionDate: invalid date format")
     }
 
     "return a 429 (Conflict) when a self-assessment already exists for the utr" in new Setup {
-      given(selfAssessmentService.create(utr, request)).willReturn(failed(new DuplicateSelfAssessmentException()))
+      given(selfAssessmentService.create(utr, request))
+        .willReturn(failed(new DuplicateSelfAssessmentException()))
 
-      val result = await(underTest.create(utr)(fakeRequest.withBody(toJson(request))))
+      val result =
+        await(underTest.create(utr)(fakeRequest.withBody(toJson(request))))
 
       status(result) shouldBe CONFLICT
-      jsonBodyOf(result) shouldBe Json.obj("code" -> "SA_ALREADY_EXISTS", "message" -> "A self-assessment record already exists for this individual")
+      jsonBodyOf(result) shouldBe Json.obj(
+        "code" -> "SA_ALREADY_EXISTS",
+        "message" -> "A self-assessment record already exists for this individual")
     }
   }
 
-  private def requestWithField(fieldName: String, fieldValue: String) = toJson(request).as[JsObject] ++ Json.obj(fieldName -> fieldValue)
+  private def requestWithField(fieldName: String, fieldValue: String) =
+    toJson(request).as[JsObject] ++ Json.obj(fieldName -> fieldValue)
 
-  private def requestWithTaxReturnField(fieldName: String, fieldValue: String) = {
+  private def requestWithTaxReturnField(fieldName: String,
+                                        fieldValue: String) = {
     Json.obj(
       "registrationDate" -> request.registrationDate,
-      "taxReturns" -> Json.arr(toJson(saReturn).as[JsObject] ++ Json.obj(fieldName -> fieldValue)))
+      "taxReturns" -> Json.arr(
+        toJson(saReturn).as[JsObject] ++ Json.obj(fieldName -> fieldValue)))
   }
 
 }

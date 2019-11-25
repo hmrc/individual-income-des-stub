@@ -17,10 +17,9 @@
 package uk.gov.hmrc.individualincomedesstub.controller
 
 import javax.inject.{Inject, Singleton}
-
 import org.joda.time.Interval
 import play.api.libs.json.Json.{obj, toJson}
-import play.api.mvc.Action
+import play.api.mvc.ControllerComponents
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.employmentIncomeResponseFormat
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentIncomeService
@@ -28,13 +27,19 @@ import uk.gov.hmrc.individualincomedesstub.service.EmploymentIncomeService
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class EmploymentIncomeController @Inject()(employmentIncomeService: EmploymentIncomeService) extends CommonController {
+class EmploymentIncomeController @Inject()(
+    employmentIncomeService: EmploymentIncomeService,
+    controllerComponents: ControllerComponents)
+    extends CommonController(controllerComponents) {
 
-  def employments(nino: Nino, interval: Interval) = Action.async { implicit request =>
-    employmentIncomeService.employments(nino, interval) map { employmentIncomeResponses =>
-      if (employmentIncomeResponses.nonEmpty) Ok(obj("employments" -> toJson(employmentIncomeResponses)))
-      else NotFound
-    } recover recovery
+  def employments(nino: Nino, interval: Interval) = Action.async {
+    implicit request =>
+      employmentIncomeService.employments(nino, interval) map {
+        employmentIncomeResponses =>
+          if (employmentIncomeResponses.nonEmpty)
+            Ok(obj("employments" -> toJson(employmentIncomeResponses)))
+          else NotFound
+      } recover recovery
   }
 
 }
