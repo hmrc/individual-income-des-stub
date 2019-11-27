@@ -16,3 +16,5 @@ addSbtPlugin("uk.gov.hmrc" % "sbt-artifactory" % "0.13.0")
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.6.23")
 
 addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.10.0-RC1")
+
+addSbtPlugin("uk.gov.hmrc" % "sbt-service-manager" % "0.4.0")

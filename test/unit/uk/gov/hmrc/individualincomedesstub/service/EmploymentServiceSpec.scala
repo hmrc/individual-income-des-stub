@@ -19,12 +19,18 @@ package unit.uk.gov.hmrc.individualincomedesstub.service
 import org.mockito.Mockito._
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.domain.{EmpRef, Nino}
-import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, EmploymentPayFrequency, HmrcPayment}
+import uk.gov.hmrc.individualincomedesstub.domain.{
+  CreateEmploymentRequest,
+  Employment,
+  EmploymentPayFrequency,
+  HmrcPayment
+}
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentService
-import uk.gov.hmrc.play.test.UnitSpec
+import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
+import scala.concurrent.Future.successful
 
-class EmploymentServiceSpec extends UnitSpec with MockitoSugar {
+class EmploymentServiceSpec extends TestSupport with MockitoSugar {
 
   trait Setup {
     val employerReference = EmpRef("123", "DI45678")
@@ -41,7 +47,8 @@ class EmploymentServiceSpec extends UnitSpec with MockitoSugar {
 
       val employment = anEmployment(employerReference, nino)
 
-      when(mockEmploymentRepository.create(employerReference, nino, request)).thenReturn(employment)
+      when(mockEmploymentRepository.create(employerReference, nino, request))
+        .thenReturn(successful(employment))
 
       val result = await(underTest.create(employerReference, nino, request))
 
@@ -49,25 +56,31 @@ class EmploymentServiceSpec extends UnitSpec with MockitoSugar {
     }
 
     "Propagate exceptions when an Employment cannot be created" in new Setup {
-      when(mockEmploymentRepository.create(employerReference, nino, request)).thenThrow(new RuntimeException("failed"))
+      when(mockEmploymentRepository.create(employerReference, nino, request))
+        .thenThrow(new RuntimeException("failed"))
 
-      intercept[RuntimeException](await(underTest.create(employerReference, nino, request)))
+      intercept[RuntimeException](
+        await(underTest.create(employerReference, nino, request)))
     }
   }
 
   private val aCreateEmploymentRequest = CreateEmploymentRequest(
     Some("2016-01-01"),
     Some("2017-01-30"),
-    Seq(HmrcPayment("2016-01-28", 1000.55, monthPayNumber = Some(10)), HmrcPayment("2016-02-28", 1200.44, monthPayNumber = Some(10))),
+    Seq(HmrcPayment("2016-01-28", 1000.55, monthPayNumber = Some(10)),
+        HmrcPayment("2016-02-28", 1200.44, monthPayNumber = Some(10))),
     None,
     None,
-    Some(EmploymentPayFrequency.CALENDAR_MONTHLY.toString))
+    Some(EmploymentPayFrequency.CALENDAR_MONTHLY.toString)
+  )
 
   private def anEmployment(empRef: EmpRef, nino: Nino) = Employment(
-    empRef, nino,
+    empRef,
+    nino,
     Some("2016-01-01"),
     Some("2017-01-30"),
-    Seq(HmrcPayment("2016-01-28", 1000.55, monthPayNumber = Some(10)), HmrcPayment("2016-02-28", 1200.44, monthPayNumber = Some(10))),
+    Seq(HmrcPayment("2016-01-28", 1000.55, monthPayNumber = Some(10)),
+        HmrcPayment("2016-02-28", 1200.44, monthPayNumber = Some(10))),
     None,
     None,
     Some(EmploymentPayFrequency.CALENDAR_MONTHLY.toString)

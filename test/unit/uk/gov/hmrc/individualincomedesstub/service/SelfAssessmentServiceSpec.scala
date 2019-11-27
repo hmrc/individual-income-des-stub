@@ -26,12 +26,12 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentService
-import uk.gov.hmrc.play.test.UnitSpec
+import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
-class SelfAssessmentServiceSpec extends UnitSpec with MockitoSugar {
+class SelfAssessmentServiceSpec extends TestSupport with MockitoSugar {
 
   val utr = SaUtr("2432552635")
   val taxReturn = SelfAssessmentTaxReturnData(
@@ -55,7 +55,8 @@ class SelfAssessmentServiceSpec extends UnitSpec with MockitoSugar {
     address = None
   )
 
-  val request = SelfAssessmentCreateRequest(registrationDate = "2015-06-06", taxReturns = Seq(taxReturn))
+  val request = SelfAssessmentCreateRequest(registrationDate = "2015-06-06",
+                                            taxReturns = Seq(taxReturn))
 
   trait Setup {
     val repository = mock[SelfAssessmentRepository]
@@ -115,30 +116,32 @@ class SelfAssessmentServiceSpec extends UnitSpec with MockitoSugar {
         pensionsAndStateBenefitsIncome = None,
         otherIncome = None
       )
-      val requestWithoutAmounts = request.copy(taxReturns = Seq(taxReturnWithoutAmounts))
+      val requestWithoutAmounts =
+        request.copy(taxReturns = Seq(taxReturnWithoutAmounts))
 
       val result = await(underTest.create(utr, requestWithoutAmounts))
 
-      result.taxReturns shouldBe Seq(SelfAssessmentTaxReturn(
-        taxYear = TaxYear("2015-16"),
-        submissionDate = LocalDate.parse("2015-01-10"),
-        employmentsIncome = 0,
-        selfEmploymentProfit = 0,
-        totalIncome = 0,
-        trustsIncome = 0,
-        foreignIncome = 0,
-        partnershipsProfit = 0,
-        ukInterestsIncome = 0,
-        foreignDividendsIncome = 0,
-        ukDividendsIncome = 0,
-        ukPropertiesProfit = 0,
-        gainsOnLifePolicies = 0,
-        sharesOptionsIncome = 0,
-        pensionsAndStateBenefitsIncome = 0,
-        otherIncome = 0,
-        businessDescription = None,
-        address = None
-      ))
+      result.taxReturns shouldBe Seq(
+        SelfAssessmentTaxReturn(
+          taxYear = TaxYear("2015-16"),
+          submissionDate = LocalDate.parse("2015-01-10"),
+          employmentsIncome = 0,
+          selfEmploymentProfit = 0,
+          totalIncome = 0,
+          trustsIncome = 0,
+          foreignIncome = 0,
+          partnershipsProfit = 0,
+          ukInterestsIncome = 0,
+          foreignDividendsIncome = 0,
+          ukDividendsIncome = 0,
+          ukPropertiesProfit = 0,
+          gainsOnLifePolicies = 0,
+          sharesOptionsIncome = 0,
+          pensionsAndStateBenefitsIncome = 0,
+          otherIncome = 0,
+          businessDescription = None,
+          address = None
+        ))
     }
 
     "propagate exceptions when a self assessment cannot be created" in new Setup {

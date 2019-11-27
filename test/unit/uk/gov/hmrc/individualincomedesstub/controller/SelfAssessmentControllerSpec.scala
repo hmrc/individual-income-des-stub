@@ -34,10 +34,9 @@ import uk.gov.hmrc.individualincomedesstub.domain.{
   _
 }
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentService
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
-import scala.concurrent.Future.failed
+import scala.concurrent.Future.{failed, successful}
 
 class SelfAssessmentControllerSpec
     extends TestSupport
@@ -47,7 +46,7 @@ class SelfAssessmentControllerSpec
   implicit lazy val materializer: Materializer = fakeApplication.materializer
   private val controllerComponents: ControllerComponents =
     fakeApplication.injector.instanceOf[ControllerComponents]
-
+  def externalServices: Seq[String] = Seq("Stub")
   val utr = SaUtr("2432552635")
   val saReturn = SelfAssessmentTaxReturnData(
     taxYear = "2014-15",
@@ -83,7 +82,7 @@ class SelfAssessmentControllerSpec
 
     "return a 201 (Created) when self assessment data is created successfully" in new Setup {
       given(selfAssessmentService.create(utr, request))
-        .willReturn(selfAssessment)
+        .willReturn(successful(selfAssessment))
 
       Logger.info(
         Json
