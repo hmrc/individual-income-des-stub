@@ -24,15 +24,19 @@ import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualincomedesstub.connector.ApiPlatformTestUserConnector
-import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, SelfAssessment, _}
+import uk.gov.hmrc.individualincomedesstub.domain.{
+  RecordNotFoundException,
+  SelfAssessment,
+  _
+}
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentIncomeService
-import uk.gov.hmrc.play.test.UnitSpec
+import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
-class SelfAssessmentIncomeServiceSpec extends UnitSpec with MockitoSugar {
+class SelfAssessmentIncomeServiceSpec extends TestSupport with MockitoSugar {
 
   val nino = Nino("AB123456A")
   val utr = SaUtr("2432552635")
@@ -43,7 +47,8 @@ class SelfAssessmentIncomeServiceSpec extends UnitSpec with MockitoSugar {
     val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
     val repository = mock[SelfAssessmentRepository]
 
-    val underTest = new SelfAssessmentIncomeService(apiPlatformTestUserConnector, repository)
+    val underTest =
+      new SelfAssessmentIncomeService(apiPlatformTestUserConnector, repository)
   }
 
   val selfAssessment = SelfAssessment(
@@ -62,7 +67,7 @@ class SelfAssessmentIncomeServiceSpec extends UnitSpec with MockitoSugar {
         ukInterestsIncome = 14.64,
         foreignDividendsIncome = 17.42,
         ukDividendsIncome = 18.54,
-        ukPropertiesProfit= 55.24,
+        ukPropertiesProfit = 55.24,
         gainsOnLifePolicies = 14.23,
         sharesOptionsIncome = 12.34,
         pensionsAndStateBenefitsIncome = 16.95,
@@ -77,72 +82,88 @@ class SelfAssessmentIncomeServiceSpec extends UnitSpec with MockitoSugar {
 
     "retrieve an individuals self assessment income for a given period" in new Setup {
 
-      given(apiPlatformTestUserConnector.getIndividualByNino(nino)).willReturn(successful(TestIndividual(Some(utr))))
-      given(repository.findByUtr(utr)).willReturn(Some(selfAssessment))
+      given(apiPlatformTestUserConnector.getIndividualByNino(nino))
+        .willReturn(successful(TestIndividual(Some(utr))))
+      given(repository.findByUtr(utr))
+        .willReturn(successful(Some(selfAssessment)))
 
       val result = await(underTest.income(nino, 2014, 2015))
 
       result shouldBe Seq(
         SelfAssessmentResponse(
           taxYear = "2015",
-          returnList = Seq(SelfAssessmentResponseReturn(
-            utr = utr,
-            caseStartDate = parse("2008-04-04"),
-            receivedDate = parse("2015-06-01"),
-            incomeFromAllEmployments = 13567.77,
-            profitFromSelfEmployment = 1233.33,
-            incomeFromSelfAssessment = 21233.33,
-            incomeFromTrust = 500.25,
-            incomeFromForeign4Sources = 200.35,
-            profitFromPartnerships = 43.23,
-            incomeFromUkInterest = 14.64,
-            incomeFromForeignDividends = 17.42,
-            incomeFromInterestNDividendsFromUKCompaniesNTrusts = 18.54,
-            incomeFromProperty = 55.24,
-            incomeFromGainsOnLifePolicies = 14.23,
-            incomeFromSharesOptions = 12.34,
-            incomeFromPensions = 16.95,
-            incomeFromOther = 134.56,
-            businessDescription = None,
-            address = SaAddress(
-              addressLine1 = None,
-              addressLine2 = None,
-              addressLine3 = None,
-              addressLine4 = None,
-              postalCode = None,
-              telephoneNumber = None,
-              baseAddressEffectiveDate = None,
-              addressTypeIndicator = None
-            )
-          ))
+          returnList = Seq(
+            SelfAssessmentResponseReturn(
+              utr = utr,
+              caseStartDate = parse("2008-04-04"),
+              receivedDate = parse("2015-06-01"),
+              incomeFromAllEmployments = 13567.77,
+              profitFromSelfEmployment = 1233.33,
+              incomeFromSelfAssessment = 21233.33,
+              incomeFromTrust = 500.25,
+              incomeFromForeign4Sources = 200.35,
+              profitFromPartnerships = 43.23,
+              incomeFromUkInterest = 14.64,
+              incomeFromForeignDividends = 17.42,
+              incomeFromInterestNDividendsFromUKCompaniesNTrusts = 18.54,
+              incomeFromProperty = 55.24,
+              incomeFromGainsOnLifePolicies = 14.23,
+              incomeFromSharesOptions = 12.34,
+              incomeFromPensions = 16.95,
+              incomeFromOther = 134.56,
+              businessDescription = None,
+              address = SaAddress(
+                addressLine1 = None,
+                addressLine2 = None,
+                addressLine3 = None,
+                addressLine4 = None,
+                postalCode = None,
+                telephoneNumber = None,
+                baseAddressEffectiveDate = None,
+                addressTypeIndicator = None
+              )
+            ))
         )
       )
     }
 
     "fail with RecordNotFoundException when there is no individual matching the nino" in new Setup {
-      given(apiPlatformTestUserConnector.getIndividualByNino(nino)).willReturn(Future.failed(new RecordNotFoundException()))
+      given(apiPlatformTestUserConnector.getIndividualByNino(nino))
+        .willReturn(Future.failed(new RecordNotFoundException()))
 
-      intercept[RecordNotFoundException]{await(underTest.income(nino, 2014, 2015))}
+      intercept[RecordNotFoundException] {
+        await(underTest.income(nino, 2014, 2015))
+      }
     }
 
     "fail with RecordNotFoundException when there is the individual does not have a UTR" in new Setup {
-      given(apiPlatformTestUserConnector.getIndividualByNino(nino)).willReturn(successful(TestIndividual(None)))
+      given(apiPlatformTestUserConnector.getIndividualByNino(nino))
+        .willReturn(successful(TestIndividual(None)))
 
-      intercept[RecordNotFoundException]{await(underTest.income(nino, 2014, 2015))}
+      intercept[RecordNotFoundException] {
+        await(underTest.income(nino, 2014, 2015))
+      }
     }
 
     "fail with RecordNotFoundException when there is no self-assessment for the individual" in new Setup {
-      given(apiPlatformTestUserConnector.getIndividualByNino(nino)).willReturn(successful(TestIndividual(Some(utr))))
-      given(repository.findByUtr(utr)).willReturn(None)
+      given(apiPlatformTestUserConnector.getIndividualByNino(nino))
+        .willReturn(successful(TestIndividual(Some(utr))))
+      given(repository.findByUtr(utr)).willReturn(successful(None))
 
-      intercept[RecordNotFoundException]{await(underTest.income(nino, 2014, 2015))}
+      intercept[RecordNotFoundException] {
+        await(underTest.income(nino, 2014, 2015))
+      }
     }
 
     "fail with RecordNotFoundException when there is no self-assessment returns for the individual for the given period" in new Setup {
-      given(apiPlatformTestUserConnector.getIndividualByNino(nino)).willReturn(successful(TestIndividual(Some(utr))))
-      given(repository.findByUtr(utr)).willReturn(Some(selfAssessment))
+      given(apiPlatformTestUserConnector.getIndividualByNino(nino))
+        .willReturn(successful(TestIndividual(Some(utr))))
+      given(repository.findByUtr(utr))
+        .willReturn(successful(Some(selfAssessment)))
 
-      intercept[RecordNotFoundException]{await(underTest.income(nino, 2013, 2014))}
+      intercept[RecordNotFoundException] {
+        await(underTest.income(nino, 2013, 2014))
+      }
     }
 
     "propagate exceptions when sa income cannot be retrieved" in new Setup {

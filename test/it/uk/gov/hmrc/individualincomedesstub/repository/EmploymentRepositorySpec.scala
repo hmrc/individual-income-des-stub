@@ -18,21 +18,29 @@ package it.uk.gov.hmrc.individualincomedesstub.repository
 
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
-import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.domain.{EmpRef, Nino}
-import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, EmploymentPayFrequency, HmrcPayment}
+import uk.gov.hmrc.individualincomedesstub.domain.{
+  CreateEmploymentRequest,
+  Employment,
+  EmploymentPayFrequency,
+  HmrcPayment
+}
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class EmploymentRepositorySpec extends TestSupport with MongoSpecSupport with BeforeAndAfterEach {
+class EmploymentRepositorySpec
+    extends TestSupport
+    with MongoSpecSupport
+    with BeforeAndAfterEach {
 
-  override lazy val fakeApplication = buildFakeApplication(Configuration("mongodb.uri" -> mongoUri))
+  override lazy val fakeApplication = buildFakeApplication(
+    Configuration("mongodb.uri" -> mongoUri))
 
-  val employmentRepository = fakeApplication.injector.instanceOf[EmploymentRepository]
+  val employmentRepository =
+    fakeApplication.injector.instanceOf[EmploymentRepository]
   val employerReference = EmpRef("123", "DI45678")
   val nino = Nino("NA000799C")
 
@@ -47,13 +55,19 @@ class EmploymentRepositorySpec extends TestSupport with MongoSpecSupport with Be
 
   "create" should {
     "create an employment" in {
-      val result = await(employmentRepository.create(employerReference, nino, aCreateEmploymentRequest))
+      val result = await(
+        employmentRepository
+          .create(employerReference, nino, aCreateEmploymentRequest))
       result shouldBe anEmployment(employerReference, nino)
     }
 
     "allow multiple employments for the same employer reference and nino" in {
-      await(employmentRepository.create(employerReference, nino, aCreateEmploymentRequest))
-      await(employmentRepository.create(employerReference, nino, aCreateEmploymentRequest))
+      await(
+        employmentRepository
+          .create(employerReference, nino, aCreateEmploymentRequest))
+      await(
+        employmentRepository
+          .create(employerReference, nino, aCreateEmploymentRequest))
       val result = await(employmentRepository.findAll())
       result.size shouldBe 2
     }
@@ -64,19 +78,31 @@ class EmploymentRepositorySpec extends TestSupport with MongoSpecSupport with Be
     "return all records for a given paye reference and nino" in {
       val employment = anEmployment(employerReference, nino)
 
-      await(employmentRepository.create(employerReference, nino, aCreateEmploymentRequest))
-      await(employmentRepository.create(EmpRef("321", "EI45678"), nino, aCreateEmploymentRequest))
-      await(employmentRepository.create(employerReference, Nino("AA123456C"), aCreateEmploymentRequest))
+      await(
+        employmentRepository
+          .create(employerReference, nino, aCreateEmploymentRequest))
+      await(
+        employmentRepository
+          .create(EmpRef("321", "EI45678"), nino, aCreateEmploymentRequest))
+      await(
+        employmentRepository.create(employerReference,
+                                    Nino("AA123456C"),
+                                    aCreateEmploymentRequest))
 
-      val result = await(employmentRepository.findByReferenceAndNino(employerReference, nino))
+      val result = await(
+        employmentRepository.findByReferenceAndNino(employerReference, nino))
 
       result shouldBe Seq(employment)
     }
 
     "return an empty list if no records exist for a given pay reference and nino" in {
-      await(employmentRepository.create(employerReference, nino, aCreateEmploymentRequest))
+      await(
+        employmentRepository
+          .create(employerReference, nino, aCreateEmploymentRequest))
 
-      val result = await(employmentRepository.findByReferenceAndNino(EmpRef("321", "EI45678"), nino))
+      val result = await(
+        employmentRepository.findByReferenceAndNino(EmpRef("321", "EI45678"),
+                                                    nino))
 
       result.isEmpty shouldBe true
     }
@@ -89,7 +115,9 @@ class EmploymentRepositorySpec extends TestSupport with MongoSpecSupport with Be
     }
 
     "return a non-empty sequence when corresponding employments exist" in {
-      await(employmentRepository.create(employerReference, nino, aCreateEmploymentRequest))
+      await(
+        employmentRepository
+          .create(employerReference, nino, aCreateEmploymentRequest))
       val employments = await(employmentRepository.findBy(nino))
       employments.nonEmpty shouldBe true
       employments.size shouldBe 1
@@ -104,10 +132,12 @@ class EmploymentRepositorySpec extends TestSupport with MongoSpecSupport with Be
     Seq(HmrcPayment("2016-01-28", 1000.55), HmrcPayment("2016-02-28", 1200.44)),
     None,
     None,
-    Some(EmploymentPayFrequency.CALENDAR_MONTHLY.toString))
+    Some(EmploymentPayFrequency.CALENDAR_MONTHLY.toString)
+  )
 
   private def anEmployment(empRef: EmpRef, nino: Nino) = Employment(
-    empRef, nino,
+    empRef,
+    nino,
     Some("2016-01-01"),
     Some("2017-01-30"),
     Seq(HmrcPayment("2016-01-28", 1000.55), HmrcPayment("2016-02-28", 1200.44)),

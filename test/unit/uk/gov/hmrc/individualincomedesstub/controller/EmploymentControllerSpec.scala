@@ -35,6 +35,8 @@ import uk.gov.hmrc.individualincomedesstub.domain.{
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
+import scala.concurrent.Future.successful
+
 class EmploymentControllerSpec
     extends TestSupport
     with MockitoSugar
@@ -43,6 +45,7 @@ class EmploymentControllerSpec
   implicit lazy val materializer = fakeApplication.materializer
   val controllerComponents: ControllerComponents =
     fakeApplication.injector.instanceOf[ControllerComponents]
+  def externalServices: Seq[String] = Seq("Stub")
 
   trait Setup {
     val fakeRequest = FakeRequest()
@@ -61,7 +64,7 @@ class EmploymentControllerSpec
       val employment = anEmployment(employerPayeReference, nino)
 
       when(mockEmploymentService.create(employerPayeReference, nino, request))
-        .thenReturn(employment)
+        .thenReturn(successful(employment))
 
       val result = await(
         underTest.create(employerPayeReference, nino)(
@@ -77,7 +80,7 @@ class EmploymentControllerSpec
         anEmployment(employerPayeReference, nino, startDate = None)
 
       when(mockEmploymentService.create(employerPayeReference, nino, request))
-        .thenReturn(employment)
+        .thenReturn(successful(employment))
 
       val result = await(
         underTest.create(employerPayeReference, nino)(
@@ -92,7 +95,7 @@ class EmploymentControllerSpec
       val employment = anEmployment(employerPayeReference, nino, endDate = None)
 
       when(mockEmploymentService.create(employerPayeReference, nino, request))
-        .thenReturn(employment)
+        .thenReturn(successful(employment))
 
       val result = await(
         underTest.create(employerPayeReference, nino)(

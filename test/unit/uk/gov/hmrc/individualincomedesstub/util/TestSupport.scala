@@ -20,7 +20,6 @@ import com.typesafe.config.ConfigFactory
 import org.scalatest.BeforeAndAfterAll
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.{Application, Configuration, Play}
-import uk.gov.hmrc.play.test.UnitSpec
 
 trait TestSupport extends UnitSpec with BeforeAndAfterAll {
 
@@ -28,13 +27,15 @@ trait TestSupport extends UnitSpec with BeforeAndAfterAll {
 
   def buildFakeApplication(extraConfig: Configuration): Application = {
     new GuiceApplicationBuilder()
-      .configure(Configuration(
-        ConfigFactory.parseString(
-          """
+      .configure(
+        Configuration(
+          ConfigFactory.parseString(
+            """
             | metrics.jvm = false
             |""".stripMargin
-        )
-      ) ++ extraConfig ).build()
+          )
+        ) ++ extraConfig)
+      .build()
   }
 
   lazy val fakeApplication: Application = buildFakeApplication(additionalConfig)

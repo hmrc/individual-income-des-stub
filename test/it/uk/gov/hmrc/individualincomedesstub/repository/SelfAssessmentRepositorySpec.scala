@@ -17,48 +17,53 @@
 package it.uk.gov.hmrc.individualincomedesstub.repository
 
 import org.joda.time.LocalDate
-import org.joda.time.LocalDate.parse
 import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
-import play.api.inject.guice.GuiceApplicationBuilder
 import reactivemongo.api.indexes.IndexType.Ascending
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
 import uk.gov.hmrc.mongo.MongoSpecSupport
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class SelfAssessmentRepositorySpec  extends TestSupport with MongoSpecSupport with BeforeAndAfterEach {
+class SelfAssessmentRepositorySpec
+    extends TestSupport
+    with MongoSpecSupport
+    with BeforeAndAfterEach {
 
-  override lazy val fakeApplication = buildFakeApplication(Configuration("mongodb.uri" -> mongoUri))
+  override lazy val fakeApplication = buildFakeApplication(
+    Configuration("mongodb.uri" -> mongoUri))
 
   val repository = fakeApplication.injector.instanceOf[SelfAssessmentRepository]
 
   val utr = SaUtr("2432552635")
-  val selfAssessment = SelfAssessment(utr, LocalDate.parse("2014-01-01"), Seq(
-    SelfAssessmentTaxReturn(
-      taxYear = TaxYear("2014-15"),
-      submissionDate = LocalDate.parse("2015-01-01"),
-      employmentsIncome = 13567.77,
-      selfEmploymentProfit = 1233.33,
-      totalIncome = 22345,
-      trustsIncome = 500.25,
-      foreignIncome = 200.35,
-      partnershipsProfit = 12.45,
-      ukInterestsIncome = 21.23,
-      foreignDividendsIncome = 52.34,
-      ukDividendsIncome = 6.34,
-      ukPropertiesProfit = 55.24,
-      gainsOnLifePolicies = 4.34,
-      sharesOptionsIncome = 5.43,
-      pensionsAndStateBenefitsIncome = 5.32,
-      otherIncome = 134.56,
-      businessDescription = None,
-      address = None
-    )))
+  val selfAssessment = SelfAssessment(
+    utr,
+    LocalDate.parse("2014-01-01"),
+    Seq(
+      SelfAssessmentTaxReturn(
+        taxYear = TaxYear("2014-15"),
+        submissionDate = LocalDate.parse("2015-01-01"),
+        employmentsIncome = 13567.77,
+        selfEmploymentProfit = 1233.33,
+        totalIncome = 22345,
+        trustsIncome = 500.25,
+        foreignIncome = 200.35,
+        partnershipsProfit = 12.45,
+        ukInterestsIncome = 21.23,
+        foreignDividendsIncome = 52.34,
+        ukDividendsIncome = 6.34,
+        ukPropertiesProfit = 55.24,
+        gainsOnLifePolicies = 4.34,
+        sharesOptionsIncome = 5.43,
+        pensionsAndStateBenefitsIncome = 5.32,
+        otherIncome = 134.56,
+        businessDescription = None,
+        address = None
+      ))
+  )
 
   override def beforeEach() {
     await(repository.drop)
@@ -73,9 +78,9 @@ class SelfAssessmentRepositorySpec  extends TestSupport with MongoSpecSupport wi
     "have a unique index on saUtr" in {
       await(repository.collection.indexesManager.list()).find({ i =>
         i.name.contains("saUtrIndex") &&
-          i.key == Seq("saUtr" -> Ascending) &&
-          i.background &&
-          i.unique
+        i.key == Seq("saUtr" -> Ascending) &&
+        i.background &&
+        i.unique
       }) should not be None
     }
   }
@@ -90,7 +95,8 @@ class SelfAssessmentRepositorySpec  extends TestSupport with MongoSpecSupport wi
     "fail to create a duplicate self assessment" in {
       await(repository.create(selfAssessment))
 
-      intercept[DuplicateSelfAssessmentException](await(repository.create(selfAssessment)))
+      intercept[DuplicateSelfAssessmentException](
+        await(repository.create(selfAssessment)))
     }
   }
 
