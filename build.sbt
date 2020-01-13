@@ -22,14 +22,15 @@ lazy val externalServices = List(ExternalService("AUTH"), ExternalService("INDIV
 val compile = Seq(
   ws,
   hmrc %% "bootstrap-play-26" % "1.3.0",
+  hmrc %% "auth-client" % "2.32.1-play-26",
   hmrc %% "domain" % "5.6.0-play-26",
   hmrc %% "play-hmrc-api" % "3.6.0-play-26",
-  hmrc %% "simple-reactivemongo" % "7.20.0-play-26",
+  hmrc %% "simple-reactivemongo" % "7.22.0-play-26",
   "com.typesafe.play" %% "play-json-joda" % "2.6.10"
 )
 
 def test(scope: String = "test,it") = Seq(
-  hmrc %% "reactivemongo-test" % "4.15.0-play-26" % scope,
+  hmrc %% "reactivemongo-test" % "4.16.0-play-26" % scope,
   hmrc %% "service-integration-test" % "0.9.0-play-26" % scope,
   "org.scalatest" %% "scalatest" % "3.0.1" % scope,
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.0" %  scope,
