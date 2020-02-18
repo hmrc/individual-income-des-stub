@@ -19,26 +19,41 @@ def componentFilter(name: String): Boolean = name startsWith "component"
 lazy val ComponentTest = config("component") extend Test
 lazy val externalServices = List(ExternalService("AUTH"), ExternalService("INDIVIDUALS_MATCHING_API"), ExternalService("DES"))
 
+val akkaVersion     = "2.5.23"
+
+val akkaHttpVersion = "10.0.15"
+
+
+dependencyOverrides += "com.typesafe.akka" %% "akka-stream"    % akkaVersion
+
+dependencyOverrides += "com.typesafe.akka" %% "akka-protobuf"  % akkaVersion
+
+dependencyOverrides += "com.typesafe.akka" %% "akka-slf4j"     % akkaVersion
+
+dependencyOverrides += "com.typesafe.akka" %% "akka-actor"     % akkaVersion
+
+dependencyOverrides += "com.typesafe.akka" %% "akka-http-core" % akkaHttpVersion
+
 val compile = Seq(
   ws,
   hmrc %% "bootstrap-play-26" % "1.3.0",
-  hmrc %% "auth-client" % "2.32.1-play-26",
+  hmrc %% "auth-client" % "2.33.0-play-26",
   hmrc %% "domain" % "5.6.0-play-26",
-  hmrc %% "play-hmrc-api" % "3.6.0-play-26",
-  hmrc %% "simple-reactivemongo" % "7.22.0-play-26",
-  "com.typesafe.play" %% "play-json-joda" % "2.6.10"
+  hmrc %% "play-hmrc-api" % "4.1.0-play-26",
+  hmrc %% "simple-reactivemongo" % "7.23.0-play-26",
+  "com.typesafe.play" %% "play-json-joda" % "2.6.14"
 )
 
 def test(scope: String = "test,it") = Seq(
   hmrc %% "reactivemongo-test" % "4.16.0-play-26" % scope,
   hmrc %% "service-integration-test" % "0.9.0-play-26" % scope,
-  "org.scalatest" %% "scalatest" % "3.0.1" % scope,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.0" %  scope,
+  "org.scalatest" %% "scalatest" % "3.0.8" % scope,
+  "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" %  scope,
   "org.pegdown" % "pegdown" % "1.6.0" % scope,
   "org.mockito" % "mockito-core" % "1.10.19" % scope,
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-  "org.scalaj" %% "scalaj-http" % "1.1.6" % scope,
-  "com.github.tomakehurst" % "wiremock-jre8" % "2.21.0" % scope
+  "org.scalaj" %% "scalaj-http" % "2.4.2" % scope,
+  "com.github.tomakehurst" % "wiremock-jre8" % "2.26.0" % scope
 )
 
 lazy val microservice = Project(appName, file("."))
@@ -59,8 +74,8 @@ lazy val microservice = Project(appName, file("."))
   .settings(itDependenciesList := externalServices)
   .settings(
     Keys.fork in IntegrationTest := false,
-    unmanagedSourceDirectories in IntegrationTest <<= (baseDirectory in IntegrationTest)(base => Seq(base / "test")),
-    unmanagedResourceDirectories in IntegrationTest <<= (baseDirectory in IntegrationTest)(base => Seq(base / "test/resources")),
+    unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest)(base => Seq(base / "test")).value,
+    unmanagedResourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest)(base => Seq(base / "test/resources")).value,
     testOptions in IntegrationTest := Seq(Tests.Filter(intTestFilter)),
     addTestReportOption(IntegrationTest, "int-test-reports"),
     testGrouping in IntegrationTest := oneForkedJvmPerTest((definedTests in IntegrationTest).value),
@@ -69,18 +84,15 @@ lazy val microservice = Project(appName, file("."))
   .settings(inConfig(ComponentTest)(Defaults.testSettings): _*)
   .settings(
     testOptions in ComponentTest := Seq(Tests.Filter(componentFilter)),
-    unmanagedSourceDirectories   in ComponentTest <<= (baseDirectory in ComponentTest)(base => Seq(base / "test")),
+    unmanagedSourceDirectories   in ComponentTest := (baseDirectory in ComponentTest)(base => Seq(base / "test")).value,
     testGrouping in ComponentTest := oneForkedJvmPerTest((definedTests in ComponentTest).value),
     parallelExecution in ComponentTest := false
   )
-  .settings(resolvers ++= Seq(
-    Resolver.bintrayRepo("hmrc", "releases"),
-    Resolver.jcenterRepo
-  ))
   .settings(PlayKeys.playDefaultPort := 9631)
   .settings(majorVersion := 0)
 
-def oneForkedJvmPerTest(tests: Seq[TestDefinition]) =
-  tests map {
-    test => Group(test.name, Seq(test), SubProcess(ForkOptions(runJVMOptions = Seq(s"-Dtest.name=${test.name}"))))
+def oneForkedJvmPerTest(tests: Seq[TestDefinition]) = {
+  tests.map { test =>
+    new Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
   }
+}
