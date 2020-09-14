@@ -18,8 +18,8 @@ package unit.uk.gov.hmrc.individualincomedesstub.controller
 
 import org.joda.time.LocalDate.parse
 import org.joda.time.{Interval, LocalDate}
-import org.mockito.Matchers
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Json.toJson
@@ -61,7 +61,7 @@ class EmploymentIncomeControllerSpec
     def mockEmploymentIncomeService(
         eventualEmploymentResponses: Future[Seq[EmploymentIncomeResponse]]) =
       when(
-        employmentIncomeService.employments(Matchers.eq(nino),
+        employmentIncomeService.employments(ArgumentMatchers.eq(nino),
                                             any(classOf[Interval]))(
           any[HeaderCarrier])).thenReturn(eventualEmploymentResponses)
 
