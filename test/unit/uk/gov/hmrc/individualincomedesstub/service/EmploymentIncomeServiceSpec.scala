@@ -17,7 +17,7 @@
 package unit.uk.gov.hmrc.individualincomedesstub.service
 
 import org.joda.time.LocalDate.parse
-import org.mockito.Matchers._
+import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito.{reset, _}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.prop.TableDrivenPropertyChecks
