@@ -27,10 +27,10 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 @Singleton
 class DocumentationController @Inject()(httpErrorHandler: HttpErrorHandler, configuration: Configuration,cc: ControllerComponents, assets: Assets)  extends BackendController(cc) {
 
-  private lazy val whitelistedApplicationIds = configuration.getStringSeq("api.access.version-1.0.whitelistedApplicationIds").getOrElse(Seq.empty)
+  private lazy val allowListedApplicationIds = configuration.getStringSeq("api.access.version-1.0.allowListedApplicationIds").getOrElse(Seq.empty)
 
    def definition(): Action[AnyContent] = Action {
-    Ok(txt.definition(whitelistedApplicationIds)).withHeaders(CONTENT_TYPE -> JSON)
+    Ok(txt.definition(allowListedApplicationIds)).withHeaders(CONTENT_TYPE -> JSON)
   }
   def documentation(
                      version: String,
