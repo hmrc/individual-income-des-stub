@@ -17,6 +17,7 @@
 package uk.gov.hmrc.individualincomedesstub.controller
 
 import controllers.Assets
+
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.http.HttpErrorHandler
@@ -25,9 +26,10 @@ import uk.gov.hmrc.individualincomedesstub.views._
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 @Singleton
-class DocumentationController @Inject()(httpErrorHandler: HttpErrorHandler, configuration: Configuration,cc: ControllerComponents, assets: Assets)  extends BackendController(cc) {
+class DocumentationController @Inject()(httpErrorHandler: HttpErrorHandler, configuration: Configuration, cc: ControllerComponents, assets: Assets) extends BackendController(cc) {
 
-  private lazy val whitelistedApplicationIds = configuration.getStringSeq("api.access.version-1.0.whitelistedApplicationIds").getOrElse(Seq.empty)
+  private lazy val whitelistedApplicationIds: Seq[String] =
+    configuration.underlying.getStringList("api.access.version-1.0.whitelistedApplicationIds").toArray(Array[String]())
 
    def definition(): Action[AnyContent] = Action {
     Ok(txt.definition(whitelistedApplicationIds)).withHeaders(CONTENT_TYPE -> JSON)
