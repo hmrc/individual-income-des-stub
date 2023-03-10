@@ -65,29 +65,29 @@ lazy val microservice = Project(appName, file("."))
   .settings(defaultSettings(): _*)
   .settings(
     libraryDependencies ++= appDependencies,
-    testOptions in Test := Seq(Tests.Filter(unitFilter)),
+    Test / testOptions := Seq(Tests.Filter(unitFilter)),
     retrieveManaged := true,
-    evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
+    update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
       routesGenerator := InjectedRoutesGenerator  )
-  .settings(unmanagedResourceDirectories in Compile += baseDirectory.value / "resources")
+  .settings(Compile / unmanagedResourceDirectories += baseDirectory.value / "resources")
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(itDependenciesList := externalServices)
   .settings(
-    Keys.fork in IntegrationTest := false,
-    unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest)(base => Seq(base / "test")).value,
-    unmanagedResourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest)(base => Seq(base / "test/resources")).value,
-    testOptions in IntegrationTest := Seq(Tests.Filter(intTestFilter)),
+    IntegrationTest / Keys.fork := false,
+    IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory)(base => Seq(base / "test")).value,
+    IntegrationTest / unmanagedResourceDirectories := (IntegrationTest / baseDirectory)(base => Seq(base / "test/resources")).value,
+    IntegrationTest / testOptions := Seq(Tests.Filter(intTestFilter)),
     addTestReportOption(IntegrationTest, "int-test-reports"),
-    testGrouping in IntegrationTest := oneForkedJvmPerTest((definedTests in IntegrationTest).value),
-    parallelExecution in IntegrationTest := false)
+    IntegrationTest / testGrouping := oneForkedJvmPerTest((IntegrationTest / definedTests).value),
+    IntegrationTest / parallelExecution := false)
   .configs(ComponentTest)
   .settings(inConfig(ComponentTest)(Defaults.testSettings): _*)
   .settings(
-    testOptions in ComponentTest := Seq(Tests.Filter(componentFilter)),
-    unmanagedSourceDirectories   in ComponentTest := (baseDirectory in ComponentTest)(base => Seq(base / "test")).value,
-    testGrouping in ComponentTest := oneForkedJvmPerTest((definedTests in ComponentTest).value),
-    parallelExecution in ComponentTest := false
+    ComponentTest / testOptions := Seq(Tests.Filter(componentFilter)),
+    ComponentTest / unmanagedSourceDirectories := (ComponentTest / baseDirectory)(base => Seq(base / "test")).value,
+    ComponentTest / testGrouping := oneForkedJvmPerTest((ComponentTest / definedTests).value),
+    ComponentTest / parallelExecution := false
   )
   .settings(PlayKeys.playDefaultPort := 9631)
   .settings(majorVersion := 0)
