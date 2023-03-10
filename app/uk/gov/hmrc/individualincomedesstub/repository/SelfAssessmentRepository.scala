@@ -16,33 +16,42 @@
 
 package uk.gov.hmrc.individualincomedesstub.repository
 
-import javax.inject.{Inject, Singleton}
+import com.mongodb.DuplicateKeyException
+import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
+import org.mongodb.scala.model.Filters._
+import org.mongodb.scala.result.InsertOneResult
 
-import play.api.libs.json.Json.obj
-import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.Index
-import reactivemongo.api.indexes.IndexType.Ascending
-import reactivemongo.bson.BSONObjectID
-import reactivemongo.play.json._
+import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.domain._
-import uk.gov.hmrc.mongo.ReactiveRepository
+import uk.gov.hmrc.mongo.MongoComponent
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
-class SelfAssessmentRepository @Inject()(mongoConnectionProvider: MongoConnectionProvider)
-  extends ReactiveRepository[SelfAssessment, BSONObjectID]("selfAssessment", mongoConnectionProvider.mongoDatabase, JsonFormatters.selfAssessmentFormat) {
+class SelfAssessmentRepository @Inject()(mongo: MongoComponent)
+  extends PlayMongoRepository[SelfAssessment](
+    mongoComponent = mongo,
+    collectionName = "selfAssessment",
+    domainFormat = JsonFormatters.selfAssessmentFormat,
+    indexes = Seq(
+      IndexModel(
+        Indexes.ascending("saUtr"),
+        IndexOptions().name("saUtrIndex").unique(true).background(true)
+      )
+    ),
+  ) {
 
-  override lazy val indexes = Seq(
-    Index(key = Seq(("saUtr", Ascending)), name = Some("saUtrIndex"), unique = true, background = true)
-  )
-
-  def create(selfAssessment: SelfAssessment) = {
-    insert(selfAssessment) map (_ => selfAssessment) recover {
-      case WriteResult.Code(11000) => throw new DuplicateSelfAssessmentException
+  def create(selfAssessment: SelfAssessment): Future[SelfAssessment] =
+    collection.insertOne(selfAssessment).recover {
+      case _: DuplicateKeyException => throw new DuplicateSelfAssessmentException
     }
-  }
+    .head
+    .map(_ => selfAssessment)
 
-  def findByUtr(saUtr: SaUtr) = collection.find(obj("saUtr" -> saUtr.value)).one[SelfAssessment]
+  def findByUtr(saUtr: SaUtr): Future[Option[SelfAssessment]] =
+    collection.find(equal("saUtr", saUtr.value)).headOption()
+
 }
