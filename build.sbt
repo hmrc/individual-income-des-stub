@@ -53,6 +53,8 @@ def test(scope: String = "test,it") = Seq(
   "com.github.tomakehurst" % "wiremock-jre8" % "2.27.2" % scope
 )
 
+Global / onChangedBuildSource := ReloadOnSourceChanges
+
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(Seq(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin) ++ plugins: _*)
   .settings(playSettings : _*)
