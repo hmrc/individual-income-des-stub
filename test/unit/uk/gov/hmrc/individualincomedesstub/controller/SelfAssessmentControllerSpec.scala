@@ -20,7 +20,6 @@ import akka.stream.Materializer
 import org.mockito.BDDMockito.given
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mockito.MockitoSugar
-import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.Json.toJson
 import play.api.libs.json.{JsObject, Json}
@@ -83,11 +82,6 @@ class SelfAssessmentControllerSpec
     "return a 201 (Created) when self assessment data is created successfully" in new Setup {
       given(selfAssessmentService.create(utr, request))
         .willReturn(successful(selfAssessment))
-
-      Logger.info(
-        Json
-          .fromJson[SelfAssessmentCreateRequest](Json.toJson(request))
-          .toString)
 
       val result =
         await(underTest.create(utr)(fakeRequest.withBody(toJson(request))))
