@@ -36,7 +36,7 @@ class EmploymentRepository @Inject()(mongoComponent: MongoComponent)
     domainFormat = JsonFormatters.employmentFormat,
     indexes = Seq(
       IndexModel(
-        Indexes.ascending("employerPayeReference", "nino"),
+        Indexes.ascending("nino", "employerPayeReference"),
         IndexOptions().name("ninoAndEmployerPayeReference").unique(false).background(true)
       )
     ),
