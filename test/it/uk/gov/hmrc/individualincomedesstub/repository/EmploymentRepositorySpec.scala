@@ -16,28 +16,19 @@
 
 package it.uk.gov.hmrc.individualincomedesstub.repository
 
+import org.mongodb.scala.model.Filters
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.matchers.should.Matchers
 import play.api.Configuration
 import uk.gov.hmrc.domain.{EmpRef, Nino}
-import uk.gov.hmrc.individualincomedesstub.domain.{
-  CreateEmploymentRequest,
-  Employment,
-  EmploymentPayFrequency,
-  HmrcPayment
-}
+import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, EmploymentPayFrequency, HmrcPayment}
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
-import uk.gov.hmrc.mongo.MongoSpecSupport
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
-class EmploymentRepositorySpec
-    extends TestSupport
-    with MongoSpecSupport
-    with BeforeAndAfterEach {
+class EmploymentRepositorySpec extends TestSupport with Matchers with BeforeAndAfterEach {
 
   override lazy val fakeApplication = buildFakeApplication(
-    Configuration("mongodb.uri" -> mongoUri))
+    Configuration("mongodb.uri" -> "mongodb://localhost:27017/individual-income-des-stub"))
 
   val employmentRepository =
     fakeApplication.injector.instanceOf[EmploymentRepository]
@@ -45,12 +36,12 @@ class EmploymentRepositorySpec
   val nino = Nino("NA000799C")
 
   override def beforeEach() {
-    await(employmentRepository.drop)
+    await(employmentRepository.collection.drop().toFuture())
     await(employmentRepository.ensureIndexes)
   }
 
   override def afterEach() {
-    await(employmentRepository.drop)
+    await(employmentRepository.collection.drop().toFuture())
   }
 
   "create" should {
@@ -68,7 +59,7 @@ class EmploymentRepositorySpec
       await(
         employmentRepository
           .create(employerReference, nino, aCreateEmploymentRequest))
-      val result = await(employmentRepository.findAll())
+      val result = await(employmentRepository.collection.find(Filters.empty()).toFuture())
       result.size shouldBe 2
     }
   }

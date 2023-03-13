@@ -41,9 +41,9 @@ class EmploymentIncomeSpec extends BaseSpec {
     Some(empRef),
     TestOrganisationDetails("Disney Inc", TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
 
-  feature("Employment Income returns a DES Stubbed response") {
+  Feature("Employment Income returns a DES Stubbed response") {
 
-    scenario("Fetch Employment Income when there are payments and employer details") {
+    Scenario("Fetch Employment Income when there are payments and employer details") {
 
       Given("An employer can be found for a given empRef")
       ApiPlatformTestUserStub.getByEmpRefReturnsTestOrganisation(empRef, employer)
@@ -88,7 +88,7 @@ class EmploymentIncomeSpec extends BaseSpec {
       )
     }
 
-    scenario("Fetch Employment Income when there are payments but no employer details") {
+    Scenario("Fetch Employment Income when there are payments but no employer details") {
 
       Given("An employer cannot be found for a given empRef")
       ApiPlatformTestUserStub.getByEmpRefReturnsNoTestOrganisation(empRef)

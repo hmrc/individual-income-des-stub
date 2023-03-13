@@ -18,8 +18,8 @@ package unit.uk.gov.hmrc.individualincomedesstub.controller
 
 import akka.stream.Materializer
 import org.mockito.BDDMockito.given
+import org.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
 import play.api.http.Status._
 import play.api.libs.json.Json.toJson
 import play.api.libs.json.{JsObject, Json}
@@ -28,10 +28,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.controller.SelfAssessmentController
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
-import uk.gov.hmrc.individualincomedesstub.domain.{
-  DuplicateSelfAssessmentException,
-  _
-}
+import uk.gov.hmrc.individualincomedesstub.domain.{DuplicateSelfAssessmentException, _}
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 

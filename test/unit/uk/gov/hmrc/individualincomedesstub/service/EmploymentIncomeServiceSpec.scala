@@ -18,10 +18,12 @@ package unit.uk.gov.hmrc.individualincomedesstub.service
 
 import org.joda.time.LocalDate.parse
 import org.mockito.ArgumentMatchers._
-import org.mockito.Mockito.{reset, _}
-import org.scalatest.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpecLike}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualincomedesstub.connector.ApiPlatformTestUserConnector
@@ -152,7 +154,7 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
   }
 }
 
-trait WordSpecWithFutures extends WordSpecLike {
+trait WordSpecWithFutures extends AnyWordSpecLike {
 
   import scala.concurrent.Await.result
   import scala.concurrent.Future

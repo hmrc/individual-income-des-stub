@@ -19,8 +19,8 @@ package unit.uk.gov.hmrc.individualincomedesstub.controller
 import org.joda.time.LocalDate.parse
 import org.mockito.BDDMockito.given
 import org.mockito.ArgumentMatchers.{any, eq => refEq}
+import org.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
 import play.api.http.Status._
 import play.api.libs.json.Json.toJson
 import play.api.mvc.ControllerComponents
@@ -29,12 +29,7 @@ import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualincomedesstub.controller.SelfAssessmentIncomeController
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.selfAssessmentResponseFormat
-import uk.gov.hmrc.individualincomedesstub.domain.{
-  RecordNotFoundException,
-  SaAddress,
-  SelfAssessmentResponse,
-  SelfAssessmentResponseReturn
-}
+import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, SaAddress, SelfAssessmentResponse, SelfAssessmentResponseReturn}
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentIncomeService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 

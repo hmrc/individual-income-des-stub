@@ -21,7 +21,7 @@ import org.scalatest.BeforeAndAfterAll
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.{Application, Configuration, Play}
 
-trait TestSupport extends UnitSpec with BeforeAndAfterAll {
+class TestSupport extends UnitSpec with BeforeAndAfterAll {
 
   lazy val additionalConfig = Configuration()
 

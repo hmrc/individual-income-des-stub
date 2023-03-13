@@ -19,10 +19,12 @@ package unit.uk.gov.hmrc.individualincomedesstub.util
 import org.joda.time.LocalDateTime.parse
 import org.joda.time.{Interval, LocalDateTime}
 import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatest.{EitherValues, FlatSpec, Matchers}
+import org.scalatest.EitherValues
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 import uk.gov.hmrc.individualincomedesstub.util.{Dates, IntervalQueryStringBinder}
 
-class IntervalQueryStringBinderSpec extends FlatSpec with Matchers with EitherValues {
+class IntervalQueryStringBinderSpec extends AnyFlatSpec with Matchers with EitherValues {
 
   private val intervalQueryStringBinder = new IntervalQueryStringBinder
 

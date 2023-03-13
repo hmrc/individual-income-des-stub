@@ -54,7 +54,7 @@ class ApiPlatformTestUserConnectorSpec
     implicit val hc = HeaderCarrier()
 
     val underTest =
-      new ApiPlatformTestUserConnector(config, http, serviceConfig) {
+      new ApiPlatformTestUserConnector(http, serviceConfig) {
         override val serviceUrl = s"http://$stubHost:$stubPort"
       }
   }

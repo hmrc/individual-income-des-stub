@@ -19,16 +19,11 @@ package unit.uk.gov.hmrc.individualincomedesstub.service
 import org.joda.time.LocalDate
 import org.joda.time.LocalDate.parse
 import org.mockito.BDDMockito.given
-import org.mockito.Mockito.when
-import org.scalatest.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualincomedesstub.connector.ApiPlatformTestUserConnector
-import uk.gov.hmrc.individualincomedesstub.domain.{
-  RecordNotFoundException,
-  SelfAssessment,
-  _
-}
+import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, SelfAssessment, _}
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentIncomeService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport

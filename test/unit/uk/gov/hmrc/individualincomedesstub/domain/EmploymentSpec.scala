@@ -18,15 +18,16 @@ package unit.uk.gov.hmrc.individualincomedesstub.domain
 
 import org.joda.time.LocalDateTime.parse
 import org.joda.time.{Interval, LocalDate, LocalDateTime}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatest.{FreeSpec, Matchers}
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.individualincomedesstub.domain.DesEmploymentPayFrequency._
 import uk.gov.hmrc.individualincomedesstub.domain.EmploymentPayFrequency._
 
 
-class EmploymentSpec extends FreeSpec with Matchers {
+class EmploymentSpec extends AnyFreeSpec with Matchers {
 
   "A payment should determine whether it was paid within a given time interval" in new TableDrivenPropertyChecks {
     val payment = HmrcPayment("2017-01-10", 123.45)
