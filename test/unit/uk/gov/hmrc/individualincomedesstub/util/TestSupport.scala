@@ -34,7 +34,7 @@ class TestSupport extends UnitSpec with BeforeAndAfterAll {
             | metrics.jvm = false
             |""".stripMargin
           )
-        ) ++ extraConfig)
+        ).withFallback(extraConfig))
       .build()
   }
 

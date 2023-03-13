@@ -46,7 +46,6 @@ class EmploymentIncomeControllerSpec
   private val employmentIncomeController = new EmploymentIncomeController(
     employmentIncomeService,
     controllerComponents)
-  private implicit val hc = HeaderCarrier()
 
   "Employment income controller employment function" should {
 

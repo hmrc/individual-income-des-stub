@@ -19,7 +19,6 @@ package uk.gov.hmrc.individualincomedesstub.repository
 import com.mongodb.DuplicateKeyException
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import org.mongodb.scala.model.Filters._
-import org.mongodb.scala.result.InsertOneResult
 
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.domain.SaUtr
