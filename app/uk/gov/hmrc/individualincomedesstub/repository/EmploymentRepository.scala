@@ -18,12 +18,13 @@ package uk.gov.hmrc.individualincomedesstub.repository
 
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import org.mongodb.scala.model.Filters._
+import play.api.libs.json.Format
 
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, JsonFormatters}
 import uk.gov.hmrc.mongo.MongoComponent
-import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import uk.gov.hmrc.mongo.play.json.{Codecs, PlayMongoRepository}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -40,7 +41,10 @@ class EmploymentRepository @Inject()(mongoComponent: MongoComponent)
         IndexOptions().name("ninoAndEmployerPayeReference").unique(false).background(true)
       )
     ),
-    extraCodecs = Seq()) {
+    extraCodecs = Seq(
+      Codecs.playFormatCodec(Format(EmpRef.empRefRead, EmpRef.empRefWrite)),
+      Codecs.playFormatCodec(Format(Nino.ninoRead, Nino.ninoWrite))
+    )) {
 
   def create(employerPayeReference: EmpRef, nino: Nino, request: CreateEmploymentRequest): Future[Employment] = {
     val employment = Employment(
