@@ -35,7 +35,7 @@ def test(scope: String = "test,it") = Seq(
   "org.scalatest" %% "scalatest" % "3.2.15" % scope,
   "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" %  scope,
   "org.pegdown" % "pegdown" % "1.6.0" % scope,
-  "org.mockito" % "mockito-scala-specs2_2.12" % "1.17.12" % scope,
+  "org.mockito" % "mockito-scala_2.12" % "1.17.12" % scope,
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
   "org.scalaj" %% "scalaj-http" % "2.4.2" % scope,
   "com.github.tomakehurst" % "wiremock-jre8" % "2.27.2" % scope
