@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.individualincomedesstub.repository
 
-import com.mongodb.DuplicateKeyException
+import com.mongodb.MongoWriteException
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import org.mongodb.scala.model.Filters._
 
@@ -45,7 +45,7 @@ class SelfAssessmentRepository @Inject()(mongo: MongoComponent)
 
   def create(selfAssessment: SelfAssessment): Future[SelfAssessment] =
     collection.insertOne(selfAssessment).recover {
-      case _: DuplicateKeyException => throw new DuplicateSelfAssessmentException
+      case _: MongoWriteException => throw new DuplicateSelfAssessmentException
     }
     .head
     .map(_ => selfAssessment)
