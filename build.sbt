@@ -38,7 +38,8 @@ def test(scope: String = "test,it") = Seq(
   "org.mockito" % "mockito-scala_2.12" % "1.17.12" % scope,
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
   "org.scalaj" %% "scalaj-http" % "2.4.2" % scope,
-  "com.github.tomakehurst" % "wiremock-jre8" % "2.27.2" % scope
+  "com.github.tomakehurst" % "wiremock-jre8" % "2.27.2" % scope,
+  "com.vladsch.flexmark" % "flexmark-all" % "0.62.2" % scope
 )
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
