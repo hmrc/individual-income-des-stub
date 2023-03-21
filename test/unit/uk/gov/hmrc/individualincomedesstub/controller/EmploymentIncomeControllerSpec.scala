@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,8 @@ package unit.uk.gov.hmrc.individualincomedesstub.controller
 
 import org.joda.time.LocalDate.parse
 import org.joda.time.{Interval, LocalDate}
-import org.mockito.ArgumentMatchers
+import org.mockito.{ArgumentMatchers, MockitoSugar}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.scalatest.mockito.MockitoSugar
 import play.api.libs.json.Json.toJson
 import play.api.mvc._
 import play.api.test.Helpers._
@@ -30,10 +28,7 @@ import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualincomedesstub.controller.EmploymentIncomeController
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.employmentIncomeResponseFormat
-import uk.gov.hmrc.individualincomedesstub.domain.{
-  Employment,
-  EmploymentIncomeResponse
-}
+import uk.gov.hmrc.individualincomedesstub.domain.{Employment, EmploymentIncomeResponse}
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentIncomeService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
@@ -51,7 +46,6 @@ class EmploymentIncomeControllerSpec
   private val employmentIncomeController = new EmploymentIncomeController(
     employmentIncomeService,
     controllerComponents)
-  private implicit val hc = HeaderCarrier()
 
   "Employment income controller employment function" should {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,8 @@ package unit.uk.gov.hmrc.individualincomedesstub.controller
 
 import akka.stream.Materializer
 import org.mockito.BDDMockito.given
+import org.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
-import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.Json.toJson
 import play.api.libs.json.{JsObject, Json}
@@ -29,10 +28,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.controller.SelfAssessmentController
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
-import uk.gov.hmrc.individualincomedesstub.domain.{
-  DuplicateSelfAssessmentException,
-  _
-}
+import uk.gov.hmrc.individualincomedesstub.domain.{DuplicateSelfAssessmentException, _}
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
@@ -83,11 +79,6 @@ class SelfAssessmentControllerSpec
     "return a 201 (Created) when self assessment data is created successfully" in new Setup {
       given(selfAssessmentService.create(utr, request))
         .willReturn(successful(selfAssessment))
-
-      Logger.info(
-        Json
-          .fromJson[SelfAssessmentCreateRequest](Json.toJson(request))
-          .toString)
 
       val result =
         await(underTest.create(utr)(fakeRequest.withBody(toJson(request))))

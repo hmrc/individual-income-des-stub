@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,28 +16,37 @@
 
 package uk.gov.hmrc.individualincomedesstub.repository
 
+import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
+import org.mongodb.scala.model.Filters._
+import play.api.libs.json.Format
+
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.{JsObject, Json}
-import reactivemongo.api.Cursor
-import reactivemongo.play.json._
-import reactivemongo.api.indexes.Index
-import reactivemongo.api.indexes.IndexType.Ascending
-import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, JsonFormatters}
-import uk.gov.hmrc.mongo.ReactiveRepository
+import uk.gov.hmrc.mongo.MongoComponent
+import uk.gov.hmrc.mongo.play.json.{Codecs, PlayMongoRepository}
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
-class EmploymentRepository @Inject() (mongoConnectionProvider: MongoConnectionProvider)
-  extends ReactiveRepository[Employment, BSONObjectID]("employment", mongoConnectionProvider.mongoDatabase, JsonFormatters.employmentFormat) {
+class EmploymentRepository @Inject()(mongoComponent: MongoComponent)
+  extends PlayMongoRepository[Employment](
+    collectionName = "employment",
+    mongoComponent = mongoComponent,
+    domainFormat = JsonFormatters.employmentFormat,
+    indexes = Seq(
+      IndexModel(
+        Indexes.ascending("nino", "employerPayeReference"),
+        IndexOptions().name("ninoAndEmployerPayeReference").unique(false).background(true)
+      )
+    ),
+    extraCodecs = Seq(
+      Codecs.playFormatCodec(Format(EmpRef.empRefRead, EmpRef.empRefWrite)),
+      Codecs.playFormatCodec(Format(Nino.ninoRead, Nino.ninoWrite))
+    )) {
 
-  override lazy val indexes = Seq(
-    Index(key = Seq(("nino", Ascending), ("employerPayeReference", Ascending)), name = Some("ninoAndEmployerPayeReference"), unique = false, background = true)
-  )
-
-  def create(employerPayeReference: EmpRef, nino: Nino, request: CreateEmploymentRequest) = {
+  def create(employerPayeReference: EmpRef, nino: Nino, request: CreateEmploymentRequest): Future[Employment] = {
     val employment = Employment(
       employerPayeReference,
       nino,
@@ -48,14 +57,18 @@ class EmploymentRepository @Inject() (mongoConnectionProvider: MongoConnectionPr
       request.payrollId,
       request.payFrequency
     )
-
-    insert(employment) map (_ => employment)
+    collection.insertOne(employment).toFuture().map(_ => employment)
   }
 
-  def findByReferenceAndNino(employerPayeReference: EmpRef, nino: Nino) = {
-    collection.find(Json.obj("employerPayeReference" -> employerPayeReference, "nino" -> nino)).cursor[Employment]().collect[List](
-      Int.MaxValue, Cursor.FailOnError[List[Employment]]())
-  }
+  def findByReferenceAndNino(employerPayeReference: EmpRef, nino: Nino): Future[Seq[Employment]] =
+    collection.find(
+      and(
+        equal("employerPayeReference", employerPayeReference),
+        equal("nino", nino)
+      )
+    )
+    .toFuture()
 
-  def findBy(nino: Nino) = collection.find(Json.obj("nino" -> nino)).cursor[Employment]().collect[Seq](Int.MaxValue, Cursor.FailOnError[Seq[Employment]]())
+  def findBy(nino: Nino): Future[Seq[Employment]] =
+    collection.find(equal("nino", nino)).toFuture()
 }

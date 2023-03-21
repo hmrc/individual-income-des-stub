@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,9 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
   val utr = SaUtr("2432552635")
   val taxYear = TaxYear("2014-15")
 
-  feature("Retrieve DES stubbed self assessment income") {
+  Feature("Retrieve DES stubbed self assessment income") {
 
-    scenario("Fetch self assessment income when there is income associated to a given tax year range") {
+    Scenario("Fetch self assessment income when there is income associated to a given tax year range") {
 
       Given("A test individual")
       ApiPlatformTestUserStub.getByNinoReturnsTestIndividual(nino, TestIndividual(Some(utr)))
@@ -124,7 +124,7 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
         """)
     }
 
-    scenario("Fetch self assessment income when there is no income associated to a given tax year range") {
+    Scenario("Fetch self assessment income when there is no income associated to a given tax year range") {
 
       Given("A test individual")
       ApiPlatformTestUserStub.getByNinoReturnsTestIndividual(nino, TestIndividual(Some(utr)))
@@ -136,7 +136,7 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
       response.code shouldBe NOT_FOUND
     }
 
-    scenario("Request fails for missing start year") {
+    Scenario("Request fails for missing start year") {
 
       When("I attempt to fetch self assessment without a start year")
       val response = Http(s"$serviceUrl/individuals/nino/$nino/self-assessment/income?endYear=2014").asString
@@ -148,7 +148,7 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
       Json.parse(response.body) shouldBe Json.parse("""{"statusCode":400,"message":"Invalid Request"}""")
     }
 
-    scenario("Request fails for missing end year") {
+    Scenario("Request fails for missing end year") {
 
       When("I attempt to fetch self assessment without an end year")
       val response = Http(s"$serviceUrl/individuals/nino/$nino/self-assessment/income?startYear=2014").asString

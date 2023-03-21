@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,8 @@
 
 package unit.uk.gov.hmrc.individualincomedesstub.controller
 
-import org.mockito.Mockito._
+import org.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
 import play.api.http.Status.{BAD_REQUEST, CREATED}
 import play.api.libs.json.Json
 import play.api.mvc.ControllerComponents
@@ -26,21 +25,13 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.controller.EmploymentController
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
-import uk.gov.hmrc.individualincomedesstub.domain.{
-  CreateEmploymentRequest,
-  Employment,
-  EmploymentPayFrequency,
-  HmrcPayment
-}
+import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, EmploymentPayFrequency, HmrcPayment}
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
 import scala.concurrent.Future.successful
 
-class EmploymentControllerSpec
-    extends TestSupport
-    with MockitoSugar
-    with ScalaFutures {
+class EmploymentControllerSpec extends TestSupport with ScalaFutures with MockitoSugar {
 
   implicit lazy val materializer = fakeApplication.materializer
   val controllerComponents: ControllerComponents =

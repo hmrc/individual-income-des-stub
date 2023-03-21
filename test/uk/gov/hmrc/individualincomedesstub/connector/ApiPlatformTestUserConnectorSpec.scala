@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ class ApiPlatformTestUserConnectorSpec
     implicit val hc = HeaderCarrier()
 
     val underTest =
-      new ApiPlatformTestUserConnector(config, http, serviceConfig) {
+      new ApiPlatformTestUserConnector(http, serviceConfig) {
         override val serviceUrl = s"http://$stubHost:$stubPort"
       }
   }

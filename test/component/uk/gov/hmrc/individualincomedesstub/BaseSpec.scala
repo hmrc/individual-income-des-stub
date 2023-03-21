@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,25 +17,24 @@
 package component.uk.gov.hmrc.individualincomedesstub
 
 import java.util.concurrent.TimeUnit
-
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import component.uk.gov.hmrc.individualincomedesstub.stubs.ApiPlatformTestUserStub
 import org.scalatest._
+import org.scalatest.featurespec.AnyFeatureSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.individualincomedesstub.repository.{EmploymentRepository, SelfAssessmentRepository}
 
 import scala.concurrent.Await.result
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 
-trait BaseSpec extends FeatureSpec with BeforeAndAfterAll with BeforeAndAfterEach with Matchers with GuiceOneServerPerSuite
-  with GivenWhenThen {
+trait BaseSpec extends AnyFeatureSpec with BeforeAndAfterAll with BeforeAndAfterEach with Matchers
+  with GuiceOneServerPerSuite with GivenWhenThen {
 
-  override lazy val port = 9000
   implicit override lazy val app: Application = GuiceApplicationBuilder().configure(
     "auditing.enabled" -> false,
     "auditing.traceRequests" -> false,
@@ -52,7 +51,7 @@ trait BaseSpec extends FeatureSpec with BeforeAndAfterAll with BeforeAndAfterEac
   val repositories = Seq(employmentRepository, selfAssessmentRepository)
 
   override protected def beforeEach(): Unit = {
-    repositories.foreach(r => result(r.drop, timeout))
+    repositories.foreach(r => result(r.collection.drop().toFuture(), timeout))
     repositories.foreach(r => result(r.ensureIndexes, timeout))
     mocks.foreach(m => if (!m.server.isRunning) m.server.start())
   }
@@ -62,7 +61,7 @@ trait BaseSpec extends FeatureSpec with BeforeAndAfterAll with BeforeAndAfterEac
   }
 
   override def afterAll(): Unit = {
-    repositories.foreach(r => result(r.drop, timeout))
+    repositories.foreach(r => result(r.collection.drop().toFuture(), timeout))
     mocks.foreach(_.server.stop())
   }
 }

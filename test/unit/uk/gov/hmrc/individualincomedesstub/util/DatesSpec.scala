@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,11 @@
 package unit.uk.gov.hmrc.individualincomedesstub.util
 
 import org.joda.time.LocalDate.parse
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 import uk.gov.hmrc.individualincomedesstub.util.Dates
 
-class DatesSpec extends FlatSpec with Matchers {
+class DatesSpec extends AnyFlatSpec with Matchers {
 
   "Dates utility" should "derive an interval between two dates" in {
     val (from, to) = (parse("2020-01-01"), parse("2020-01-02"))

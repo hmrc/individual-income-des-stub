@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,13 @@
 
 package unit.uk.gov.hmrc.individualincomedesstub.service
 
-import org.mockito.Mockito._
-import org.scalatest.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import uk.gov.hmrc.domain.{EmpRef, Nino}
-import uk.gov.hmrc.individualincomedesstub.domain.{
-  CreateEmploymentRequest,
-  Employment,
-  EmploymentPayFrequency,
-  HmrcPayment
-}
+import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, EmploymentPayFrequency, HmrcPayment}
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
+
 import scala.concurrent.Future.successful
 
 class EmploymentServiceSpec extends TestSupport with MockitoSugar {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,9 +54,9 @@ class SelfAssessmentSpec extends BaseSpec {
       address = None
     )))
 
-  feature("Create self assessment") {
+  Feature("Create self assessment") {
 
-    scenario("Self assessment successfully created for a valid UTR") {
+    Scenario("Self assessment successfully created for a valid UTR") {
 
       Given("A valid create self assessment request")
       val request = Json.parse(
@@ -100,7 +100,7 @@ class SelfAssessmentSpec extends BaseSpec {
       storedSa shouldBe Some(selfAssessment)
     }
 
-    scenario("Self assessment successfully created with default income values") {
+    Scenario("Self assessment successfully created with default income values") {
       val expectedReturn = SelfAssessmentTaxReturn(
         taxYear = TaxYear("2014-15"),
         submissionDate = LocalDate.parse("2016-01-01"),

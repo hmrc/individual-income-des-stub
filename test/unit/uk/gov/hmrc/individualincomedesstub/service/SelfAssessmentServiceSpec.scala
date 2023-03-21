@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,9 @@ package unit.uk.gov.hmrc.individualincomedesstub.service
 
 import org.joda.time.LocalDate
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.IdiomaticMockito
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
-import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
@@ -31,7 +30,7 @@ import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 
-class SelfAssessmentServiceSpec extends TestSupport with MockitoSugar {
+class SelfAssessmentServiceSpec extends TestSupport with IdiomaticMockito {
 
   val utr = SaUtr("2432552635")
   val taxReturn = SelfAssessmentTaxReturnData(
@@ -62,7 +61,7 @@ class SelfAssessmentServiceSpec extends TestSupport with MockitoSugar {
     val repository = mock[SelfAssessmentRepository]
     val underTest = new SelfAssessmentService(repository)
 
-    when(repository.create(any())).thenAnswer(returnSame)
+    repository.create(any()) answers ((sa: SelfAssessment) => Future.successful(sa))
   }
 
   "create" should {
@@ -96,7 +95,7 @@ class SelfAssessmentServiceSpec extends TestSupport with MockitoSugar {
       val result = await(underTest.create(utr, request))
 
       result shouldBe expectedSelfAssessment
-      verify(repository).create(expectedSelfAssessment)
+      repository.create(expectedSelfAssessment) was called
     }
 
     "defaults the amounts to zero when they are no set" in new Setup {
@@ -145,7 +144,7 @@ class SelfAssessmentServiceSpec extends TestSupport with MockitoSugar {
     }
 
     "propagate exceptions when a self assessment cannot be created" in new Setup {
-      when(repository.create(any())).thenThrow(new RuntimeException("failed"))
+      repository.create(any()) throws new RuntimeException("failed")
       intercept[RuntimeException](await(underTest.create(utr, request)))
     }
   }

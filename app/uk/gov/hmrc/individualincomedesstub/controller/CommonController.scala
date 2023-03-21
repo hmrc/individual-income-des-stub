@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import play.api.libs.json._
 import play.api.mvc.Results.{BadRequest, NotFound, Status}
 import play.api.mvc.{ControllerComponents, Request, RequestHeader, Result}
 import uk.gov.hmrc.individualincomedesstub.domain._
-import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -51,8 +50,6 @@ class CustomErrorHandler @Inject()(
       case Failure(e)     => "Invalid Request"
     }
 
-    implicit val headerCarrier = HeaderCarrierConverter
-      .fromHeadersAndSessionAndRequest(request.headers, request = Some(request))
     statusCode match {
       case NOT_FOUND =>
         Future.successful(

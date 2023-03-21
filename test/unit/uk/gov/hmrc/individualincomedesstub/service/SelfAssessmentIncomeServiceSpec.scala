@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,16 +19,11 @@ package unit.uk.gov.hmrc.individualincomedesstub.service
 import org.joda.time.LocalDate
 import org.joda.time.LocalDate.parse
 import org.mockito.BDDMockito.given
-import org.mockito.Mockito.when
-import org.scalatest.mockito.MockitoSugar
+import org.mockito.MockitoSugar
 import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualincomedesstub.connector.ApiPlatformTestUserConnector
-import uk.gov.hmrc.individualincomedesstub.domain.{
-  RecordNotFoundException,
-  SelfAssessment,
-  _
-}
+import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, SelfAssessment, _}
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentIncomeService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport

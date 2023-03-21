@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,9 +33,9 @@ class EmploymentSpec extends BaseSpec {
   val employerReferenceEncoded = "123%2FDI45678"
   val validNino = "NA000799C"
 
-  feature("Create employment") {
+  Feature("Create employment") {
 
-    scenario("Employment successfully created for given empRef and NINO") {
+    Scenario("Employment successfully created for given empRef and NINO") {
 
       Given("A valid create employment request")
       val request = aCreateEmploymentRequest()
@@ -55,7 +55,7 @@ class EmploymentSpec extends BaseSpec {
       storedEmployment shouldBe Seq(employment)
     }
 
-    scenario("Request succeeds with missing startDate and endDate") {
+    Scenario("Request succeeds with missing startDate and endDate") {
       Given("A create employment request with no startDate and endDate")
       val request = aCreateEmploymentRequest(startDate = None, endDate = None)
 
@@ -75,7 +75,7 @@ class EmploymentSpec extends BaseSpec {
     }
 
 
-    scenario("Request succeeds with missing startDate") {
+    Scenario("Request succeeds with missing startDate") {
       Given("A create employment request with no startDate")
       val request = aCreateEmploymentRequest(startDate = None)
 
@@ -94,7 +94,7 @@ class EmploymentSpec extends BaseSpec {
       storedEmployment shouldBe Seq(employment)
     }
 
-    scenario("Request succeeds with missing endDate") {
+    Scenario("Request succeeds with missing endDate") {
       Given("A create employment request with no endDate")
       val request = aCreateEmploymentRequest(endDate = None)
 
@@ -113,7 +113,7 @@ class EmploymentSpec extends BaseSpec {
       storedEmployment shouldBe Seq(employment)
     }
 
-    scenario("Request fails for invalid startDate format") {
+    Scenario("Request fails for invalid startDate format") {
       Given("A create employment request with an invalid startDate")
       val request = s"""{"startDate": "201601-01","payments":[], "payFrequency":"CALENDAR_MONTHLY"}"""
 
@@ -125,7 +125,7 @@ class EmploymentSpec extends BaseSpec {
       response.body shouldBe """{"code":"INVALID_REQUEST","message":"startDate: invalid date format"}"""
     }
 
-    scenario("Request fails for invalid endDate format") {
+    Scenario("Request fails for invalid endDate format") {
       Given("A create employment request with an invalid endDate")
       val request = s"""{"endDate": "201703-01","payments":[], "payFrequency":"CALENDAR_MONTHLY"}"""
 
@@ -137,7 +137,7 @@ class EmploymentSpec extends BaseSpec {
       response.body shouldBe """{"code":"INVALID_REQUEST","message":"endDate: invalid date format"}"""
     }
 
-    scenario("Request fails for invalid employment interval") {
+    Scenario("Request fails for invalid employment interval") {
       Given("A create employment request with an endDate before the startDate")
       val request =
         s"""
@@ -161,7 +161,7 @@ class EmploymentSpec extends BaseSpec {
       response.body shouldBe """{"code":"INVALID_REQUEST","message":"Invalid employment period"}"""
     }
 
-    scenario("Request fails for invalid NINO") {
+    Scenario("Request fails for invalid NINO") {
       Given("A valid create employment request")
       val request = Json.toJson(aCreateEmploymentRequest()).toString
 
@@ -173,7 +173,7 @@ class EmploymentSpec extends BaseSpec {
       response.body shouldBe """{"statusCode":400,"message":"Malformed nino submitted"}"""
     }
 
-    scenario("Request fails for unencoded employer reference") {
+    Scenario("Request fails for unencoded employer reference") {
       Given("A valid create employment request")
       val request = Json.toJson(aCreateEmploymentRequest()).toString
 
@@ -185,7 +185,7 @@ class EmploymentSpec extends BaseSpec {
       response.body shouldBe """{"statusCode":404,"message":"URI not found","requested":"/employer/123/DI45678/employment/NA000799C"}"""
     }
 
-    scenario("Request fails for invalid employer reference") {
+    Scenario("Request fails for invalid employer reference") {
       Given("A valid create employment request")
       val request = Json.toJson(aCreateEmploymentRequest()).toString
 
@@ -197,7 +197,7 @@ class EmploymentSpec extends BaseSpec {
       response.body shouldBe """{"statusCode":400,"message":"Invalid employer reference submitted"}"""
     }
 
-    scenario("Request fails for invalid paymentDate format") {
+    Scenario("Request fails for invalid paymentDate format") {
       Given("A create employment request with an invalid paymentDate")
       val request =
         s"""
@@ -222,9 +222,9 @@ class EmploymentSpec extends BaseSpec {
     }
   }
 
-  feature("retrieve employments") {
+  Feature("retrieve employments") {
 
-    scenario("request with an invalid nino") {
+    Scenario("request with an invalid nino") {
       Given("a request with an invalid nino")
       val httpRequest = Http(s"$serviceUrl/individuals/nino/ABCDEFGHI/employments/income")
 
@@ -236,7 +236,7 @@ class EmploymentSpec extends BaseSpec {
       httpResponse.body shouldBe """{"statusCode":400,"message":"Malformed nino submitted"}"""
     }
 
-    scenario("request without a from date") {
+    Scenario("request without a from date") {
       Given("a request without a from date")
       val httpRequest = Http(s"$serviceUrl/individuals/nino/$validNino/employments/income?missingFrom=whatever")
 
@@ -248,7 +248,7 @@ class EmploymentSpec extends BaseSpec {
       httpResponse.body shouldBe """{"statusCode":400,"message":"from is required"}"""
     }
 
-    scenario("request with a malformed from date") {
+    Scenario("request with a malformed from date") {
       Given("a request with an malformed from date")
       val httpRequest = Http(s"$serviceUrl/individuals/nino/$validNino/employments/income?from=01-01-2017")
 
@@ -260,7 +260,7 @@ class EmploymentSpec extends BaseSpec {
       httpResponse.body shouldBe """{"statusCode":400,"message":"from: invalid date format"}"""
     }
 
-    scenario("request with a malformed to date") {
+    Scenario("request with a malformed to date") {
       Given("a request with an malformed to date")
       val httpRequest = Http(s"$serviceUrl/individuals/nino/$validNino/employments/income?from=2017-01-01&to=01-01-2017")
 
@@ -272,7 +272,7 @@ class EmploymentSpec extends BaseSpec {
       httpResponse.body shouldBe """{"statusCode":400,"message":"to: invalid date format"}"""
     }
 
-    scenario("request with an invalid date range") {
+    Scenario("request with an invalid date range") {
       Given("a request with an invalid date range")
       val httpRequest = Http(s"$serviceUrl/individuals/nino/$validNino/employments/income?from=2017-01-02&to=2017-01-01")
 
