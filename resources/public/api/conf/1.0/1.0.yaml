@@ -1,0 +1,502 @@
+openapi: 3.0.0
+info:
+  title: Individuals Income Test Support
+  description: >-
+    The Individuals Income Test Support API allows you to create employment and income test data, for PAYE and SA,
+
+    for the Individuals Employments API and the Individuals Income API
+  contact: {}
+  version: '1.0'
+servers:
+- url: https://api.service.hmrc.gov.uk/
+  variables: {}
+paths:
+  /individuals-income-test-support/employer/{empRef}/employment/{nino}:
+    post:
+      tags:
+      - individuals-income-test-support
+      summary: Create an employment
+      description: >
+        <p>This resource is used to create an employment</p>
+      operationId: Createanemployment
+      parameters:
+      - name: empRef
+        in: path
+        description: The URL encoded employer PAYE reference number
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: 904%2FUZ00057
+      - name: nino
+        in: path
+        description: The employee National Insurance number
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: AA123456D
+      - name: Authorization
+        in: header
+        description: OAuth 2.0 Bearer Token or server token.
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: Bearer <BEARER_TOKEN>
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/IndividualsIncomeTestSupportEmployerEmploymentrequest'
+              - example:
+                  startDate: 2016-01-01
+                  endDate: 2017-03-01
+                  payFrequency: CALENDAR_MONTHLY
+                  payments:
+                  - paymentDate: 2016-01-28
+                    taxablePayment: 1000.55
+                    monthPayNumber: 10
+                  - paymentDate: 2016-02-28
+                    taxablePayment: 950.55
+                    weekPayNumber: 48
+            example:
+              startDate: 2016-01-01
+              endDate: 2017-03-01
+              payFrequency: CALENDAR_MONTHLY
+              payments:
+              - paymentDate: 2016-01-28
+                taxablePayment: 1000.55
+                monthPayNumber: 10
+              - paymentDate: 2016-02-28
+                taxablePayment: 950.55
+                weekPayNumber: 48
+        required: true
+      responses:
+        '201':
+          description: The created employment
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/IndividualsIncomeTestSupportEmployerEmploymentresponse'
+                - example:
+                    employerPayeReference: 904/UZ00057
+                    nino: AA123456D
+                    startDate: 2016-01-01
+                    endDate: 2017-03-01
+                    payFrequency: CALENDAR_MONTHLY
+                    payments:
+                    - paymentDate: 2016-01-28
+                      taxablePayment: 1000.55
+                      monthPayNumber: 10
+                    - paymentDate: 2016-02-28
+                      taxablePayment: 950.55
+                      weekPayNumber: 48
+              example:
+                employerPayeReference: 904/UZ00057
+                nino: AA123456D
+                startDate: 2016-01-01
+                endDate: 2017-03-01
+                payFrequency: CALENDAR_MONTHLY
+                payments:
+                - paymentDate: 2016-01-28
+                  taxablePayment: 1000.55
+                  monthPayNumber: 10
+                - paymentDate: 2016-02-28
+                  taxablePayment: 950.55
+                  weekPayNumber: 48
+        '400':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/errorResponse'
+                - example:
+                    code: INVALID_REQUEST
+              examples:
+                BadRequest:
+                  description: Invalid request
+                  value:
+                    code: INVALID_REQUEST
+      deprecated: false
+  /individuals-income-test-support/{utr}/self-assessment:
+    post:
+      tags:
+      - individuals-income-test-support
+      summary: Create a self assessment
+      description: >
+        <p>This resource is used to create a self assessment</p>
+      operationId: Createaselfassessment
+      parameters:
+      - name: utr
+        in: path
+        description: The self-assessment unique tax reference
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: '2234567890'
+      - name: Authorization
+        in: header
+        description: OAuth 2.0 Bearer Token or server token.
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: Bearer <BEARER_TOKEN>
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/IndividualsIncomeTestSupportSelfAssessmentrequest'
+              - example:
+                  registrationDate: 2015-01-28
+                  taxReturns:
+                  - taxYear: 2015-16
+                    submissionDate: 2016-06-01
+                    selfEmploymentProfit: 1233.33
+                    employmentsIncome: 13567.77
+                    totalIncome: 21233.33
+                    trustsIncome: 500.25
+                    foreignIncome: 200.35
+                    partnershipsProfit: 34.35
+                    ukInterestsIncome: 26.43
+                    foreignDividendsIncome: 14.74
+                    ukDividendsIncome: 17.85
+                    ukPropertiesProfit: 24.15
+                    gainsOnLifePolicies: 14.32
+                    sharesOptionsIncome: 13.64
+                    pensionsAndStateBenefitsIncome: 26.85
+                    otherIncome: 123.45
+            example:
+              registrationDate: 2015-01-28
+              taxReturns:
+              - taxYear: 2015-16
+                submissionDate: 2016-06-01
+                selfEmploymentProfit: 1233.33
+                employmentsIncome: 13567.77
+                totalIncome: 21233.33
+                trustsIncome: 500.25
+                foreignIncome: 200.35
+                partnershipsProfit: 34.35
+                ukInterestsIncome: 26.43
+                foreignDividendsIncome: 14.74
+                ukDividendsIncome: 17.85
+                ukPropertiesProfit: 24.15
+                gainsOnLifePolicies: 14.32
+                sharesOptionsIncome: 13.64
+                pensionsAndStateBenefitsIncome: 26.85
+                otherIncome: 123.45
+        required: true
+      responses:
+        '201':
+          description: The created self assessment
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/IndividualsIncomeTestSupportSelfAssessmentresponse'
+                - example:
+                    utr: '2234567890'
+                    registrationDate: 2015-01-28
+                    taxReturns:
+                    - taxYear: 2015-16
+                      submissionDate: 2016-06-01
+                      selfEmploymentProfit: 1233.33
+                      employmentsIncome: 13567.77
+                      totalIncome: 21233.33
+                      trustsIncome: 500.25
+                      foreignIncome: 200.35
+                      partnershipsProfit: 34.35
+                      ukInterestsIncome: 26.43
+                      foreignDividendsIncome: 14.74
+                      ukDividendsIncome: 17.85
+                      ukPropertiesProfit: 24.15
+                      gainsOnLifePolicies: 14.32
+                      sharesOptionsIncome: 13.64
+                      pensionsAndStateBenefitsIncome: 26.85
+                      otherIncome: 123.45
+              example:
+                utr: '2234567890'
+                registrationDate: 2015-01-28
+                taxReturns:
+                - taxYear: 2015-16
+                  submissionDate: 2016-06-01
+                  selfEmploymentProfit: 1233.33
+                  employmentsIncome: 13567.77
+                  totalIncome: 21233.33
+                  trustsIncome: 500.25
+                  foreignIncome: 200.35
+                  partnershipsProfit: 34.35
+                  ukInterestsIncome: 26.43
+                  foreignDividendsIncome: 14.74
+                  ukDividendsIncome: 17.85
+                  ukPropertiesProfit: 24.15
+                  gainsOnLifePolicies: 14.32
+                  sharesOptionsIncome: 13.64
+                  pensionsAndStateBenefitsIncome: 26.85
+                  otherIncome: 123.45
+        '409':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/errorResponse'
+                - example:
+                    code: SA_ALREADY_EXISTS
+              examples:
+                Conflict:
+                  description: The self-assessment record already exists
+                  value:
+                    code: SA_ALREADY_EXISTS
+        '400':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/errorResponse'
+                - example:
+                    code: INVALID_REQUEST
+              examples:
+                BadRequest:
+                  description: Invalid request
+                  value:
+                    code: INVALID_REQUEST
+      deprecated: false
+components:
+  schemas:
+    errorResponse:
+      title: errorResponse
+      required:
+      - code
+      type: object
+      properties:
+        code:
+          type: string
+    propertiespaymentsitems:
+      title: propertiespaymentsitems
+      required:
+      - paymentDate
+      - taxablePayment
+      type: object
+      properties:
+        paymentDate:
+          type: string
+          description: The payment date
+          format: date
+          example: 2016-01-28
+        taxablePayment:
+          type: number
+          description: The total amount for which tax was paid
+          example: 1000.55
+        weekPayNumber:
+          type: number
+          description: A number corresponding to the week the payment was made
+          example: 45
+        monthPayNumber:
+          type: number
+          description: A number between 1 and 12, corresponding to the month the payment was made
+          example: 10
+    propertiestaxReturnsitems:
+      title: propertiestaxReturnsitems
+      required:
+      - taxYear
+      - submissionDate
+      type: object
+      properties:
+        taxYear:
+          type: string
+          description: The return tax year
+          example: 2015-16
+        submissionDate:
+          type: string
+          description: The date on which the tax return was submitted
+          format: date
+          example: 2016-06-01
+        selfEmploymentProfit:
+          type: number
+          description: The self-employments profit declared in the tax return
+          example: 1233.33
+        employmentsIncome:
+          type: number
+          description: The employments income declared in the tax return
+          example: 13567.77
+        gainsOnLifePolicies:
+          type: number
+          description: The gains on life policies declared in the tax return
+          example: 14.32
+        sharesOptionsIncome:
+          type: number
+          description: The shares options income declared in the tax return
+          example: 13.64
+        totalIncome:
+          type: number
+          description: The total income declared in the tax return
+          example: 21233.33
+        trustsIncome:
+          type: number
+          description: The trusts income declared in the tax return
+          example: 500.25
+        foreignIncome:
+          type: number
+          description: The foreign income declared in the tax return
+          example: 200.35
+        partnershipsProfit:
+          type: number
+          description: The partnerships profit declared in the tax return
+          example: 34.35
+        pensionsAndStateBenefitsIncome:
+          type: number
+          description: The pensions and state benefits income declared in the tax return
+          example: 26.85
+        ukInterestsIncome:
+          type: number
+          description: The UK interests income declared in the tax return
+          example: 26.43
+        foreignDividendsIncome:
+          type: number
+          description: The foreign dividends income declared in the tax return
+          example: 14.74
+        ukDividendsIncome:
+          type: number
+          description: The UK dividends income declared in the tax return
+          example: 17.85
+        ukPropertiesProfit:
+          type: number
+          description: The UK properties profit declared in the tax return
+          example: 24.15
+        otherIncome:
+          type: number
+          description: The other income declared in the tax return
+          example: 123.45
+    IndividualsIncomeTestSupportEmployerEmploymentrequest:
+      title: IndividualsIncomeTestSupportEmployerEmploymentrequest
+      required:
+      - payments
+      type: object
+      properties:
+        startDate:
+          type: string
+          description: The start date for the employment
+          format: date
+          example: 2016-01-01
+        endDate:
+          type: string
+          description: The end date for the employment
+          format: date
+          example: 2017-03-01
+        payFrequency:
+          allOf:
+          - $ref: '#/components/schemas/PayFrequency'
+          - description: A value representing the frequency of payment for an employment
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/propertiespaymentsitems'
+          description: The payments associated with the employment
+      description: employment
+    IndividualsIncomeTestSupportEmployerEmploymentresponse:
+      title: IndividualsIncomeTestSupportEmployerEmploymentresponse
+      required:
+      - payments
+      - employerPayeReference
+      - nino
+      type: object
+      properties:
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/propertiespaymentsitems'
+          description: The payments associated with the employment
+        startDate:
+          type: string
+          description: The start date for the employment
+          example: 2016-01-01
+        endDate:
+          type: string
+          description: The end date for the employment
+          example: 2017-03-01
+        employerPayeReference:
+          type: string
+          description: The employer PAYE reference number
+          example: 904/UZ00057
+        nino:
+          type: string
+          description: The employee National Insurance number
+          example: AA123456D
+        payFrequency:
+          allOf:
+          - $ref: '#/components/schemas/PayFrequency'
+          - description: A value representing the frequency of payment for an employment
+      description: employment
+    IndividualsIncomeTestSupportSelfAssessmentrequest:
+      title: IndividualsIncomeTestSupportSelfAssessmentrequest
+      required:
+      - registrationDate
+      - taxReturns
+      type: object
+      properties:
+        registrationDate:
+          type: string
+          description: The self assessment registration date
+          format: date
+          example: 2015-01-28
+        taxReturns:
+          type: array
+          items:
+            $ref: '#/components/schemas/propertiestaxReturnsitems'
+          description: The self assessment tax returns
+      description: Self assessment request
+    IndividualsIncomeTestSupportSelfAssessmentresponse:
+      title: IndividualsIncomeTestSupportSelfAssessmentresponse
+      required:
+      - utr
+      - registrationDate
+      - taxReturns
+      type: object
+      properties:
+        utr:
+          type: string
+          description: The individual unique tax reference
+          example: '2234567890'
+        registrationDate:
+          type: string
+          description: The self assessment registration date
+          format: date
+          example: 2015-01-28
+        taxReturns:
+          type: array
+          items:
+            $ref: '#/components/schemas/propertiestaxReturnsitems'
+          description: The self assessment tax returns
+      description: Self assessment response
+    PayFrequency:
+      title: PayFrequency
+      enum:
+      - WEEKLY
+      - FORTNIGHTLY
+      - FOUR_WEEKLY
+      - CALENDAR_MONTHLY
+      - QUARTERLY
+      - BI_ANNUALLY
+      - ANNUALLY
+      - ONE_OFF
+      - IRREGULAR
+      type: string
+      description: A value representing the frequency of payment for an employment
+tags:
+- name: individuals-income-test-support
+  description: ''
