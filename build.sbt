@@ -1,7 +1,6 @@
 import play.core.PlayVersion
 import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, scalaSettings}
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 
 val appName = "individual-income-des-stub"
@@ -27,7 +26,7 @@ val compile = Seq(
   hmrc %% "domain" % "8.1.0-play-28",
   hmrc %% "play-hmrc-api" % "7.1.0-play-28",
   "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28" % "1.1.0",
-  "com.typesafe.play" %% "play-json-joda"     % "2.9.1",
+  "com.typesafe.play" %% "play-json-joda"     % "2.9.1"
 )
 
 def test(scope: String = "test,it") = Seq(
@@ -45,9 +44,10 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(Seq(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin) ++ plugins: _*)
+  .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(playSettings : _*)
   .settings(scalaSettings: _*)
-  .settings(scalaVersion := "2.12.17")
+  .settings(scalaVersion := "2.12.13")
   .settings(defaultSettings(): _*)
   .settings(
     libraryDependencies ++= appDependencies,
@@ -76,6 +76,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(PlayKeys.playDefaultPort := 9631)
   .settings(majorVersion := 0)
   .settings(scalafmtOnCompile := true)
+  .settings(CodeCoverageSettings.settings *)
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]) = {
   tests.map { test =>
