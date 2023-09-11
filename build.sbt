@@ -31,7 +31,6 @@ val compile = Seq(
 )
 
 def test(scope: String = "test,it") = Seq(
-  hmrc %% "service-integration-test" % "1.3.0-play-28" % scope,
   "org.scalatest" %% "scalatest" % "3.2.15" % scope,
   "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" %  scope,
   "org.pegdown" % "pegdown" % "1.6.0" % scope,
