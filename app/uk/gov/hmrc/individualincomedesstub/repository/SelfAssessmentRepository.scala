@@ -31,24 +31,26 @@ import scala.concurrent.Future
 
 @Singleton
 class SelfAssessmentRepository @Inject()(mongo: MongoComponent)
-  extends PlayMongoRepository[SelfAssessment](
-    mongoComponent = mongo,
-    collectionName = "selfAssessment",
-    domainFormat = JsonFormatters.selfAssessmentFormat,
-    indexes = Seq(
-      IndexModel(
-        Indexes.ascending("saUtr"),
-        IndexOptions().name("saUtrIndex").unique(true).background(true)
-      )
-    ),
-  ) {
+    extends PlayMongoRepository[SelfAssessment](
+      mongoComponent = mongo,
+      collectionName = "selfAssessment",
+      domainFormat = JsonFormatters.selfAssessmentFormat,
+      indexes = Seq(
+        IndexModel(
+          Indexes.ascending("saUtr"),
+          IndexOptions().name("saUtrIndex").unique(true).background(true)
+        )
+      ),
+    ) {
 
   def create(selfAssessment: SelfAssessment): Future[SelfAssessment] =
-    collection.insertOne(selfAssessment).recover {
-      case _: MongoWriteException => throw new DuplicateSelfAssessmentException
-    }
-    .head
-    .map(_ => selfAssessment)
+    collection
+      .insertOne(selfAssessment)
+      .recover {
+        case _: MongoWriteException => throw new DuplicateSelfAssessmentException
+      }
+      .head
+      .map(_ => selfAssessment)
 
   def findByUtr(saUtr: SaUtr): Future[Option[SelfAssessment]] =
     collection.find(equal("saUtr", saUtr.value)).headOption()

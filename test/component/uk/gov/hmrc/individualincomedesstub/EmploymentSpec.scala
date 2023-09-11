@@ -51,7 +51,8 @@ class EmploymentSpec extends BaseSpec {
       Json.parse(response.body) shouldBe Json.toJson(employment)
 
       And("The employment is stored in mongo")
-      val storedEmployment = result(employmentRepository.findByReferenceAndNino(employerReference, Nino(validNino)), timeout)
+      val storedEmployment =
+        result(employmentRepository.findByReferenceAndNino(employerReference, Nino(validNino)), timeout)
       storedEmployment shouldBe Seq(employment)
     }
 
@@ -70,10 +71,10 @@ class EmploymentSpec extends BaseSpec {
       Json.parse(response.body) shouldBe Json.toJson(employment)
 
       And("The employment is stored in mongo")
-      val storedEmployment = result(employmentRepository.findByReferenceAndNino(employerReference, Nino(validNino)), timeout)
+      val storedEmployment =
+        result(employmentRepository.findByReferenceAndNino(employerReference, Nino(validNino)), timeout)
       storedEmployment shouldBe Seq(employment)
     }
-
 
     Scenario("Request succeeds with missing startDate") {
       Given("A create employment request with no startDate")
@@ -90,7 +91,8 @@ class EmploymentSpec extends BaseSpec {
       Json.parse(response.body) shouldBe Json.toJson(employment)
 
       And("The employment is stored in mongo")
-      val storedEmployment = result(employmentRepository.findByReferenceAndNino(employerReference, Nino(validNino)), timeout)
+      val storedEmployment =
+        result(employmentRepository.findByReferenceAndNino(employerReference, Nino(validNino)), timeout)
       storedEmployment shouldBe Seq(employment)
     }
 
@@ -109,7 +111,8 @@ class EmploymentSpec extends BaseSpec {
       Json.parse(response.body) shouldBe Json.toJson(employment)
 
       And("The employment is stored in mongo")
-      val storedEmployment = result(employmentRepository.findByReferenceAndNino(employerReference, Nino(validNino)), timeout)
+      val storedEmployment =
+        result(employmentRepository.findByReferenceAndNino(employerReference, Nino(validNino)), timeout)
       storedEmployment shouldBe Seq(employment)
     }
 
@@ -262,7 +265,8 @@ class EmploymentSpec extends BaseSpec {
 
     Scenario("request with a malformed to date") {
       Given("a request with an malformed to date")
-      val httpRequest = Http(s"$serviceUrl/individuals/nino/$validNino/employments/income?from=2017-01-01&to=01-01-2017")
+      val httpRequest =
+        Http(s"$serviceUrl/individuals/nino/$validNino/employments/income?from=2017-01-01&to=01-01-2017")
 
       When("the employments endpoint is invoked")
       val httpResponse = httpRequest.asString
@@ -274,7 +278,8 @@ class EmploymentSpec extends BaseSpec {
 
     Scenario("request with an invalid date range") {
       Given("a request with an invalid date range")
-      val httpRequest = Http(s"$serviceUrl/individuals/nino/$validNino/employments/income?from=2017-01-02&to=2017-01-01")
+      val httpRequest =
+        Http(s"$serviceUrl/individuals/nino/$validNino/employments/income?from=2017-01-02&to=2017-01-01")
 
       When("the employments endpoint is invoked")
       val httpResponse = httpRequest.asString
@@ -286,29 +291,28 @@ class EmploymentSpec extends BaseSpec {
 
   }
 
-  private def aCreateEmploymentRequest(startDate: Option[String] = Some("2016-01-01"),
-                                       endDate: Option[String] = Some("2017-03-01"),
-                                       payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55), HmrcPayment("2016-02-28", 950.55)),
-                                       payFrequency: EmploymentPayFrequency.Value = EmploymentPayFrequency.CALENDAR_MONTHLY) = {
-
+  private def aCreateEmploymentRequest(
+    startDate: Option[String] = Some("2016-01-01"),
+    endDate: Option[String] = Some("2017-03-01"),
+    payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55), HmrcPayment("2016-02-28", 950.55)),
+    payFrequency: EmploymentPayFrequency.Value = EmploymentPayFrequency.CALENDAR_MONTHLY) =
     CreateEmploymentRequest(startDate, endDate, payments, None, None, Some(payFrequency.toString))
-  }
 
-
-  private def anEmployment(employerPayeReference: EmpRef = employerReference,
-                           nino: Nino = Nino(validNino),
-                           startDate: Option[String] = Some("2016-01-01"),
-                           endDate: Option[String] = Some("2017-03-01"),
-                           payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55), HmrcPayment("2016-02-28", 950.55)),
-                           payFrequency: EmploymentPayFrequency.Value = EmploymentPayFrequency.CALENDAR_MONTHLY) = {
-
+  private def anEmployment(
+    employerPayeReference: EmpRef = employerReference,
+    nino: Nino = Nino(validNino),
+    startDate: Option[String] = Some("2016-01-01"),
+    endDate: Option[String] = Some("2017-03-01"),
+    payments: Seq[HmrcPayment] = Seq(HmrcPayment("2016-01-28", 1000.55), HmrcPayment("2016-02-28", 950.55)),
+    payFrequency: EmploymentPayFrequency.Value = EmploymentPayFrequency.CALENDAR_MONTHLY) =
     Employment(employerPayeReference, nino, startDate, endDate, payments, None, None, Some(payFrequency.toString))
-  }
 
-  private def requestCreateEmployment(request: String, reference: String = employerReferenceEncoded, nino: String = validNino) = {
+  private def requestCreateEmployment(
+    request: String,
+    reference: String = employerReferenceEncoded,
+    nino: String = validNino) =
     Http(s"$serviceUrl/employer/$reference/employment/$nino")
       .postData(Json.parse(request).toString())
-      .headers(CONTENT_TYPE -> JSON
-      ).asString
-  }
+      .headers(CONTENT_TYPE -> JSON)
+      .asString
 }

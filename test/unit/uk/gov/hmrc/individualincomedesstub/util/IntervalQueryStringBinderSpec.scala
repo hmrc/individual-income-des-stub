@@ -35,15 +35,20 @@ class IntervalQueryStringBinderSpec extends AnyFlatSpec with Matchers with Eithe
       (Map("from" -> Seq.empty[String]), """{"code":"INVALID_REQUEST","message":"from is required"}"""),
       (Map("from" -> Seq("")), """{"code":"INVALID_REQUEST","message":"from: invalid date format"}"""),
       (Map("from" -> Seq("20200131")), """{"code":"INVALID_REQUEST","message":"from: invalid date format"}"""),
-      (Map("from" -> Seq("2020-01-31"), "to" -> Seq("")), """{"code":"INVALID_REQUEST","message":"to: invalid date format"}"""),
-      (Map("from" -> Seq("2020-01-31"), "to" -> Seq("20201231")), """{"code":"INVALID_REQUEST","message":"to: invalid date format"}""")
+      (
+        Map("from" -> Seq("2020-01-31"), "to" -> Seq("")),
+        """{"code":"INVALID_REQUEST","message":"to: invalid date format"}"""),
+      (
+        Map("from" -> Seq("2020-01-31"), "to" -> Seq("20201231")),
+        """{"code":"INVALID_REQUEST","message":"to: invalid date format"}""")
     )
 
-    fixtures foreach { case (parameters, response) =>
-      val maybeEither = intervalQueryStringBinder.bind("", parameters)
-      maybeEither.isDefined shouldBe true
-      maybeEither.get.isLeft shouldBe true
-      maybeEither.get.left.value shouldBe response
+    fixtures foreach {
+      case (parameters, response) =>
+        val maybeEither = intervalQueryStringBinder.bind("", parameters)
+        maybeEither.isDefined shouldBe true
+        maybeEither.get.isLeft shouldBe true
+        maybeEither.get.left.value shouldBe response
     }
   }
 
@@ -52,7 +57,9 @@ class IntervalQueryStringBinderSpec extends AnyFlatSpec with Matchers with Eithe
     val maybeEither = intervalQueryStringBinder.bind("", parameters)
     maybeEither.isDefined shouldBe true
     maybeEither.get.isRight shouldBe true
-    maybeEither.get.value shouldBe toInterval("2017-01-31T00:00:00.000", LocalDateTime.now().withTime(0, 0, 0, 1).toString())
+    maybeEither.get.value shouldBe toInterval(
+      "2017-01-31T00:00:00.000",
+      LocalDateTime.now().withTime(0, 0, 0, 1).toString())
   }
 
   it should "succeed in binding an interval from well formed from and to parameters" in {

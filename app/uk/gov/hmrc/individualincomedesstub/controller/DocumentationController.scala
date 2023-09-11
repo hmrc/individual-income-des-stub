@@ -26,23 +26,26 @@ import uk.gov.hmrc.individualincomedesstub.views._
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 @Singleton
-class DocumentationController @Inject()(httpErrorHandler: HttpErrorHandler, configuration: Configuration, cc: ControllerComponents, assets: Assets) extends BackendController(cc) {
+class DocumentationController @Inject()(
+  httpErrorHandler: HttpErrorHandler,
+  configuration: Configuration,
+  cc: ControllerComponents,
+  assets: Assets)
+    extends BackendController(cc) {
 
   private lazy val whitelistedApplicationIds: Seq[String] =
     configuration.underlying.getStringList("api.access.version-1.0.whitelistedApplicationIds").toArray(Array[String]())
 
-   def definition(): Action[AnyContent] = Action {
+  def definition(): Action[AnyContent] = Action {
     Ok(txt.definition(whitelistedApplicationIds)).withHeaders(CONTENT_TYPE -> JSON)
   }
   def documentation(
-                     version: String,
-                     endpointName: String
-                   ): Action[AnyContent] =
+    version: String,
+    endpointName: String
+  ): Action[AnyContent] =
     assets.at(s"/public/api/documentation/$version", s"${endpointName.replaceAll(" ", "-")}.xml")
 
-
-  def raml(version: String, file: String) = {
+  def raml(version: String, file: String) =
     assets.at(s"/public/api/conf/$version", file)
-  }
 
 }

@@ -25,7 +25,7 @@ import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
 import scala.concurrent.Future
 
 @Singleton
-class EmploymentService @Inject() (employmentRepository: EmploymentRepository) {
+class EmploymentService @Inject()(employmentRepository: EmploymentRepository) {
   def create(employerPayeReference: EmpRef, nino: Nino, request: CreateEmploymentRequest): Future[Employment] =
     employmentRepository.create(employerPayeReference, nino, request)
 }

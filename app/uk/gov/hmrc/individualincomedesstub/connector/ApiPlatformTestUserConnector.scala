@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 @Singleton
-class ApiPlatformTestUserConnector @Inject()(http : HttpClient, servicesConfig: ServicesConfig) extends Logging {
+class ApiPlatformTestUserConnector @Inject()(http: HttpClient, servicesConfig: ServicesConfig) extends Logging {
 
   val serviceUrl = servicesConfig.baseUrl("api-platform-test-user")
   def getOrganisationByEmpRef(empRef: EmpRef)(implicit hc: HeaderCarrier): Future[Option[TestOrganisation]] = {

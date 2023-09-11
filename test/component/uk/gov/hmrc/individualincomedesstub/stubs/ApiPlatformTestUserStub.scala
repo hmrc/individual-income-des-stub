@@ -26,11 +26,13 @@ import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
 
 object ApiPlatformTestUserStub extends MockHost(22001) {
 
-  def getByEmpRefReturnsTestOrganisation(empRef: EmpRef, organisation: TestOrganisation) = {
-    mock.register(get(urlPathMatching(s"/organisations/empref/${empRef.encodedValue}"))
-      .willReturn(aResponse().withStatus(Status.OK)
-        .withBody(
-          s"""
+  def getByEmpRefReturnsTestOrganisation(empRef: EmpRef, organisation: TestOrganisation) =
+    mock.register(
+      get(urlPathMatching(s"/organisations/empref/${empRef.encodedValue}"))
+        .willReturn(
+          aResponse()
+            .withStatus(Status.OK)
+            .withBody(s"""
              {
                "empRef": "${empRef.value}",
                "organisationDetails": {
@@ -43,16 +45,17 @@ object ApiPlatformTestUserStub extends MockHost(22001) {
                }
              }
              """)))
-  }
 
-  def getByEmpRefReturnsNoTestOrganisation(empRef: EmpRef) = {
-    mock.register(get(urlPathMatching(s"/organisations/empref/${empRef.encodedValue}"))
-      .willReturn(aResponse().withStatus(Status.NOT_FOUND)))
-  }
+  def getByEmpRefReturnsNoTestOrganisation(empRef: EmpRef) =
+    mock.register(
+      get(urlPathMatching(s"/organisations/empref/${empRef.encodedValue}"))
+        .willReturn(aResponse().withStatus(Status.NOT_FOUND)))
 
-  def getByNinoReturnsTestIndividual(nino: Nino, individual: TestIndividual) = {
-    mock.register(get(urlPathMatching(s"/individuals/nino/$nino"))
-      .willReturn(aResponse().withStatus(Status.OK)
-        .withBody(Json.toJson(individual).toString())))
-  }
+  def getByNinoReturnsTestIndividual(nino: Nino, individual: TestIndividual) =
+    mock.register(
+      get(urlPathMatching(s"/individuals/nino/$nino"))
+        .willReturn(
+          aResponse()
+            .withStatus(Status.OK)
+            .withBody(Json.toJson(individual).toString())))
 }

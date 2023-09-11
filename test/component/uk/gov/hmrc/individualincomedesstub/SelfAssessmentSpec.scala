@@ -32,35 +32,38 @@ import scalaj.http.Http
 class SelfAssessmentSpec extends BaseSpec {
 
   val utr = SaUtr("2432552635")
-  val selfAssessment = SelfAssessment(utr, LocalDate.parse("2014-01-01"), Seq(
-    SelfAssessmentTaxReturn(
-      taxYear = TaxYear("2014-15"),
-      submissionDate = parse("2016-01-01"),
-      employmentsIncome = 13567.77,
-      selfEmploymentProfit = 1233.33,
-      totalIncome = 22345,
-      trustsIncome = 12345.55,
-      foreignIncome = 500.25,
-      partnershipsProfit = 23.45,
-      ukInterestsIncome = 14.74,
-      foreignDividendsIncome = 11.46,
-      ukDividendsIncome = 10.32,
-      ukPropertiesProfit = 55.24,
-      gainsOnLifePolicies = 4.32,
-      sharesOptionsIncome = 12.32,
-      pensionsAndStateBenefitsIncome = 28.42,
-      otherIncome = 134.56,
-      businessDescription = None,
-      address = None
-    )))
+  val selfAssessment = SelfAssessment(
+    utr,
+    LocalDate.parse("2014-01-01"),
+    Seq(
+      SelfAssessmentTaxReturn(
+        taxYear = TaxYear("2014-15"),
+        submissionDate = parse("2016-01-01"),
+        employmentsIncome = 13567.77,
+        selfEmploymentProfit = 1233.33,
+        totalIncome = 22345,
+        trustsIncome = 12345.55,
+        foreignIncome = 500.25,
+        partnershipsProfit = 23.45,
+        ukInterestsIncome = 14.74,
+        foreignDividendsIncome = 11.46,
+        ukDividendsIncome = 10.32,
+        ukPropertiesProfit = 55.24,
+        gainsOnLifePolicies = 4.32,
+        sharesOptionsIncome = 12.32,
+        pensionsAndStateBenefitsIncome = 28.42,
+        otherIncome = 134.56,
+        businessDescription = None,
+        address = None
+      ))
+  )
 
   Feature("Create self assessment") {
 
     Scenario("Self assessment successfully created for a valid UTR") {
 
       Given("A valid create self assessment request")
-      val request = Json.parse(
-        """
+      val request = Json.parse("""
           {
            "registrationDate": "2014-01-01",
            "taxReturns": [
@@ -123,8 +126,7 @@ class SelfAssessmentSpec extends BaseSpec {
       )
 
       Given("A valid create self assessment request with no income values")
-      val request = Json.parse(
-        """
+      val request = Json.parse("""
           {
            "registrationDate": "2014-01-01",
            "taxReturns": [
@@ -151,9 +153,9 @@ class SelfAssessmentSpec extends BaseSpec {
     }
   }
 
-  private def requestCreateSelfAssessment(request: JsValue, utr: String) = {
+  private def requestCreateSelfAssessment(request: JsValue, utr: String) =
     Http(s"$serviceUrl/$utr/self-assessment")
       .postData(request.toString())
-      .headers(CONTENT_TYPE -> JSON).asString
-  }
+      .headers(CONTENT_TYPE -> JSON)
+      .asString
 }

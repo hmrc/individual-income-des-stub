@@ -31,20 +31,21 @@ import scala.concurrent.Future
 
 @Singleton
 class EmploymentRepository @Inject()(mongoComponent: MongoComponent)
-  extends PlayMongoRepository[Employment](
-    collectionName = "employment",
-    mongoComponent = mongoComponent,
-    domainFormat = JsonFormatters.employmentFormat,
-    indexes = Seq(
-      IndexModel(
-        Indexes.ascending("nino", "employerPayeReference"),
-        IndexOptions().name("ninoAndEmployerPayeReference").unique(false).background(true)
+    extends PlayMongoRepository[Employment](
+      collectionName = "employment",
+      mongoComponent = mongoComponent,
+      domainFormat = JsonFormatters.employmentFormat,
+      indexes = Seq(
+        IndexModel(
+          Indexes.ascending("nino", "employerPayeReference"),
+          IndexOptions().name("ninoAndEmployerPayeReference").unique(false).background(true)
+        )
+      ),
+      extraCodecs = Seq(
+        Codecs.playFormatCodec(Format(EmpRef.empRefRead, EmpRef.empRefWrite)),
+        Codecs.playFormatCodec(Format(Nino.ninoRead, Nino.ninoWrite))
       )
-    ),
-    extraCodecs = Seq(
-      Codecs.playFormatCodec(Format(EmpRef.empRefRead, EmpRef.empRefWrite)),
-      Codecs.playFormatCodec(Format(Nino.ninoRead, Nino.ninoWrite))
-    )) {
+    ) {
 
   def create(employerPayeReference: EmpRef, nino: Nino, request: CreateEmploymentRequest): Future[Employment] = {
     val employment = Employment(
@@ -61,13 +62,14 @@ class EmploymentRepository @Inject()(mongoComponent: MongoComponent)
   }
 
   def findByReferenceAndNino(employerPayeReference: EmpRef, nino: Nino): Future[Seq[Employment]] =
-    collection.find(
-      and(
-        equal("employerPayeReference", employerPayeReference),
-        equal("nino", nino)
+    collection
+      .find(
+        and(
+          equal("employerPayeReference", employerPayeReference),
+          equal("nino", nino)
+        )
       )
-    )
-    .toFuture()
+      .toFuture()
 
   def findBy(nino: Nino): Future[Seq[Employment]] =
     collection.find(equal("nino", nino)).toFuture()

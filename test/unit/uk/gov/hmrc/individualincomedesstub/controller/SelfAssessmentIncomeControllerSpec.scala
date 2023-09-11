@@ -35,10 +35,7 @@ import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
 import scala.concurrent.Future.{failed, successful}
 
-class SelfAssessmentIncomeControllerSpec
-    extends TestSupport
-    with MockitoSugar
-    with ScalaFutures {
+class SelfAssessmentIncomeControllerSpec extends TestSupport with MockitoSugar with ScalaFutures {
 
   implicit lazy val materializer = fakeApplication.materializer
   private val controllerComponents: ControllerComponents =
@@ -50,9 +47,7 @@ class SelfAssessmentIncomeControllerSpec
     val nino = Nino("AB123456A")
     val fakeRequest = FakeRequest()
     val selfAssessmentIncomeService = mock[SelfAssessmentIncomeService]
-    val underTest = new SelfAssessmentIncomeController(
-      selfAssessmentIncomeService,
-      controllerComponents)
+    val underTest = new SelfAssessmentIncomeController(selfAssessmentIncomeService, controllerComponents)
   }
 
   val selfAssessmentResponse = SelfAssessmentResponse(
@@ -92,10 +87,7 @@ class SelfAssessmentIncomeControllerSpec
 
   "fetch self assessment income" should {
     "retrieve self assessment income for a given period" in new Setup {
-      given(
-        selfAssessmentIncomeService.income(refEq(nino),
-                                           refEq(2015),
-                                           refEq(2016))(any[HeaderCarrier]))
+      given(selfAssessmentIncomeService.income(refEq(nino), refEq(2015), refEq(2016))(any[HeaderCarrier]))
         .willReturn(successful(Seq(selfAssessmentResponse)))
 
       val result = await(underTest.income(nino, 2015, 2016)(fakeRequest))
@@ -105,10 +97,7 @@ class SelfAssessmentIncomeControllerSpec
     }
 
     "return 404 (Not Found) if there is no self assessment income for a given period" in new Setup {
-      given(
-        selfAssessmentIncomeService.income(refEq(nino),
-                                           refEq(2015),
-                                           refEq(2016))(any[HeaderCarrier]))
+      given(selfAssessmentIncomeService.income(refEq(nino), refEq(2015), refEq(2016))(any[HeaderCarrier]))
         .willReturn(failed(new RecordNotFoundException()))
 
       val result = await(underTest.income(nino, 2015, 2016)(fakeRequest))
