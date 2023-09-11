@@ -24,24 +24,23 @@ import scala.util.Try
 
 object Validators {
 
-  def valid(requirement: Boolean, message: String) = {
-    if(!requirement)
+  def valid(requirement: Boolean, message: String) =
+    if (!requirement)
       throw new ValidationException(message)
-  }
 
-  def validDate(fieldName: String, value: String) = {
-    valid(Try(LocalDate.parse(value, DateTimeFormat.forPattern("yyyy-MM-dd"))).isSuccess, s"$fieldName: invalid date format")
-  }
+  def validDate(fieldName: String, value: String) =
+    valid(
+      Try(LocalDate.parse(value, DateTimeFormat.forPattern("yyyy-MM-dd"))).isSuccess,
+      s"$fieldName: invalid date format")
 
-  def validInterval(startDate: String, endDate: String, errorMessage: String) = {
-    valid(Try(new Interval(LocalDate.parse(startDate).toDate.getTime, LocalDate.parse(endDate).toDate.getTime)).isSuccess, errorMessage)
-  }
+  def validInterval(startDate: String, endDate: String, errorMessage: String) =
+    valid(
+      Try(new Interval(LocalDate.parse(startDate).toDate.getTime, LocalDate.parse(endDate).toDate.getTime)).isSuccess,
+      errorMessage)
 
-  def validPayFrequency(string: String, errorMessage: String): Unit = {
+  def validPayFrequency(string: String, errorMessage: String): Unit =
     valid(Try(EmploymentPayFrequency.withName(string)).isSuccess, errorMessage)
-  }
 
-  def validTaxYear(string: String): Unit = {
+  def validTaxYear(string: String): Unit =
     valid(Try(TaxYear(string)).isSuccess, "taxYear: invalid tax year format")
-  }
 }

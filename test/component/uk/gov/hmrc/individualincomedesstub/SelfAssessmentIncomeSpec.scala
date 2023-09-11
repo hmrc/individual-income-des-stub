@@ -84,7 +84,8 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
               businessDescription = None,
               address = None
             )
-          )))
+          )
+        ))
 
       When("I fetch self assessment income for that period")
       val response = fetchSelfAssessmentIncome(nino, "2013", "2014")
@@ -93,8 +94,7 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
       response.code shouldBe OK
 
       And("The self assessment income is returned in the response body")
-      Json.parse(response.body) shouldBe Json.parse(
-        """
+      Json.parse(response.body) shouldBe Json.parse("""
           [
               {
                   "taxYear": "2014",
@@ -161,7 +161,6 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
     }
   }
 
-  private def fetchSelfAssessmentIncome(nino: Nino, startYear: String, endYear: String) = {
+  private def fetchSelfAssessmentIncome(nino: Nino, startYear: String, endYear: String) =
     Http(s"$serviceUrl/individuals/nino/$nino/self-assessment/income?startYear=$startYear&endYear=$endYear").asString
-  }
 }

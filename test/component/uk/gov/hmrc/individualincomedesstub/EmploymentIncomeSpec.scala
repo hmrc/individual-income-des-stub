@@ -128,7 +128,6 @@ class EmploymentIncomeSpec extends BaseSpec {
     }
   }
 
-  private def fetchEmploymentIncome(nino: String, fromDate: String) = {
+  private def fetchEmploymentIncome(nino: String, fromDate: String) =
     Http(s"$serviceUrl/individuals/nino/$nino/employments/income?from=$fromDate").asString
-  }
 }

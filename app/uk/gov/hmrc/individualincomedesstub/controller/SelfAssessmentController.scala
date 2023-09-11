@@ -28,15 +28,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class SelfAssessmentController @Inject()(
-    selfAssessmentService: SelfAssessmentService,
-    controllerComponents: ControllerComponents)
+  selfAssessmentService: SelfAssessmentService,
+  controllerComponents: ControllerComponents)
     extends CommonController(controllerComponents) {
 
-  def create(utr: SaUtr) = Action.async(parse.json) {
-    implicit request =>
-      withJsonBody[SelfAssessmentCreateRequest] { createRequest =>
-        selfAssessmentService.create(utr, createRequest) map (e =>
-          Created(toJson(e)))
-      } recover recovery
+  def create(utr: SaUtr) = Action.async(parse.json) { implicit request =>
+    withJsonBody[SelfAssessmentCreateRequest] { createRequest =>
+      selfAssessmentService.create(utr, createRequest) map (e => Created(toJson(e)))
+    } recover recovery
   }
 }

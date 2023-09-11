@@ -32,15 +32,18 @@ import uk.gov.hmrc.individualincomedesstub.repository.{EmploymentRepository, Sel
 import scala.concurrent.Await.result
 import scala.concurrent.duration.Duration
 
-trait BaseSpec extends AnyFeatureSpec with BeforeAndAfterAll with BeforeAndAfterEach with Matchers
-  with GuiceOneServerPerSuite with GivenWhenThen {
+trait BaseSpec
+    extends AnyFeatureSpec with BeforeAndAfterAll with BeforeAndAfterEach with Matchers with GuiceOneServerPerSuite
+    with GivenWhenThen {
 
-  implicit override lazy val app: Application = GuiceApplicationBuilder().configure(
-    "auditing.enabled" -> false,
-    "auditing.traceRequests" -> false,
-    "microservice.services.api-platform-test-user.port" -> ApiPlatformTestUserStub.port,
-    "mongodb.uri" -> "mongodb://localhost:27017/individual-income-des-stub-component-tests"
-  ).build()
+  implicit override lazy val app: Application = GuiceApplicationBuilder()
+    .configure(
+      "auditing.enabled"                                  -> false,
+      "auditing.traceRequests"                            -> false,
+      "microservice.services.api-platform-test-user.port" -> ApiPlatformTestUserStub.port,
+      "mongodb.uri"                                       -> "mongodb://localhost:27017/individual-income-des-stub-component-tests"
+    )
+    .build()
 
   val timeout = Duration(5, TimeUnit.SECONDS)
   val serviceUrl = s"http://localhost:$port"
@@ -56,9 +59,8 @@ trait BaseSpec extends AnyFeatureSpec with BeforeAndAfterAll with BeforeAndAfter
     mocks.foreach(m => if (!m.server.isRunning) m.server.start())
   }
 
-  override protected def afterEach(): Unit = {
+  override protected def afterEach(): Unit =
     mocks.foreach(_.mock.resetMappings())
-  }
 
   override def afterAll(): Unit = {
     repositories.foreach(r => result(r.collection.drop().toFuture(), timeout))

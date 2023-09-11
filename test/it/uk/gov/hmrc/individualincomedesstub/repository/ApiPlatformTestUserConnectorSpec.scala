@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualincomedesstub.connector
+package it.uk.gov.hmrc.individualincomedesstub.repository
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock._
@@ -24,13 +24,12 @@ import play.api.Configuration
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import uk.gov.hmrc.domain.{EmpRef, Nino, SaUtr}
 import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpClient}
+import uk.gov.hmrc.individualincomedesstub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
-class ApiPlatformTestUserConnectorSpec
-    extends TestSupport
-    with BeforeAndAfterEach {
+class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEach {
 
   val stubPort = sys.env.getOrElse("WIREMOCK", "11121").toInt
   val stubHost = "localhost"
@@ -38,9 +37,7 @@ class ApiPlatformTestUserConnectorSpec
   val empRef = EmpRef("123", "AI45678")
   val testOrganisation = TestOrganisation(
     Some(empRef),
-    TestOrganisationDetails(
-      "Disney Inc",
-      TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
+    TestOrganisationDetails("Disney Inc", TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
 
   val nino = Nino("AB123456A")
   val utr = SaUtr("2432552635")
@@ -110,8 +107,7 @@ class ApiPlatformTestUserConnectorSpec
         get(urlEqualTo(s"/organisations/empref/${empRef.encodedValue}"))
           .willReturn(aResponse().withStatus(BAD_REQUEST)))
 
-      intercept[BadRequestException](
-        await(underTest.getOrganisationByEmpRef(empRef)))
+      intercept[BadRequestException](await(underTest.getOrganisationByEmpRef(empRef)))
     }
   }
 
@@ -145,8 +141,7 @@ class ApiPlatformTestUserConnectorSpec
         get(urlEqualTo(s"/individuals/nino/$nino"))
           .willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR)))
 
-      intercept[BadRequestException](
-        await(underTest.getOrganisationByEmpRef(empRef)))
+      intercept[BadRequestException](await(underTest.getOrganisationByEmpRef(empRef)))
     }
 
   }

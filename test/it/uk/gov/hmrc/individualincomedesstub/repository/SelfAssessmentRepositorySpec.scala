@@ -24,9 +24,7 @@ import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
-class SelfAssessmentRepositorySpec
-    extends TestSupport
-    with BeforeAndAfterEach {
+class SelfAssessmentRepositorySpec extends TestSupport with BeforeAndAfterEach {
 
   override lazy val fakeApplication = buildFakeApplication(
     Configuration("mongodb.uri" -> "mongodb://localhost:27017/individual-income-des-stub"))
@@ -93,8 +91,7 @@ class SelfAssessmentRepositorySpec
     "fail to create a duplicate self assessment" in {
       await(repository.create(selfAssessment))
 
-      intercept[DuplicateSelfAssessmentException](
-        await(repository.create(selfAssessment)))
+      intercept[DuplicateSelfAssessmentException](await(repository.create(selfAssessment)))
     }
   }
 

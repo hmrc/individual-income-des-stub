@@ -25,7 +25,6 @@ import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
 @Singleton
 class SelfAssessmentService @Inject()(selfAssessmentRepository: SelfAssessmentRepository) {
 
-  def create(utr: SaUtr, request: SelfAssessmentCreateRequest) = {
+  def create(utr: SaUtr, request: SelfAssessmentCreateRequest) =
     selfAssessmentRepository.create(SelfAssessment(utr, request))
-  }
 }

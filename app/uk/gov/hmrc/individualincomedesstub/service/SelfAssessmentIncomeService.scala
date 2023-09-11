@@ -29,24 +29,27 @@ import scala.concurrent.Future
 
 @Singleton
 class SelfAssessmentIncomeService @Inject()(
-                                             apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
-                                             selfAssessmentRepository: SelfAssessmentRepository) {
+  apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
+  selfAssessmentRepository: SelfAssessmentRepository) {
 
-  def income(nino: Nino, startYear: Int, endYear: Int)(implicit hc: HeaderCarrier): Future[Seq[SelfAssessmentResponse]] = {
+  def income(nino: Nino, startYear: Int, endYear: Int)(
+    implicit hc: HeaderCarrier): Future[Seq[SelfAssessmentResponse]] = {
 
-    def selfAssessmentReturnsForPeriod(saUtr: SaUtr): Future[Seq[SelfAssessmentResponse]] = {
+    def selfAssessmentReturnsForPeriod(saUtr: SaUtr): Future[Seq[SelfAssessmentResponse]] =
       selfAssessmentRepository.findByUtr(saUtr) map {
         case Some(selfAssessment) =>
-          selfAssessment.taxReturns.filter(_.isIn(startYear, endYear)) map (SelfAssessmentResponse(saUtr, selfAssessment.registrationDate, _))
+          selfAssessment.taxReturns.filter(_.isIn(startYear, endYear)) map (SelfAssessmentResponse(
+            saUtr,
+            selfAssessment.registrationDate,
+            _))
         case None => Seq.empty
       }
-    }
 
     for {
       individual <- apiPlatformTestUserConnector.getIndividualByNino(nino)
       utr = individual.saUtr.getOrElse(throw new RecordNotFoundException)
       selfAssessmentReturns <- selfAssessmentReturnsForPeriod(utr)
-      _ = if(selfAssessmentReturns.isEmpty) throw new RecordNotFoundException
+      _ = if (selfAssessmentReturns.isEmpty) throw new RecordNotFoundException
     } yield selfAssessmentReturns
   }
 }

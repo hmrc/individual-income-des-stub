@@ -75,13 +75,9 @@ class EmploymentRepositorySpec extends TestSupport with Matchers with BeforeAndA
       await(
         employmentRepository
           .create(EmpRef("321", "EI45678"), nino, aCreateEmploymentRequest))
-      await(
-        employmentRepository.create(employerReference,
-                                    Nino("AA123456C"),
-                                    aCreateEmploymentRequest))
+      await(employmentRepository.create(employerReference, Nino("AA123456C"), aCreateEmploymentRequest))
 
-      val result = await(
-        employmentRepository.findByReferenceAndNino(employerReference, nino))
+      val result = await(employmentRepository.findByReferenceAndNino(employerReference, nino))
 
       result shouldBe Seq(employment)
     }
@@ -91,9 +87,7 @@ class EmploymentRepositorySpec extends TestSupport with Matchers with BeforeAndA
         employmentRepository
           .create(employerReference, nino, aCreateEmploymentRequest))
 
-      val result = await(
-        employmentRepository.findByReferenceAndNino(EmpRef("321", "EI45678"),
-                                                    nino))
+      val result = await(employmentRepository.findByReferenceAndNino(EmpRef("321", "EI45678"), nino))
 
       result.isEmpty shouldBe true
     }

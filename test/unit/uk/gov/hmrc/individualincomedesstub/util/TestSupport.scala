@@ -25,18 +25,17 @@ class TestSupport extends UnitSpec with BeforeAndAfterAll {
 
   lazy val additionalConfig = Configuration()
 
-  def buildFakeApplication(extraConfig: Configuration): Application = {
+  def buildFakeApplication(extraConfig: Configuration): Application =
     new GuiceApplicationBuilder()
       .configure(
         Configuration(
           ConfigFactory.parseString(
             """
-            | metrics.jvm = false
-            |""".stripMargin
+              | metrics.jvm = false
+              |""".stripMargin
           )
         ).withFallback(extraConfig))
       .build()
-  }
 
   lazy val fakeApplication: Application = buildFakeApplication(additionalConfig)
 

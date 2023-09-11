@@ -30,7 +30,9 @@ import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
-class EmploymentIncomeService @Inject()(employmentRepository: EmploymentRepository, apiPlatformTestUserConnector: ApiPlatformTestUserConnector) {
+class EmploymentIncomeService @Inject()(
+  employmentRepository: EmploymentRepository,
+  apiPlatformTestUserConnector: ApiPlatformTestUserConnector) {
 
   def getEmployers(empRefs: Seq[EmpRef])(implicit hc: HeaderCarrier): Future[Seq[TestOrganisation]] = {
     val futures = empRefs.map(apiPlatformTestUserConnector.getOrganisationByEmpRef)
@@ -42,10 +44,13 @@ class EmploymentIncomeService @Inject()(employmentRepository: EmploymentReposito
       employments <- employmentRepository.findBy(nino) map (_ filter overlap(interval))
       employerPayeReferences = employments map (_.employerPayeReference)
       employers <- getEmployers(employerPayeReferences)
-      maybeEmployers = employments map (employment => employers find (_.empRef.exists(_ == employment.employerPayeReference)))
-    } yield employments zip maybeEmployers map { case (employment, employer) =>
-      val paymentsWithinInterval = employment.payments.filter(_.isPaidWithin(interval))
-      EmploymentIncomeResponse(employment.copy(payments = paymentsWithinInterval), employer)
-    }
+      maybeEmployers = employments map (employment =>
+        employers find (_.empRef.exists(_ == employment.employerPayeReference)))
+    } yield
+      employments zip maybeEmployers map {
+        case (employment, employer) =>
+          val paymentsWithinInterval = employment.payments.filter(_.isPaidWithin(interval))
+          EmploymentIncomeResponse(employment.copy(payments = paymentsWithinInterval), employer)
+      }
 
 }

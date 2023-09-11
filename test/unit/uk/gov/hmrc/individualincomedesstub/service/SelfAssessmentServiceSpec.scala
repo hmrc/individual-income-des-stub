@@ -54,8 +54,7 @@ class SelfAssessmentServiceSpec extends TestSupport with IdiomaticMockito {
     address = None
   )
 
-  val request = SelfAssessmentCreateRequest(registrationDate = "2015-06-06",
-                                            taxReturns = Seq(taxReturn))
+  val request = SelfAssessmentCreateRequest(registrationDate = "2015-06-06", taxReturns = Seq(taxReturn))
 
   trait Setup {
     val repository = mock[SelfAssessmentRepository]

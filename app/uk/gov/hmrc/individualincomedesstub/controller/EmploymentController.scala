@@ -27,7 +27,8 @@ import uk.gov.hmrc.individualincomedesstub.service.EmploymentService
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class EmploymentController @Inject()(employmentService: EmploymentService, controllerComponents: ControllerComponents) extends CommonController(controllerComponents) {
+class EmploymentController @Inject()(employmentService: EmploymentService, controllerComponents: ControllerComponents)
+    extends CommonController(controllerComponents) {
 
   def create(employerReference: EmpRef, nino: Nino) = Action.async(parse.json) { implicit request =>
     withJsonBody[CreateEmploymentRequest] { createEmployment =>

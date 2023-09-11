@@ -27,10 +27,14 @@ import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentIncomeService
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class SelfAssessmentIncomeController @Inject() (selfAssessmentIncomeService: SelfAssessmentIncomeService,controllerComponents : ControllerComponents ) extends CommonController(controllerComponents) {
+class SelfAssessmentIncomeController @Inject()(
+  selfAssessmentIncomeService: SelfAssessmentIncomeService,
+  controllerComponents: ControllerComponents)
+    extends CommonController(controllerComponents) {
 
   def income(nino: Nino, startYear: Int, endYear: Int) = Action.async { implicit request =>
-    selfAssessmentIncomeService.income(nino, startYear, endYear) map { saReturns => Ok(Json.toJson(saReturns))
+    selfAssessmentIncomeService.income(nino, startYear, endYear) map { saReturns =>
+      Ok(Json.toJson(saReturns))
     } recover {
       case _: RecordNotFoundException => NotFound
     }
