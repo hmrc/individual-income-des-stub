@@ -75,6 +75,7 @@ lazy val microservice = Project(appName, file("."))
   )
   .settings(PlayKeys.playDefaultPort := 9631)
   .settings(majorVersion := 0)
+  .settings(scalafmtOnCompile := true)
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]) = {
   tests.map { test =>
