@@ -39,13 +39,8 @@ class DocumentationController @Inject()(
   def definition(): Action[AnyContent] = Action {
     Ok(txt.definition(whitelistedApplicationIds)).withHeaders(CONTENT_TYPE -> JSON)
   }
-  def documentation(
-    version: String,
-    endpointName: String
-  ): Action[AnyContent] =
-    assets.at(s"/public/api/documentation/$version", s"${endpointName.replaceAll(" ", "-")}.xml")
 
-  def raml(version: String, file: String) =
+  def yaml(version: String, file: String) =
     assets.at(s"/public/api/conf/$version", file)
 
 }
