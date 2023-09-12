@@ -1,12 +1,8 @@
-import play.core.PlayVersion
 import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings, scalaSettings}
 
-
 val appName = "individual-income-des-stub"
-val hmrc = "uk.gov.hmrc"
 
-lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 lazy val playSettings : Seq[Setting[_]] = Seq(routesImport ++= Seq("uk.gov.hmrc.domain._", "uk.gov.hmrc.individualincomedesstub.domain._", "uk.gov.hmrc.individualincomedesstub.Binders._"))
 lazy val plugins : Seq[Plugins] = Seq.empty
 
@@ -19,27 +15,6 @@ val akkaVersion     = "2.5.23"
 
 val akkaHttpVersion = "10.0.15"
 
-val compile = Seq(
-  ws,
-  hmrc %% "bootstrap-backend-play-28" % "7.14.0",
-  hmrc %% "auth-client" % "6.0.0-play-28",
-  hmrc %% "domain" % "8.1.0-play-28",
-  hmrc %% "play-hmrc-api" % "7.1.0-play-28",
-  "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28" % "1.1.0",
-  "com.typesafe.play" %% "play-json-joda"     % "2.9.1"
-)
-
-def test(scope: String = "test,it") = Seq(
-  "org.scalatest" %% "scalatest" % "3.2.15" % scope,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" %  scope,
-  "org.pegdown" % "pegdown" % "1.6.0" % scope,
-  "org.mockito" % "mockito-scala_2.12" % "1.17.12" % scope,
-  "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-  "org.scalaj" %% "scalaj-http" % "2.4.2" % scope,
-  "com.github.tomakehurst" % "wiremock-jre8" % "2.27.2" % scope,
-  "com.vladsch.flexmark" % "flexmark-all" % "0.62.2" % scope
-)
-
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 lazy val microservice = Project(appName, file("."))
@@ -50,7 +25,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(scalaVersion := "2.12.13")
   .settings(defaultSettings(): _*)
   .settings(
-    libraryDependencies ++= appDependencies,
+    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test(),
     Test / testOptions := Seq(Tests.Filter(unitFilter)),
     retrieveManaged := true
   )
