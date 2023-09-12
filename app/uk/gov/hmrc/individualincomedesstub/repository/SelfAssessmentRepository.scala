@@ -40,7 +40,7 @@ class SelfAssessmentRepository @Inject()(mongo: MongoComponent)
           Indexes.ascending("saUtr"),
           IndexOptions().name("saUtrIndex").unique(true).background(true)
         )
-      ),
+      )
     ) {
 
   def create(selfAssessment: SelfAssessment): Future[SelfAssessment] =
