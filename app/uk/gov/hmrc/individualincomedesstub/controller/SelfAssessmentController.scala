@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.individualincomedesstub.controller
 
-import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json.toJson
 import play.api.mvc.ControllerComponents
 import uk.gov.hmrc.domain.SaUtr
@@ -24,6 +23,7 @@ import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
 import uk.gov.hmrc.individualincomedesstub.domain.SelfAssessmentCreateRequest
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentService
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton

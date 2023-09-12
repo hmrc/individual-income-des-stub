@@ -20,10 +20,9 @@ import component.uk.gov.hmrc.individualincomedesstub.stubs.ApiPlatformTestUserSt
 import org.joda.time.LocalDate
 import play.api.http.Status._
 import play.api.libs.json.Json
+import scalaj.http.Http
 import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.individualincomedesstub.domain.{SelfAssessment, SelfAssessmentTaxReturn, TaxYear, TestIndividual}
-
-import scalaj.http.Http
 
 class SelfAssessmentIncomeSpec extends BaseSpec {
 

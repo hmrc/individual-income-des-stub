@@ -20,12 +20,12 @@ import play.api.http.HeaderNames._
 import play.api.http.MimeTypes._
 import play.api.http.Status.{BAD_REQUEST, CREATED, NOT_FOUND}
 import play.api.libs.json.Json
+import scalaj.http.Http
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
 import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, EmploymentPayFrequency, HmrcPayment}
 
 import scala.concurrent.Await.result
-import scalaj.http.Http
 
 class EmploymentSpec extends BaseSpec {
 

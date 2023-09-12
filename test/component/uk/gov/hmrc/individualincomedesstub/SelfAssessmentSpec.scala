@@ -22,12 +22,12 @@ import play.api.http.HeaderNames._
 import play.api.http.MimeTypes._
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
+import scalaj.http.Http
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.selfAssessmentFormat
 import uk.gov.hmrc.individualincomedesstub.domain.{SelfAssessment, SelfAssessmentTaxReturn, TaxYear}
 
 import scala.concurrent.Await.result
-import scalaj.http.Http
 
 class SelfAssessmentSpec extends BaseSpec {
 

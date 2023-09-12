@@ -18,8 +18,8 @@ package unit.uk.gov.hmrc.individualincomedesstub.controller
 
 import org.joda.time.LocalDate.parse
 import org.joda.time.{Interval, LocalDate}
-import org.mockito.{ArgumentMatchers, MockitoSugar}
 import org.mockito.ArgumentMatchers.any
+import org.mockito.{ArgumentMatchers, MockitoSugar}
 import play.api.libs.json.Json.toJson
 import play.api.mvc._
 import play.api.test.Helpers._

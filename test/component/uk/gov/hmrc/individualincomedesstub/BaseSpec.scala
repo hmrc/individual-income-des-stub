@@ -16,7 +16,6 @@
 
 package component.uk.gov.hmrc.individualincomedesstub
 
-import java.util.concurrent.TimeUnit
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
@@ -29,6 +28,7 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.individualincomedesstub.repository.{EmploymentRepository, SelfAssessmentRepository}
 
+import java.util.concurrent.TimeUnit
 import scala.concurrent.Await.result
 import scala.concurrent.duration.Duration
 

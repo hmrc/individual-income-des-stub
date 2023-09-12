@@ -21,8 +21,8 @@ import component.uk.gov.hmrc.individualincomedesstub.MockHost
 import play.api.http.Status
 import play.api.libs.json.Json
 import uk.gov.hmrc.domain.{EmpRef, Nino}
-import uk.gov.hmrc.individualincomedesstub.domain.{TestIndividual, TestOrganisation}
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
+import uk.gov.hmrc.individualincomedesstub.domain.{TestIndividual, TestOrganisation}
 
 object ApiPlatformTestUserStub extends MockHost(22001) {
 

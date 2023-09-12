@@ -19,11 +19,11 @@ package component.uk.gov.hmrc.individualincomedesstub
 import component.uk.gov.hmrc.individualincomedesstub.stubs.ApiPlatformTestUserStub
 import play.api.http.Status.OK
 import play.api.libs.json.Json
+import scalaj.http.Http
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.domain._
-import scala.concurrent.Await.result
 
-import scalaj.http.Http
+import scala.concurrent.Await.result
 
 class EmploymentIncomeSpec extends BaseSpec {
 
