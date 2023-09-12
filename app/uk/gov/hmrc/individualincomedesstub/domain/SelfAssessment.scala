@@ -47,7 +47,7 @@ case class SelfAssessmentTaxReturn(
   businessDescription: Option[String],
   address: Option[SaAddress]) {
 
-  def isIn(startYear: Int, endYear: Int) = taxYear.endYr.toInt >= startYear && taxYear.endYr.toInt <= endYear
+  def isIn(startYear: Int, endYear: Int): Boolean = taxYear.endYr.toInt >= startYear && taxYear.endYr.toInt <= endYear
 }
 
 object SelfAssessmentTaxReturn {
@@ -278,7 +278,7 @@ object SelfAssessmentResponseReturn {
         line4                         <- (json \ "addressLine4").validateOpt[String]
         postcode                      <- (json \ "postalCode").validateOpt[String]
         phoneNumber                   <- (json \ "telephoneNumber").validateOpt[String]
-        effectiveDate                 <- (json \ "baseAddressEffectivetDate").validateOpt[LocalDate] // misspelled as per the DES spec
+        effectiveDate                 <- (json \ "baseAddressEffectiveDate").validateOpt[LocalDate] // misspelled as per the DES spec
         addressType                   <- (json \ "addressTypeIndicator").validateOpt[String]
       } yield
         SelfAssessmentResponseReturn(
@@ -338,7 +338,7 @@ object SelfAssessmentResponseReturn {
         "addressLine4"                                       -> o.address.addressLine4,
         "postalCode"                                         -> o.address.postalCode,
         "telephoneNumber"                                    -> o.address.telephoneNumber,
-        "baseAddressEffectivetDate"                          -> o.address.baseAddressEffectiveDate,
+        "baseAddressEffectiveDate"                           -> o.address.baseAddressEffectiveDate,
         "addressTypeIndicator"                               -> o.address.addressTypeIndicator
       )
 
@@ -362,19 +362,19 @@ object SelfAssessmentResponse {
 case class TaxYear(ty: String) {
   if (!TaxYear.isValid(ty)) throw new IllegalArgumentException
 
-  val startYr = ty.split("-")(0)
-  val endYr = startYr.toInt + 1 toString
+  private val startYr = ty.split("-")(0)
+  val endYr: String = (startYr.toInt + 1).toString
 }
 
 object TaxYear {
 
-  final val TaxYearRegex = "^(\\d{4})-(\\d{2})$"
+  private final val TaxYearRegex = "^(\\d{4})-(\\d{2})$"
 
-  val matchTaxYear: String => Option[Match] = new Regex(s"$TaxYearRegex", "first", "second") findFirstMatchIn _
+  private val matchTaxYear: String => Option[Match] = new Regex(s"$TaxYearRegex", "first", "second") findFirstMatchIn _
 
   def build(ty: String): Option[TaxYear] = TaxYearRegex.r findFirstIn ty map (TaxYear(_))
 
-  def isValid(taxYearReference: String) = matchTaxYear(taxYearReference) exists { r =>
+  private def isValid(taxYearReference: String) = matchTaxYear(taxYearReference) exists { r =>
     (r.group("first").toInt + 1) % 100 == r.group("second").toInt
   }
 

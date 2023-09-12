@@ -26,7 +26,9 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 @Singleton
-class ApiPlatformTestUserConnector @Inject()(http: HttpClient, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) extends Logging {
+class ApiPlatformTestUserConnector @Inject()(http: HttpClient, servicesConfig: ServicesConfig)(
+  implicit ec: ExecutionContext)
+    extends Logging {
 
   val serviceUrl = servicesConfig.baseUrl("api-platform-test-user")
 

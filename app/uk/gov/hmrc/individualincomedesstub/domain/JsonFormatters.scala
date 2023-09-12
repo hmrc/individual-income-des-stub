@@ -21,6 +21,7 @@ import play.api.libs.json.JodaWrites._
 import play.api.libs.json.JodaReads._
 import play.api.libs.json._
 
+import scala.language.{implicitConversions, postfixOps}
 import scala.util.{Failure, Try}
 
 object JsonFormatters {
