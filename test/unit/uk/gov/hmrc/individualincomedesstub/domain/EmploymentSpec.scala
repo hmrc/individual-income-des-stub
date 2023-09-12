@@ -22,9 +22,9 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import uk.gov.hmrc.domain.{EmpRef, Nino}
-import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.individualincomedesstub.domain.DesEmploymentPayFrequency._
 import uk.gov.hmrc.individualincomedesstub.domain.EmploymentPayFrequency._
+import uk.gov.hmrc.individualincomedesstub.domain._
 
 class EmploymentSpec extends AnyFreeSpec with Matchers {
 

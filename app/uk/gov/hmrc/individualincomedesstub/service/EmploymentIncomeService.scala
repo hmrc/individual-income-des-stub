@@ -16,18 +16,17 @@
 
 package uk.gov.hmrc.individualincomedesstub.service
 
-import javax.inject.{Inject, Singleton}
-
 import org.joda.time.Interval
 import uk.gov.hmrc.domain.{EmpRef, Nino}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualincomedesstub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualincomedesstub.domain.Employment.overlap
 import uk.gov.hmrc.individualincomedesstub.domain.{EmploymentIncomeResponse, TestOrganisation}
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
 
 @Singleton
 class EmploymentIncomeService @Inject()(

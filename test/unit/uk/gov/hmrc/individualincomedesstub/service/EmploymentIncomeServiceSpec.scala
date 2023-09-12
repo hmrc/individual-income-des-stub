@@ -19,9 +19,9 @@ package unit.uk.gov.hmrc.individualincomedesstub.service
 import org.joda.time.LocalDate.parse
 import org.mockito.ArgumentMatchers._
 import org.mockito.MockitoSugar
-import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpecLike
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.http.HeaderCarrier

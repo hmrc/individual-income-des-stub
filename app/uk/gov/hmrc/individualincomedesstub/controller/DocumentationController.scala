@@ -17,13 +17,13 @@
 package uk.gov.hmrc.individualincomedesstub.controller
 
 import controllers.Assets
-
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.http.HttpErrorHandler
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.individualincomedesstub.views._
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class DocumentationController @Inject()(

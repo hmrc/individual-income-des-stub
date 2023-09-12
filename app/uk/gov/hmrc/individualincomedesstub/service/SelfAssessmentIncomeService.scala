@@ -16,14 +16,13 @@
 
 package uk.gov.hmrc.individualincomedesstub.service
 
-import javax.inject.{Inject, Singleton}
-
 import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualincomedesstub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, SelfAssessmentResponse}
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 

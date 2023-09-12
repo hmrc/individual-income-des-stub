@@ -17,8 +17,8 @@
 package unit.uk.gov.hmrc.individualincomedesstub.controller
 
 import org.joda.time.LocalDate.parse
-import org.mockito.BDDMockito.given
 import org.mockito.ArgumentMatchers.{any, eq => refEq}
+import org.mockito.BDDMockito.given
 import org.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status._

@@ -16,11 +16,11 @@
 
 package uk.gov.hmrc.individualincomedesstub.service
 
-import javax.inject.{Inject, Singleton}
-
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class SelfAssessmentService @Inject()(selfAssessmentRepository: SelfAssessmentRepository) {

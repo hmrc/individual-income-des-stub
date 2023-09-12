@@ -16,12 +16,11 @@
 
 package uk.gov.hmrc.individualincomedesstub.service
 
-import javax.inject.{Inject, Singleton}
-
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment}
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
