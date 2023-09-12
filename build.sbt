@@ -26,10 +26,8 @@ lazy val microservice = Project(appName, file("."))
   .settings(defaultSettings(): _*)
   .settings(
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test(),
-    Test / testOptions := Seq(Tests.Filter(unitFilter)),
-    retrieveManaged := true
-  )
-  .settings(Compile / unmanagedResourceDirectories += baseDirectory.value / "resources")
+    routesImport ++= Seq("uk.gov.hmrc.individualincomedesstub.Binders._"),
+    scalacOptions += "-Wconf:src=routes/.*:s")
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(
