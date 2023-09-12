@@ -32,6 +32,7 @@ import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.{failed, successful}
 
 class SelfAssessmentControllerSpec extends TestSupport with MockitoSugar with ScalaFutures {

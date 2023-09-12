@@ -28,6 +28,7 @@ import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentIncomeService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 

@@ -29,6 +29,7 @@ import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Empl
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.successful
 
 class EmploymentControllerSpec extends TestSupport with ScalaFutures with MockitoSugar {

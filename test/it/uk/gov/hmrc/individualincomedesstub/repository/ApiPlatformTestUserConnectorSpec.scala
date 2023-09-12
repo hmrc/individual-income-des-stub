@@ -29,6 +29,8 @@ import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEach {
 
   val stubPort = sys.env.getOrElse("WIREMOCK", "11121").toInt

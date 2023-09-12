@@ -24,12 +24,12 @@ import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, Test
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 @Singleton
-class ApiPlatformTestUserConnector @Inject()(http: HttpClient, servicesConfig: ServicesConfig) extends Logging {
+class ApiPlatformTestUserConnector @Inject()(http: HttpClient, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) extends Logging {
 
   val serviceUrl = servicesConfig.baseUrl("api-platform-test-user")
+
   def getOrganisationByEmpRef(empRef: EmpRef)(implicit hc: HeaderCarrier): Future[Option[TestOrganisation]] = {
     http.GET[TestOrganisation](s"$serviceUrl/organisations/empref/${empRef.encodedValue}") map (Some(_))
   } recover {

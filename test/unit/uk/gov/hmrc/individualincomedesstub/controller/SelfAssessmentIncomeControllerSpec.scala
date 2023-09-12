@@ -33,6 +33,7 @@ import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, SaAd
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentIncomeService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.{failed, successful}
 
 class SelfAssessmentIncomeControllerSpec extends TestSupport with MockitoSugar with ScalaFutures {

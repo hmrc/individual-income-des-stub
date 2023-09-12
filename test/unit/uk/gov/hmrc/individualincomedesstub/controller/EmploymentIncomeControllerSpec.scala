@@ -32,6 +32,7 @@ import uk.gov.hmrc.individualincomedesstub.domain.{Employment, EmploymentIncomeR
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentIncomeService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 

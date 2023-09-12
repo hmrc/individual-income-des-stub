@@ -25,11 +25,10 @@ import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.{Codecs, PlayMongoRepository}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EmploymentRepository @Inject()(mongoComponent: MongoComponent)
+class EmploymentRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: ExecutionContext)
     extends PlayMongoRepository[Employment](
       collectionName = "employment",
       mongoComponent = mongoComponent,

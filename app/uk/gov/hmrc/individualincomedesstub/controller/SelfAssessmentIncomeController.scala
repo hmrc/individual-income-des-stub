@@ -17,22 +17,22 @@
 package uk.gov.hmrc.individualincomedesstub.controller
 
 import play.api.libs.json.Json
-import play.api.mvc.ControllerComponents
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
 import uk.gov.hmrc.individualincomedesstub.domain.RecordNotFoundException
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentIncomeService
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class SelfAssessmentIncomeController @Inject()(
   selfAssessmentIncomeService: SelfAssessmentIncomeService,
-  controllerComponents: ControllerComponents)
+  controllerComponents: ControllerComponents)(implicit ec: ExecutionContext)
     extends CommonController(controllerComponents) {
 
-  def income(nino: Nino, startYear: Int, endYear: Int) = Action.async { implicit request =>
+  def income(nino: Nino, startYear: Int, endYear: Int): Action[AnyContent] = Action.async { implicit request =>
     selfAssessmentIncomeService.income(nino, startYear, endYear) map { saReturns =>
       Ok(Json.toJson(saReturns))
     } recover {
