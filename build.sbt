@@ -16,7 +16,7 @@ lazy val microservice = Project(appName, file("."))
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test(),
     scalacOptions += "-Wconf:src=routes/.*:s",
     scalacOptions += "-Wconf:cat=unused-imports&src=views/.*:s",
-    routesImport ++= Seq("uk.gov.hmrc.individualincomedesstub.Binders._")
+    routesImport ++= Seq("uk.gov.hmrc.individualincomedesstub._")
   )
   .configs(IntegrationTest)
   .settings(integrationTestSettings() *)

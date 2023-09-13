@@ -34,20 +34,20 @@ import scala.concurrent.Future.successful
 
 class SelfAssessmentIncomeServiceSpec extends TestSupport with MockitoSugar {
 
-  val nino = Nino("AB123456A")
-  val utr = SaUtr("2432552635")
+  private val nino = Nino("AB123456A")
+  private val utr = SaUtr("2432552635")
 
   trait Setup {
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
-    val repository = mock[SelfAssessmentRepository]
+    val apiPlatformTestUserConnector: ApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+    val repository: SelfAssessmentRepository = mock[SelfAssessmentRepository]
 
     val underTest =
       new SelfAssessmentIncomeService(apiPlatformTestUserConnector, repository)
   }
 
-  val selfAssessment = SelfAssessment(
+  private val selfAssessment = SelfAssessment(
     saUtr = utr,
     registrationDate = LocalDate.parse("2008-04-04"),
     taxReturns = Seq(
@@ -83,7 +83,7 @@ class SelfAssessmentIncomeServiceSpec extends TestSupport with MockitoSugar {
       given(repository.findByUtr(utr))
         .willReturn(successful(Some(selfAssessment)))
 
-      val result = await(underTest.income(nino, 2014, 2015))
+      private val result = await(underTest.income(nino, 2014, 2015))
 
       result shouldBe Seq(
         SelfAssessmentResponse(

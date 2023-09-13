@@ -24,16 +24,17 @@ import scala.util.Try
 
 object Validators {
 
-  def valid(requirement: Boolean, message: String) =
-    if (!requirement)
+  private def valid(requirement: Boolean, message: String): Unit =
+    if (!requirement) {
       throw new ValidationException(message)
+    }
 
-  def validDate(fieldName: String, value: String) =
+  def validDate(fieldName: String, value: String): Unit =
     valid(
       Try(LocalDate.parse(value, DateTimeFormat.forPattern("yyyy-MM-dd"))).isSuccess,
       s"$fieldName: invalid date format")
 
-  def validInterval(startDate: String, endDate: String, errorMessage: String) =
+  def validInterval(startDate: String, endDate: String, errorMessage: String): Unit =
     valid(
       Try(new Interval(LocalDate.parse(startDate).toDate.getTime, LocalDate.parse(endDate).toDate.getTime)).isSuccess,
       errorMessage)

@@ -17,6 +17,7 @@
 package component.uk.gov.hmrc.individualincomedesstub.stubs
 
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, urlPathMatching}
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import component.uk.gov.hmrc.individualincomedesstub.MockHost
 import play.api.http.Status
 import play.api.libs.json.Json
@@ -26,7 +27,7 @@ import uk.gov.hmrc.individualincomedesstub.domain.{TestIndividual, TestOrganisat
 
 object ApiPlatformTestUserStub extends MockHost(22001) {
 
-  def getByEmpRefReturnsTestOrganisation(empRef: EmpRef, organisation: TestOrganisation) =
+  def getByEmpRefReturnsTestOrganisation(empRef: EmpRef, organisation: TestOrganisation): StubMapping =
     mock.register(
       get(urlPathMatching(s"/organisations/empref/${empRef.encodedValue}"))
         .willReturn(
@@ -46,12 +47,12 @@ object ApiPlatformTestUserStub extends MockHost(22001) {
              }
              """)))
 
-  def getByEmpRefReturnsNoTestOrganisation(empRef: EmpRef) =
+  def getByEmpRefReturnsNoTestOrganisation(empRef: EmpRef): StubMapping =
     mock.register(
       get(urlPathMatching(s"/organisations/empref/${empRef.encodedValue}"))
         .willReturn(aResponse().withStatus(Status.NOT_FOUND)))
 
-  def getByNinoReturnsTestIndividual(nino: Nino, individual: TestIndividual) =
+  def getByNinoReturnsTestIndividual(nino: Nino, individual: TestIndividual): StubMapping =
     mock.register(
       get(urlPathMatching(s"/individuals/nino/$nino"))
         .willReturn(

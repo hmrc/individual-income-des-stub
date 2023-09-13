@@ -23,7 +23,7 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status._
 import play.api.libs.json.Json.toJson
 import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.ControllerComponents
+import play.api.mvc.{AnyContentAsEmpty, ControllerComponents}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.controller.SelfAssessmentController
@@ -41,8 +41,9 @@ class SelfAssessmentControllerSpec extends TestSupport with MockitoSugar with Sc
   private val controllerComponents: ControllerComponents =
     fakeApplication.injector.instanceOf[ControllerComponents]
   def externalServices: Seq[String] = Seq("Stub")
-  val utr = SaUtr("2432552635")
-  val saReturn = SelfAssessmentTaxReturnData(
+
+  private val utr = SaUtr("2432552635")
+  private val saReturn = SelfAssessmentTaxReturnData(
     taxYear = "2014-15",
     submissionDate = "2015-06-01",
     employmentsIncome = Some(123),
@@ -62,12 +63,12 @@ class SelfAssessmentControllerSpec extends TestSupport with MockitoSugar with Sc
     businessDescription = None,
     address = None
   )
-  val request = SelfAssessmentCreateRequest("2014-01-01", Seq(saReturn))
-  val selfAssessment = SelfAssessment(utr, request)
+  private val request = SelfAssessmentCreateRequest("2014-01-01", Seq(saReturn))
+  private val selfAssessment = SelfAssessment(utr, request)
 
   trait Setup {
-    val fakeRequest = FakeRequest()
-    val selfAssessmentService = mock[SelfAssessmentService]
+    val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+    val selfAssessmentService: SelfAssessmentService = mock[SelfAssessmentService]
     val underTest =
       new SelfAssessmentController(selfAssessmentService, controllerComponents)
   }
@@ -78,7 +79,7 @@ class SelfAssessmentControllerSpec extends TestSupport with MockitoSugar with Sc
       given(selfAssessmentService.create(utr, request))
         .willReturn(successful(selfAssessment))
 
-      val result =
+      private val result =
         await(underTest.create(utr)(fakeRequest.withBody(toJson(request))))
 
       status(result) shouldBe CREATED
@@ -86,7 +87,7 @@ class SelfAssessmentControllerSpec extends TestSupport with MockitoSugar with Sc
     }
 
     "return a 400 (BadRequest) when the registration date is invalid" in new Setup {
-      val result =
+      private val result =
         await(underTest.create(utr)(fakeRequest.withBody(requestWithField("registrationDate", "11-11-1111"))))
 
       status(result) shouldBe BAD_REQUEST
@@ -95,14 +96,14 @@ class SelfAssessmentControllerSpec extends TestSupport with MockitoSugar with Sc
     }
 
     "return a 400 (BadRequest) when the taxYear is invalid" in new Setup {
-      val result = await(underTest.create(utr)(fakeRequest.withBody(requestWithTaxReturnField("taxYear", "201516"))))
+      private val result = await(underTest.create(utr)(fakeRequest.withBody(requestWithTaxReturnField("taxYear", "201516"))))
 
       status(result) shouldBe BAD_REQUEST
       jsonBodyOf(result) shouldBe Json.obj("code" -> "INVALID_REQUEST", "message" -> "taxYear: invalid tax year format")
     }
 
     "return a 400 (BadRequest) when the submissionDate is invalid" in new Setup {
-      val result =
+      private val result =
         await(underTest.create(utr)(fakeRequest.withBody(requestWithTaxReturnField("submissionDate", "invalid"))))
 
       status(result) shouldBe BAD_REQUEST
@@ -114,7 +115,7 @@ class SelfAssessmentControllerSpec extends TestSupport with MockitoSugar with Sc
       given(selfAssessmentService.create(utr, request))
         .willReturn(failed(new DuplicateSelfAssessmentException()))
 
-      val result =
+      private val result =
         await(underTest.create(utr)(fakeRequest.withBody(toJson(request))))
 
       status(result) shouldBe CONFLICT
@@ -130,5 +131,4 @@ class SelfAssessmentControllerSpec extends TestSupport with MockitoSugar with Sc
     Json.obj(
       "registrationDate" -> request.registrationDate,
       "taxReturns"       -> Json.arr(toJson(saReturn).as[JsObject] ++ Json.obj(fieldName -> fieldValue)))
-
 }

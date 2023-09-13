@@ -23,7 +23,7 @@ import play.api.{Application, Configuration, Play}
 
 class TestSupport extends UnitSpec with BeforeAndAfterAll {
 
-  lazy val additionalConfig = Configuration()
+  lazy val additionalConfig: Configuration = Configuration()
 
   def buildFakeApplication(extraConfig: Configuration): Application =
     new GuiceApplicationBuilder()
@@ -39,12 +39,12 @@ class TestSupport extends UnitSpec with BeforeAndAfterAll {
 
   lazy val fakeApplication: Application = buildFakeApplication(additionalConfig)
 
-  override def beforeAll() {
+  override def beforeAll(): Unit = {
     Play.start(fakeApplication)
     super.beforeAll()
   }
 
-  override def afterAll() {
+  override def afterAll(): Unit = {
     Play.stop(fakeApplication)
     super.afterAll()
   }

@@ -28,34 +28,10 @@ import scala.concurrent.Future.successful
 class EmploymentServiceSpec extends TestSupport with MockitoSugar {
 
   trait Setup {
-    val employerReference = EmpRef("123", "DI45678")
-    val nino = Nino("NA000799C")
-    val mockEmploymentRepository = mock[EmploymentRepository]
+    val employerReference: EmpRef = EmpRef("123", "DI45678")
+    val nino: Nino = Nino("NA000799C")
+    val mockEmploymentRepository: EmploymentRepository = mock[EmploymentRepository]
     val underTest = new EmploymentService(mockEmploymentRepository)
-  }
-
-  "Employment service" should {
-
-    val request = aCreateEmploymentRequest
-
-    "Return the created employment for a given empRef and Nino" in new Setup {
-
-      val employment = anEmployment(employerReference, nino)
-
-      when(mockEmploymentRepository.create(employerReference, nino, request))
-        .thenReturn(successful(employment))
-
-      val result = await(underTest.create(employerReference, nino, request))
-
-      result shouldBe employment
-    }
-
-    "Propagate exceptions when an Employment cannot be created" in new Setup {
-      when(mockEmploymentRepository.create(employerReference, nino, request))
-        .thenThrow(new RuntimeException("failed"))
-
-      intercept[RuntimeException](await(underTest.create(employerReference, nino, request)))
-    }
   }
 
   private val aCreateEmploymentRequest = CreateEmploymentRequest(
@@ -68,6 +44,28 @@ class EmploymentServiceSpec extends TestSupport with MockitoSugar {
     None,
     Some(EmploymentPayFrequency.CALENDAR_MONTHLY.toString)
   )
+
+  "Employment service" should {
+    val request = aCreateEmploymentRequest
+
+    "Return the created employment for a given empRef and Nino" in new Setup {
+      private val employment = anEmployment(employerReference, nino)
+
+      when(mockEmploymentRepository.create(employerReference, nino, request))
+        .thenReturn(successful(employment))
+
+      private val result = await(underTest.create(employerReference, nino, request))
+
+      result shouldBe employment
+    }
+
+    "Propagate exceptions when an Employment cannot be created" in new Setup {
+      when(mockEmploymentRepository.create(employerReference, nino, request))
+        .thenThrow(new RuntimeException("failed"))
+
+      intercept[RuntimeException](await(underTest.create(employerReference, nino, request)))
+    }
+  }
 
   private def anEmployment(empRef: EmpRef, nino: Nino) = Employment(
     empRef,

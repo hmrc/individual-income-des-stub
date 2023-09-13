@@ -43,7 +43,7 @@ class CustomErrorHandler @Inject()(
       Json.parse(message).\\("message").mkString(",").replaceAll("\"", "")
     } match {
       case Success(value) => value
-      case Failure(e)     => "Invalid Request"
+      case Failure(_)     => "Invalid Request"
     }
 
     statusCode match {
@@ -63,7 +63,7 @@ abstract class CommonController(controllerComponents: ControllerComponents)
     extends BackendController(controllerComponents) {
 
   override protected def withJsonBody[T](
-    f: (T) => Future[Result])(implicit request: Request[JsValue], m: Manifest[T], reads: Reads[T]): Future[Result] =
+    f: T => Future[Result])(implicit request: Request[JsValue], m: Manifest[T], reads: Reads[T]): Future[Result] =
     Try(request.body.validate[T]) match {
       case Success(JsSuccess(payload, _)) => f(payload)
       case Success(JsError(errs)) =>
@@ -74,7 +74,7 @@ abstract class CommonController(controllerComponents: ControllerComponents)
         Future.successful(ErrorInvalidRequest("Unable to process request").toHttpResponse)
     }
 
-  private def fieldName[T](errs: Seq[(JsPath, Seq[JsonValidationError])]) =
+  private def fieldName(errs: Seq[(JsPath, Seq[JsonValidationError])]) =
     errs.head._1.toString().substring(1)
 
   private[controller] def recovery: PartialFunction[Throwable, Result] = {

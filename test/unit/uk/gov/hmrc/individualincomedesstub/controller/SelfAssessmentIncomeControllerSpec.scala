@@ -16,6 +16,7 @@
 
 package unit.uk.gov.hmrc.individualincomedesstub.controller
 
+import akka.stream.Materializer
 import org.joda.time.LocalDate.parse
 import org.mockito.ArgumentMatchers.{any, eq => refEq}
 import org.mockito.BDDMockito.given
@@ -23,7 +24,7 @@ import org.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status._
 import play.api.libs.json.Json.toJson
-import play.api.mvc.ControllerComponents
+import play.api.mvc.{AnyContentAsEmpty, ControllerComponents}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -38,20 +39,20 @@ import scala.concurrent.Future.{failed, successful}
 
 class SelfAssessmentIncomeControllerSpec extends TestSupport with MockitoSugar with ScalaFutures {
 
-  implicit lazy val materializer = fakeApplication.materializer
+  implicit lazy val materializer: Materializer = fakeApplication.materializer
   private val controllerComponents: ControllerComponents =
     fakeApplication.injector.instanceOf[ControllerComponents]
 
   trait Setup {
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val nino = Nino("AB123456A")
-    val fakeRequest = FakeRequest()
-    val selfAssessmentIncomeService = mock[SelfAssessmentIncomeService]
+    val nino: Nino = Nino("AB123456A")
+    val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+    val selfAssessmentIncomeService: SelfAssessmentIncomeService = mock[SelfAssessmentIncomeService]
     val underTest = new SelfAssessmentIncomeController(selfAssessmentIncomeService, controllerComponents)
   }
 
-  val selfAssessmentResponse = SelfAssessmentResponse(
+  private val selfAssessmentResponse = SelfAssessmentResponse(
     taxYear = "2015",
     returnList = Seq(
       SelfAssessmentResponseReturn(
@@ -91,7 +92,7 @@ class SelfAssessmentIncomeControllerSpec extends TestSupport with MockitoSugar w
       given(selfAssessmentIncomeService.income(refEq(nino), refEq(2015), refEq(2016))(any[HeaderCarrier]))
         .willReturn(successful(Seq(selfAssessmentResponse)))
 
-      val result = await(underTest.income(nino, 2015, 2016)(fakeRequest))
+      private val result = await(underTest.income(nino, 2015, 2016)(fakeRequest))
 
       status(result) shouldBe OK
       jsonBodyOf(result) shouldBe toJson(Seq(selfAssessmentResponse))
@@ -101,7 +102,7 @@ class SelfAssessmentIncomeControllerSpec extends TestSupport with MockitoSugar w
       given(selfAssessmentIncomeService.income(refEq(nino), refEq(2015), refEq(2016))(any[HeaderCarrier]))
         .willReturn(failed(new RecordNotFoundException()))
 
-      val result = await(underTest.income(nino, 2015, 2016)(fakeRequest))
+      private val result = await(underTest.income(nino, 2015, 2016)(fakeRequest))
 
       status(result) shouldBe NOT_FOUND
     }

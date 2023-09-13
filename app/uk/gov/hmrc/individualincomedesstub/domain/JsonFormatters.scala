@@ -21,41 +21,44 @@ import play.api.libs.json.JodaWrites._
 import play.api.libs.json.JodaReads._
 import play.api.libs.json._
 
-import scala.language.{implicitConversions, postfixOps}
+import scala.language.implicitConversions
 import scala.util.{Failure, Try}
 
 object JsonFormatters {
-  implicit val dateFormatDefault = new Format[DateTime] {
+  implicit val dateFormatDefault: Format[DateTime] = new Format[DateTime] {
     override def reads(json: JsValue): JsResult[DateTime] = JodaReads.DefaultJodaDateTimeReads.reads(json)
     override def writes(o: DateTime): JsValue = JodaDateTimeNumberWrites.writes(o)
   }
-  implicit val hmrcPaymentFormat = Json.format[HmrcPayment]
-  implicit val desEmploymentPayFrequencyJsonFormat = EnumJson.enumFormat(DesEmploymentPayFrequency)
-  implicit val desPaymentFormat = Json.format[DesPayment]
-  implicit val desAddressFormat = Json.format[DesAddress]
-  implicit val employmentPayFrequencyJsonFormat = EnumJson.enumFormat(EmploymentPayFrequency)
-  implicit val employmentFormat = Json.format[Employment]
+  implicit val hmrcPaymentFormat: OFormat[HmrcPayment] = Json.format[HmrcPayment]
+  implicit val desEmploymentPayFrequencyJsonFormat: Format[DesEmploymentPayFrequency.Value] =
+    EnumJson.enumFormat(DesEmploymentPayFrequency)
+  implicit val desPaymentFormat: OFormat[DesPayment] = Json.format[DesPayment]
+  implicit val desAddressFormat: OFormat[DesAddress] = Json.format[DesAddress]
+  implicit val employmentPayFrequencyJsonFormat: Format[EmploymentPayFrequency.Value] =
+    EnumJson.enumFormat(EmploymentPayFrequency)
+  implicit val employmentFormat: OFormat[Employment] = Json.format[Employment]
 
-  implicit val testAddressFormat = Json.format[TestAddress]
-  implicit val testOrganisationDetailsFormat = Json.format[TestOrganisationDetails]
-  implicit val testOrganisationFormat = Json.format[TestOrganisation]
-  implicit val testIndividualFormat = Json.format[TestIndividual]
+  implicit val testAddressFormat: OFormat[TestAddress] = Json.format[TestAddress]
+  implicit val testOrganisationDetailsFormat: OFormat[TestOrganisationDetails] = Json.format[TestOrganisationDetails]
+  implicit val testOrganisationFormat: OFormat[TestOrganisation] = Json.format[TestOrganisation]
+  implicit val testIndividualFormat: OFormat[TestIndividual] = Json.format[TestIndividual]
 
-  implicit val createEmploymentRequestFormat = Json.format[CreateEmploymentRequest]
-  implicit val employmentIncomeResponseFormat = Json.format[EmploymentIncomeResponse]
+  implicit val createEmploymentRequestFormat: OFormat[CreateEmploymentRequest] = Json.format[CreateEmploymentRequest]
+  implicit val employmentIncomeResponseFormat: OFormat[EmploymentIncomeResponse] = Json.format[EmploymentIncomeResponse]
 
-  implicit val taxYearFormat = new Format[TaxYear] {
+  implicit val taxYearFormat: Format[TaxYear] = new Format[TaxYear] {
     override def reads(json: JsValue): JsResult[TaxYear] = JsSuccess(TaxYear(json.asInstanceOf[JsString].value))
 
     override def writes(taxYear: TaxYear): JsValue = JsString(taxYear.ty)
   }
 
-  implicit val selfAssessmentTaxReturnFormat = Json.format[SelfAssessmentTaxReturn]
-  implicit val selfAssessmentFormat = Json.format[SelfAssessment]
-  implicit val selfAssessmentCreateRequestFormat = Json.format[SelfAssessmentCreateRequest]
-  implicit val selfAssessmentResponseFormat = Json.format[SelfAssessmentResponse]
+  implicit val selfAssessmentTaxReturnFormat: OFormat[SelfAssessmentTaxReturn] = Json.format[SelfAssessmentTaxReturn]
+  implicit val selfAssessmentFormat: OFormat[SelfAssessment] = Json.format[SelfAssessment]
+  implicit val selfAssessmentCreateRequestFormat: OFormat[SelfAssessmentCreateRequest] =
+    Json.format[SelfAssessmentCreateRequest]
+  implicit val selfAssessmentResponseFormat: OFormat[SelfAssessmentResponse] = Json.format[SelfAssessmentResponse]
 
-  implicit val errorInvalidRequestFormat = new Format[ErrorInvalidRequest] {
+  implicit val errorInvalidRequestFormat: Format[ErrorInvalidRequest] = new Format[ErrorInvalidRequest] {
     def reads(json: JsValue): JsResult[ErrorInvalidRequest] = JsSuccess(
       ErrorInvalidRequest((json \ "message").as[String])
     )
@@ -64,30 +67,24 @@ object JsonFormatters {
       Json.obj("code" -> error.errorCode, "message" -> error.message)
   }
 
-  implicit val errorResponseWrites = new Writes[ErrorResponse] {
-    def writes(e: ErrorResponse): JsValue = Json.obj("code" -> e.errorCode, "message" -> e.message)
-  }
+  implicit val errorResponseWrites: Writes[ErrorResponse] = (e: ErrorResponse) =>
+    Json.obj("code" -> e.errorCode, "message" -> e.message)
 }
 
 object EnumJson {
 
-  def enumReads[E <: Enumeration](enum: E): Reads[E#Value] = new Reads[E#Value] {
-    def reads(json: JsValue): JsResult[E#Value] = json match {
-      case JsString(s) =>
-        Try(JsSuccess(enum.withName(s))) recoverWith {
-          case _: NoSuchElementException => Failure(new InvalidEnumException(enum.getClass.getSimpleName, s))
-        } get
-      case _ => JsError("String value expected")
-    }
+  private def enumReads[E <: Enumeration](enum: E): Reads[E#Value] = {
+    case JsString(s) =>
+      Try(JsSuccess(enum.withName(s))) recoverWith {
+        case _: NoSuchElementException => Failure(new InvalidEnumException(enum.getClass.getSimpleName, s))
+      } get
+    case _ => JsError("String value expected")
   }
 
-  implicit def enumWrites[E <: Enumeration]: Writes[E#Value] = new Writes[E#Value] {
-    def writes(v: E#Value): JsValue = JsString(v.toString)
-  }
+  implicit def enumWrites[E <: Enumeration]: Writes[E#Value] = (v: E#Value) => JsString(v.toString)
 
   implicit def enumFormat[E <: Enumeration](enum: E): Format[E#Value] =
     Format(enumReads(enum), enumWrites)
-
 }
 
 class InvalidEnumException(className: String, input: String)

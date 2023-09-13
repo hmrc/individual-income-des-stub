@@ -29,9 +29,9 @@ import uk.gov.hmrc.individualincomedesstub.domain._
 class EmploymentSpec extends AnyFreeSpec with Matchers {
 
   "A payment should determine whether it was paid within a given time interval" in new TableDrivenPropertyChecks {
-    val payment = HmrcPayment("2017-01-10", 123.45)
+    private val payment = HmrcPayment("2017-01-10", 123.45)
 
-    val fixtures = Table(
+    private val fixtures = Table(
       ("exampleinterval", "expected result"),
       (toInterval(parse("2017-01-08T00:00:00.000"), parse("2017-01-09T00:00:00.001")), false),
       (toInterval(parse("2017-01-09T00:00:00.000"), parse("2017-01-10T00:00:00.001")), true),
@@ -46,10 +46,10 @@ class EmploymentSpec extends AnyFreeSpec with Matchers {
   }
 
   "An employment should determine whether it contains a payment within a given time interval" in new TableDrivenPropertyChecks {
-    val payment = HmrcPayment("2017-01-10", 123.45)
-    val employment = Employment(EmpRef("123", "AB12345"), Nino("AB123456C"), None, None, Seq(payment), None, None)
+    private val payment = HmrcPayment("2017-01-10", 123.45)
+    private val employment = Employment(EmpRef("123", "AB12345"), Nino("AB123456C"), None, None, Seq(payment), None, None)
 
-    val fixtures = Table(
+    private val fixtures = Table(
       ("interval example", "expected result"),
       (toInterval(parse("2017-01-09T00:00:00.000"), parse("2017-01-09T23:59:59.999")), false),
       (toInterval(parse("2017-01-10T00:00:00.000"), parse("2017-01-10T23:59:59.999")), true),
@@ -62,7 +62,7 @@ class EmploymentSpec extends AnyFreeSpec with Matchers {
   }
 
   "An employment with start/end dates should determine whether it falls within a given time interval" in new TableDrivenPropertyChecks {
-    val employment = Employment(
+    private val employment = Employment(
       EmpRef("123", "AB12345"),
       Nino("AB123456C"),
       Option("2017-02-01"),
@@ -71,7 +71,7 @@ class EmploymentSpec extends AnyFreeSpec with Matchers {
       None,
       None)
 
-    val fixtures = Table(
+    private val fixtures = Table(
       ("interval example", "expected result"),
       (toInterval(parse("2017-01-09T00:00:00.000"), parse("2017-01-31T23:59:59.999")), false),
       (toInterval(parse("2017-02-28T00:00:00.000"), parse("2017-03-02T23:59:59.999")), false),
@@ -86,10 +86,10 @@ class EmploymentSpec extends AnyFreeSpec with Matchers {
   }
 
   "An employment with only start date should determine whether it falls within a given time interval" in new TableDrivenPropertyChecks {
-    val employment =
+    private val employment =
       Employment(EmpRef("123", "AB12345"), Nino("AB123456C"), Option("2017-02-01"), None, Seq.empty, None, None)
 
-    val fixtures = Table(
+    private val fixtures = Table(
       ("interval example", "expected result"),
       (toInterval(parse("2016-12-01T00:00:00.000"), parse("2017-01-31T23:59:59.999")), false),
       (toInterval(parse("2017-03-01T00:00:00.000"), parse("2017-05-31T23:59:59.999")), true),
@@ -103,10 +103,10 @@ class EmploymentSpec extends AnyFreeSpec with Matchers {
   }
 
   "An employment with only end date should determine whether it falls within a given time interval" in new TableDrivenPropertyChecks {
-    val employment =
+    private val employment =
       Employment(EmpRef("123", "AB12345"), Nino("AB123456C"), None, Option("2017-02-01"), Seq.empty, None, None)
 
-    val fixtures = Table(
+    private val fixtures = Table(
       ("interval example", "expected result"),
       (toInterval(parse("2017-02-02T00:00:00.000"), parse("2017-05-31T23:59:59.999")), false),
       (toInterval(parse("2017-02-01T00:00:00.000"), parse("2017-03-02T23:59:59.999")), true),
@@ -179,7 +179,7 @@ class EmploymentSpec extends AnyFreeSpec with Matchers {
   }
 
   "A Des pay frequency should derive itself from a  employment pay frequency" in new TableDrivenPropertyChecks {
-    val fixtures = Table(
+    private val fixtures = Table(
       ("Employment frequency", "Expected Des employment frequency"),
       (WEEKLY, Some(W1)),
       (FORTNIGHTLY, Some(W2)),

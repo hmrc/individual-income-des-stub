@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.individualincomedesstub
+package uk.gov.hmrc
 
 import uk.gov.hmrc.individualincomedesstub.util._
 
-package object Binders {
+package object individualincomedesstub {
 
-  implicit val ninoBinder = new NinoPathStringBinder
-  implicit val employerReferenceBinder = new EmployerReferenceStringBinder
-  implicit val intervalQueryStringBinder = new IntervalQueryStringBinder
-  implicit val saUtrPathStringBinder = new SaUtrPathStringBinder
+  implicit val ninoBinder: NinoPathStringBinder = new NinoPathStringBinder
+  implicit val employerReferenceBinder: EmployerReferenceStringBinder = new EmployerReferenceStringBinder
+  implicit val intervalQueryStringBinder: IntervalQueryStringBinder = new IntervalQueryStringBinder
+  implicit val saUtrPathStringBinder: SaUtrPathStringBinder = new SaUtrPathStringBinder
 }

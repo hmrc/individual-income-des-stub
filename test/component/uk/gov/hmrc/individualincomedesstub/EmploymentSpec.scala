@@ -29,7 +29,7 @@ import scala.concurrent.Await.result
 
 class EmploymentSpec extends BaseSpec {
 
-  val employerReference = EmpRef("123", "DI45678")
+  private val employerReference = EmpRef("123", "DI45678")
   val employerReferenceEncoded = "123%2FDI45678"
   val validNino = "NA000799C"
 

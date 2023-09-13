@@ -16,11 +16,12 @@
 
 package unit.uk.gov.hmrc.individualincomedesstub.controller
 
+import akka.stream.Materializer
 import org.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.{BAD_REQUEST, CREATED}
 import play.api.libs.json.Json
-import play.api.mvc.ControllerComponents
+import play.api.mvc.{AnyContentAsEmpty, ControllerComponents}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.controller.EmploymentController
@@ -34,14 +35,14 @@ import scala.concurrent.Future.successful
 
 class EmploymentControllerSpec extends TestSupport with ScalaFutures with MockitoSugar {
 
-  implicit lazy val materializer = fakeApplication.materializer
+  implicit lazy val materializer: Materializer = fakeApplication.materializer
   val controllerComponents: ControllerComponents =
     fakeApplication.injector.instanceOf[ControllerComponents]
   def externalServices: Seq[String] = Seq("Stub")
 
   trait Setup {
-    val fakeRequest = FakeRequest()
-    val mockEmploymentService = mock[EmploymentService]
+    val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+    val mockEmploymentService: EmploymentService = mock[EmploymentService]
     val underTest =
       new EmploymentController(mockEmploymentService, controllerComponents)
   }
@@ -52,47 +53,47 @@ class EmploymentControllerSpec extends TestSupport with ScalaFutures with Mockit
     val nino = Nino("NA000799C")
 
     "Successfully create an employment record and return the correct response" in new Setup {
-      val request = aCreateEmploymentRequest()
-      val employment = anEmployment(employerPayeReference, nino)
+      private val request = aCreateEmploymentRequest()
+      private val employment = anEmployment(employerPayeReference, nino)
 
       when(mockEmploymentService.create(employerPayeReference, nino, request))
         .thenReturn(successful(employment))
 
-      val result = await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.toJson(request))))
+      private val result = await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.toJson(request))))
 
       status(result) shouldBe CREATED
       bodyOf(result) shouldBe Json.toJson(employment).toString
     }
 
     "Successfully create an employment with no startDate" in new Setup {
-      val request = aCreateEmploymentRequest(startDate = None)
-      val employment =
+      private val request = aCreateEmploymentRequest(startDate = None)
+      private val employment =
         anEmployment(employerPayeReference, nino, startDate = None)
 
       when(mockEmploymentService.create(employerPayeReference, nino, request))
         .thenReturn(successful(employment))
 
-      val result = await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.toJson(request))))
+      private val result = await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.toJson(request))))
 
       status(result) shouldBe CREATED
       bodyOf(result) shouldBe Json.toJson(employment).toString
     }
 
     "Successfully create an employment with no endDate" in new Setup {
-      val request = aCreateEmploymentRequest(endDate = None)
-      val employment = anEmployment(employerPayeReference, nino, endDate = None)
+      private val request = aCreateEmploymentRequest(endDate = None)
+      private val employment = anEmployment(employerPayeReference, nino, endDate = None)
 
       when(mockEmploymentService.create(employerPayeReference, nino, request))
         .thenReturn(successful(employment))
 
-      val result = await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.toJson(request))))
+      private val result = await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.toJson(request))))
 
       status(result) shouldBe CREATED
       bodyOf(result) shouldBe Json.toJson(employment).toString
     }
 
     "Fail with correct error message for missing payments field" in new Setup {
-      val result = await(
+      private val result = await(
         underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json
           .parse("""{"startDate": "2016-01-01", "endDate": "2017-03-01"}"""))))
       status(result) shouldBe BAD_REQUEST
@@ -100,7 +101,7 @@ class EmploymentControllerSpec extends TestSupport with ScalaFutures with Mockit
     }
 
     "Fail with correct error message for invalid payment" in new Setup {
-      val result = await(
+      private val result = await(
         underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.parse(
           """{"startDate": "2016-01-01","endDate": "2017-03-01","payments":[{"taxablePayment": 1000.55}]}"""))))
       status(result) shouldBe BAD_REQUEST

@@ -33,16 +33,16 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEach {
 
-  val stubPort = sys.env.getOrElse("WIREMOCK", "11121").toInt
+  private val stubPort = sys.env.getOrElse("WIREMOCK", "11121").toInt
   val stubHost = "localhost"
   val wireMockServer = new WireMockServer(wireMockConfig().port(stubPort))
-  val empRef = EmpRef("123", "AI45678")
-  val testOrganisation = TestOrganisation(
+  private val empRef = EmpRef("123", "AI45678")
+  private val testOrganisation = TestOrganisation(
     Some(empRef),
     TestOrganisationDetails("Disney Inc", TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
 
-  val nino = Nino("AB123456A")
-  val utr = SaUtr("2432552635")
+  private val nino = Nino("AB123456A")
+  private val utr = SaUtr("2432552635")
 
   val http: HttpClient = fakeApplication.injector.instanceOf[HttpClient]
   val config: Configuration = fakeApplication.injector.instanceOf[Configuration]
@@ -50,20 +50,20 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
     fakeApplication.injector.instanceOf[ServicesConfig]
 
   trait Setup {
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val underTest =
+    val underTest: ApiPlatformTestUserConnector =
       new ApiPlatformTestUserConnector(http, serviceConfig) {
         override val serviceUrl = s"http://$stubHost:$stubPort"
       }
   }
 
-  override def beforeEach() {
+  override def beforeEach(): Unit = {
     wireMockServer.start()
     configureFor(stubHost, stubPort)
   }
 
-  override def afterEach() {
+  override def afterEach(): Unit = {
     wireMockServer.stop()
   }
 
@@ -91,7 +91,7 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
              """
               )))
 
-      val result = await(underTest.getOrganisationByEmpRef(empRef))
+      private val result = await(underTest.getOrganisationByEmpRef(empRef))
 
       result shouldBe Some(testOrganisation)
     }
@@ -123,7 +123,7 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
               .withStatus(OK)
               .withBody(s"""{"saUtr": "${utr.value}"}""")))
 
-      val result = await(underTest.getIndividualByNino(nino))
+      private val result = await(underTest.getIndividualByNino(nino))
 
       result shouldBe TestIndividual(Some(utr))
     }

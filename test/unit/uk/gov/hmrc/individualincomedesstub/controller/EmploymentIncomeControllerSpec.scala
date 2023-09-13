@@ -19,6 +19,7 @@ package unit.uk.gov.hmrc.individualincomedesstub.controller
 import org.joda.time.LocalDate.parse
 import org.joda.time.{Interval, LocalDate}
 import org.mockito.ArgumentMatchers.any
+import org.mockito.stubbing.ScalaOngoingStubbing
 import org.mockito.{ArgumentMatchers, MockitoSugar}
 import play.api.libs.json.Json.toJson
 import play.api.mvc._
@@ -48,11 +49,11 @@ class EmploymentIncomeControllerSpec extends TestSupport with Results with Mocki
     val nino = Nino("AB123456C")
     val interval = toInterval(parse("2017-01-01"), parse("2017-06-30"))
 
-    def mockEmploymentIncomeService(eventualEmploymentResponses: Future[Seq[EmploymentIncomeResponse]]) =
+    def mockEmploymentIncomeService(eventualEmploymentResponses: Future[Seq[EmploymentIncomeResponse]]): ScalaOngoingStubbing[Future[Seq[EmploymentIncomeResponse]]] =
       when(employmentIncomeService.employments(ArgumentMatchers.eq(nino), any(classOf[Interval]))(any[HeaderCarrier]))
         .thenReturn(eventualEmploymentResponses)
 
-    def asEmploymentResponse(employment: Employment) =
+    def asEmploymentResponse(employment: Employment): EmploymentIncomeResponse =
       EmploymentIncomeResponse(employment, None)
 
     "return a http 404 (Not Found) response when service does not return any employments" in {

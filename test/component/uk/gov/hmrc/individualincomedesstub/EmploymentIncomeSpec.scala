@@ -27,9 +27,9 @@ import scala.concurrent.Await.result
 
 class EmploymentIncomeSpec extends BaseSpec {
 
-  val nino = Nino("NA000799C")
-  val empRef = EmpRef("123", "AI45678")
-  val employment = CreateEmploymentRequest(
+  private val nino = Nino("NA000799C")
+  private val empRef = EmpRef("123", "AI45678")
+  private val employment = CreateEmploymentRequest(
     startDate = Some("2016-01-01"),
     endDate = Some("2016-06-01"),
     payments = Seq(HmrcPayment("2016-05-30", 252.55, monthPayNumber = Some(10))),
@@ -37,7 +37,7 @@ class EmploymentIncomeSpec extends BaseSpec {
     None,
     Some(EmploymentPayFrequency.CALENDAR_MONTHLY.toString)
   )
-  val employer = TestOrganisation(
+  private val employer = TestOrganisation(
     Some(empRef),
     TestOrganisationDetails("Disney Inc", TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
 
