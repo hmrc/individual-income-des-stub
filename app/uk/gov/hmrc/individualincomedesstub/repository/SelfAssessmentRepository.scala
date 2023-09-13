@@ -25,11 +25,10 @@ import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SelfAssessmentRepository @Inject()(mongo: MongoComponent)
+class SelfAssessmentRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
     extends PlayMongoRepository[SelfAssessment](
       mongoComponent = mongo,
       collectionName = "selfAssessment",
@@ -53,5 +52,4 @@ class SelfAssessmentRepository @Inject()(mongo: MongoComponent)
 
   def findByUtr(saUtr: SaUtr): Future[Option[SelfAssessment]] =
     collection.find(equal("saUtr", saUtr.value)).headOption()
-
 }

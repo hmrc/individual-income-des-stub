@@ -19,8 +19,6 @@ package unit.uk.gov.hmrc.individualincomedesstub.service
 import org.joda.time.LocalDate
 import org.mockito.ArgumentMatchers.any
 import org.mockito.IdiomaticMockito
-import org.mockito.invocation.InvocationOnMock
-import org.mockito.stubbing.Answer
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
@@ -28,12 +26,11 @@ import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
 import scala.concurrent.Future
-import scala.concurrent.Future.successful
 
 class SelfAssessmentServiceSpec extends TestSupport with IdiomaticMockito {
 
-  val utr = SaUtr("2432552635")
-  val taxReturn = SelfAssessmentTaxReturnData(
+  private val utr = SaUtr("2432552635")
+  private val taxReturn = SelfAssessmentTaxReturnData(
     taxYear = "2015-16",
     submissionDate = "2015-01-10",
     employmentsIncome = Some(1444.44),
@@ -54,10 +51,10 @@ class SelfAssessmentServiceSpec extends TestSupport with IdiomaticMockito {
     address = None
   )
 
-  val request = SelfAssessmentCreateRequest(registrationDate = "2015-06-06", taxReturns = Seq(taxReturn))
+  private val request = SelfAssessmentCreateRequest(registrationDate = "2015-06-06", taxReturns = Seq(taxReturn))
 
   trait Setup {
-    val repository = mock[SelfAssessmentRepository]
+    val repository: SelfAssessmentRepository = mock[SelfAssessmentRepository]
     val underTest = new SelfAssessmentService(repository)
 
     repository.create(any()) answers ((sa: SelfAssessment) => Future.successful(sa))
@@ -65,7 +62,7 @@ class SelfAssessmentServiceSpec extends TestSupport with IdiomaticMockito {
 
   "create" should {
     "return the created self assessment" in new Setup {
-      val expectedSelfAssessment = SelfAssessment(
+      private val expectedSelfAssessment = SelfAssessment(
         saUtr = utr,
         registrationDate = LocalDate.parse("2015-06-06"),
         taxReturns = Seq(
@@ -91,14 +88,14 @@ class SelfAssessmentServiceSpec extends TestSupport with IdiomaticMockito {
           ))
       )
 
-      val result = await(underTest.create(utr, request))
+      private val result = await(underTest.create(utr, request))
 
       result shouldBe expectedSelfAssessment
       repository.create(expectedSelfAssessment) was called
     }
 
     "defaults the amounts to zero when they are no set" in new Setup {
-      val taxReturnWithoutAmounts = taxReturn.copy(
+      private val taxReturnWithoutAmounts = taxReturn.copy(
         employmentsIncome = None,
         selfEmploymentProfit = None,
         totalIncome = None,
@@ -114,10 +111,10 @@ class SelfAssessmentServiceSpec extends TestSupport with IdiomaticMockito {
         pensionsAndStateBenefitsIncome = None,
         otherIncome = None
       )
-      val requestWithoutAmounts =
+      private val requestWithoutAmounts =
         request.copy(taxReturns = Seq(taxReturnWithoutAmounts))
 
-      val result = await(underTest.create(utr, requestWithoutAmounts))
+      private val result = await(underTest.create(utr, requestWithoutAmounts))
 
       result.taxReturns shouldBe Seq(
         SelfAssessmentTaxReturn(
@@ -145,13 +142,6 @@ class SelfAssessmentServiceSpec extends TestSupport with IdiomaticMockito {
     "propagate exceptions when a self assessment cannot be created" in new Setup {
       repository.create(any()) throws new RuntimeException("failed")
       intercept[RuntimeException](await(underTest.create(utr, request)))
-    }
-  }
-
-  def returnSame[T] = new Answer[Future[T]] {
-    override def answer(invocationOnMock: InvocationOnMock): Future[T] = {
-      val argument = invocationOnMock.getArguments()(0)
-      successful(argument.asInstanceOf[T])
     }
   }
 }

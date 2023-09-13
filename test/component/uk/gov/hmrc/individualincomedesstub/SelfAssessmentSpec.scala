@@ -31,8 +31,8 @@ import scala.concurrent.Await.result
 
 class SelfAssessmentSpec extends BaseSpec {
 
-  val utr = SaUtr("2432552635")
-  val selfAssessment = SelfAssessment(
+  private val utr = SaUtr("2432552635")
+  private val selfAssessment = SelfAssessment(
     utr,
     LocalDate.parse("2014-01-01"),
     Seq(

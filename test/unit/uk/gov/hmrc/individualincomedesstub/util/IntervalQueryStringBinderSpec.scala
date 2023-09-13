@@ -29,7 +29,7 @@ class IntervalQueryStringBinderSpec extends AnyFlatSpec with Matchers with Eithe
   private val intervalQueryStringBinder = new IntervalQueryStringBinder
 
   "Interval query string binder" should "fail to bind a missing or malformed from or a malformed to parameter" in new TableDrivenPropertyChecks {
-    val fixtures = Table(
+    private val fixtures = Table(
       ("parameters", "response"),
       (Map[String, Seq[String]]().empty, """{"code":"INVALID_REQUEST","message":"from is required"}"""),
       (Map("from" -> Seq.empty[String]), """{"code":"INVALID_REQUEST","message":"from is required"}"""),

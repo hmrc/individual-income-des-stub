@@ -25,15 +25,14 @@ import uk.gov.hmrc.individualincomedesstub.domain.{EmploymentIncomeResponse, Tes
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EmploymentIncomeService @Inject()(
   employmentRepository: EmploymentRepository,
-  apiPlatformTestUserConnector: ApiPlatformTestUserConnector) {
+  apiPlatformTestUserConnector: ApiPlatformTestUserConnector)(implicit ec: ExecutionContext) {
 
-  def getEmployers(empRefs: Seq[EmpRef])(implicit hc: HeaderCarrier): Future[Seq[TestOrganisation]] = {
+  private def getEmployers(empRefs: Seq[EmpRef])(implicit hc: HeaderCarrier): Future[Seq[TestOrganisation]] = {
     val futures = empRefs.map(apiPlatformTestUserConnector.getOrganisationByEmpRef)
     Future.sequence(futures).map(_.flatten.toSeq)
   }
@@ -51,5 +50,4 @@ class EmploymentIncomeService @Inject()(
           val paymentsWithinInterval = employment.payments.filter(_.isPaidWithin(interval))
           EmploymentIncomeResponse(employment.copy(payments = paymentsWithinInterval), employer)
       }
-
 }

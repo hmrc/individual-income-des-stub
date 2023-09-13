@@ -26,11 +26,13 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
+import uk.gov.hmrc.individualincomedesstub.domain.{Employment, SelfAssessment}
 import uk.gov.hmrc.individualincomedesstub.repository.{EmploymentRepository, SelfAssessmentRepository}
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import java.util.concurrent.TimeUnit
 import scala.concurrent.Await.result
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration.{Duration, FiniteDuration}
 
 trait BaseSpec
     extends AnyFeatureSpec with BeforeAndAfterAll with BeforeAndAfterEach with Matchers with GuiceOneServerPerSuite
@@ -45,13 +47,14 @@ trait BaseSpec
     )
     .build()
 
-  val timeout = Duration(5, TimeUnit.SECONDS)
+  val timeout: FiniteDuration = Duration(5, TimeUnit.SECONDS)
   val serviceUrl = s"http://localhost:$port"
-  val employmentRepository = app.injector.instanceOf[EmploymentRepository]
-  val selfAssessmentRepository = app.injector.instanceOf[SelfAssessmentRepository]
-  val mocks = Seq(ApiPlatformTestUserStub)
+  val employmentRepository: EmploymentRepository = app.injector.instanceOf[EmploymentRepository]
+  val selfAssessmentRepository: SelfAssessmentRepository = app.injector.instanceOf[SelfAssessmentRepository]
+  val mocks: Seq[ApiPlatformTestUserStub.type] = Seq(ApiPlatformTestUserStub)
 
-  val repositories = Seq(employmentRepository, selfAssessmentRepository)
+  val repositories: Seq[PlayMongoRepository[_ >: Employment with SelfAssessment <: Product]] =
+    Seq(employmentRepository, selfAssessmentRepository)
 
   override protected def beforeEach(): Unit = {
     repositories.foreach(r => result(r.collection.drop().toFuture(), timeout))

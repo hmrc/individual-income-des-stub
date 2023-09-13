@@ -81,7 +81,7 @@ case class Employment(
 
   private def containsPaymentWithin(interval: Interval) = payments.exists(_.isPaidWithin(interval))
 
-  def isWithin(interval: Interval) = {
+  def isWithin(interval: Interval): Boolean = {
 
     val employmentWithinInterval = (startDate, endDate) match {
       case (Some(start), Some(end)) => interval.overlaps(toInterval(start, end))
@@ -108,8 +108,9 @@ case class CreateEmploymentRequest(
   payrollId: Option[String],
   payFrequency: Option[String]) {
 
-  if (payFrequency.isDefined)
+  if (payFrequency.isDefined) {
     validPayFrequency(payFrequency.get, "payFrequency is invalid")
+  }
 
   (startDate, endDate) match {
     case (Some(start), Some(end)) =>
@@ -190,7 +191,8 @@ object DesEmploymentPayFrequency extends Enumeration {
     BI_ANNUALLY      -> M6,
     ANNUALLY         -> MA)
 
-  def from(payFrequency: String) = conversionMap.get(EmploymentPayFrequency.withName(payFrequency))
+  def from(payFrequency: String): Option[DesEmploymentPayFrequency.Value] =
+    conversionMap.get(EmploymentPayFrequency.withName(payFrequency))
 
 }
 

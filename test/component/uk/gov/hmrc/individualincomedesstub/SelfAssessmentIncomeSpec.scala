@@ -26,9 +26,8 @@ import uk.gov.hmrc.individualincomedesstub.domain.{SelfAssessment, SelfAssessmen
 
 class SelfAssessmentIncomeSpec extends BaseSpec {
 
-  val nino = Nino("AB123456A")
-  val utr = SaUtr("2432552635")
-  val taxYear = TaxYear("2014-15")
+  private val nino = Nino("AB123456A")
+  private val utr = SaUtr("2432552635")
 
   Feature("Retrieve DES stubbed self assessment income") {
 

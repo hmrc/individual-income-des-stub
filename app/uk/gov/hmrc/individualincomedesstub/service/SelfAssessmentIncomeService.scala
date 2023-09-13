@@ -23,13 +23,12 @@ import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, Self
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SelfAssessmentIncomeService @Inject()(
   apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
-  selfAssessmentRepository: SelfAssessmentRepository) {
+  selfAssessmentRepository: SelfAssessmentRepository)(implicit ec: ExecutionContext) {
 
   def income(nino: Nino, startYear: Int, endYear: Int)(
     implicit hc: HeaderCarrier): Future[Seq[SelfAssessmentResponse]] = {

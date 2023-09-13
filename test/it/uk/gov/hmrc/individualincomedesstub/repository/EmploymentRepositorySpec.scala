@@ -19,7 +19,7 @@ package it.uk.gov.hmrc.individualincomedesstub.repository
 import org.mongodb.scala.model.Filters
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
-import play.api.Configuration
+import play.api.{Application, Configuration}
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, EmploymentPayFrequency, HmrcPayment}
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
@@ -27,22 +27,30 @@ import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
 class EmploymentRepositorySpec extends TestSupport with Matchers with BeforeAndAfterEach {
 
-  override lazy val fakeApplication = buildFakeApplication(
+  override lazy val fakeApplication: Application = buildFakeApplication(
     Configuration("mongodb.uri" -> "mongodb://localhost:27017/individual-income-des-stub"))
 
-  val employmentRepository =
+  private val employmentRepository =
     fakeApplication.injector.instanceOf[EmploymentRepository]
-  val employerReference = EmpRef("123", "DI45678")
-  val nino = Nino("NA000799C")
+  private val employerReference = EmpRef("123", "DI45678")
+  private val nino = Nino("NA000799C")
 
-  override def beforeEach() {
+  private val aCreateEmploymentRequest = CreateEmploymentRequest(
+    Some("2016-01-01"),
+    Some("2017-01-30"),
+    Seq(HmrcPayment("2016-01-28", 1000.55), HmrcPayment("2016-02-28", 1200.44)),
+    None,
+    None,
+    Some(EmploymentPayFrequency.CALENDAR_MONTHLY.toString)
+  )
+
+  override def beforeEach(): Unit = {
     await(employmentRepository.collection.drop().toFuture())
     await(employmentRepository.ensureIndexes)
   }
 
-  override def afterEach() {
+  override def afterEach(): Unit =
     await(employmentRepository.collection.drop().toFuture())
-  }
 
   "create" should {
     "create an employment" in {
@@ -65,7 +73,6 @@ class EmploymentRepositorySpec extends TestSupport with Matchers with BeforeAndA
   }
 
   "findByReferenceAndNino" should {
-
     "return all records for a given paye reference and nino" in {
       val employment = anEmployment(employerReference, nino)
 
@@ -94,7 +101,6 @@ class EmploymentRepositorySpec extends TestSupport with Matchers with BeforeAndA
   }
 
   "find by nino" should {
-
     "return an empty sequence when a corresponding employment does not exist" in {
       await(employmentRepository.findBy(nino)).isEmpty shouldBe true
     }
@@ -108,17 +114,7 @@ class EmploymentRepositorySpec extends TestSupport with Matchers with BeforeAndA
       employments.size shouldBe 1
       employments.head shouldBe anEmployment(employerReference, nino)
     }
-
   }
-
-  private val aCreateEmploymentRequest = CreateEmploymentRequest(
-    Some("2016-01-01"),
-    Some("2017-01-30"),
-    Seq(HmrcPayment("2016-01-28", 1000.55), HmrcPayment("2016-02-28", 1200.44)),
-    None,
-    None,
-    Some(EmploymentPayFrequency.CALENDAR_MONTHLY.toString)
-  )
 
   private def anEmployment(empRef: EmpRef, nino: Nino) = Employment(
     empRef,

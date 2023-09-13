@@ -27,13 +27,12 @@ sealed abstract class ErrorResponse(val httpStatusCode: Int, val errorCode: Stri
 }
 
 case class ErrorInvalidRequest(errorMessage: String) extends ErrorResponse(BAD_REQUEST, "INVALID_REQUEST", errorMessage)
+
 class ValidationException(message: String) extends RuntimeException(message)
-class InvalidNinoException extends RuntimeException
+
 class DuplicateSelfAssessmentException extends RuntimeException
 
 class RecordNotFoundException() extends RuntimeException
 
-case object ErrorInternalServer
-    extends ErrorResponse(INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "Internal server error")
 case object ErrorDuplicateAssessment
     extends ErrorResponse(CONFLICT, "SA_ALREADY_EXISTS", "A self-assessment record already exists for this individual")

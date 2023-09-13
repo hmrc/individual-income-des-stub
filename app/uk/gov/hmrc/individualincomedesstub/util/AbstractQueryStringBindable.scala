@@ -22,6 +22,6 @@ import uk.gov.hmrc.individualincomedesstub.domain.ErrorInvalidRequest
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.errorInvalidRequestFormat
 
 trait AbstractQueryStringBindable[T] extends QueryStringBindable[T] {
-  protected def errorResponse(message: String) =
+  protected def errorResponse(message: String): String =
     Json.toJson(ErrorInvalidRequest(message)).toString
 }

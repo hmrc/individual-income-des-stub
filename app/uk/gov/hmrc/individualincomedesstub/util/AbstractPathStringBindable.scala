@@ -24,7 +24,7 @@ import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.errorInvalidReq
 import scala.util.Try
 
 trait AbstractPathStringBindable[T] extends PathBindable[T] {
-  protected def errorResponse(message: String) =
+  protected def errorResponse(message: String): String =
     Json.toJson(ErrorInvalidRequest(message)).toString
 
   def bind[A](message: String, function: => A): Either[String, A] =

@@ -18,7 +18,7 @@ package it.uk.gov.hmrc.individualincomedesstub.repository
 
 import org.joda.time.LocalDate
 import org.scalatest.BeforeAndAfterEach
-import play.api.Configuration
+import play.api.{Application, Configuration}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
@@ -26,13 +26,13 @@ import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
 class SelfAssessmentRepositorySpec extends TestSupport with BeforeAndAfterEach {
 
-  override lazy val fakeApplication = buildFakeApplication(
+  override lazy val fakeApplication: Application = buildFakeApplication(
     Configuration("mongodb.uri" -> "mongodb://localhost:27017/individual-income-des-stub"))
 
-  val repository = fakeApplication.injector.instanceOf[SelfAssessmentRepository]
+  private val repository = fakeApplication.injector.instanceOf[SelfAssessmentRepository]
 
-  val utr = SaUtr("2432552635")
-  val selfAssessment = SelfAssessment(
+  private val utr = SaUtr("2432552635")
+  private val selfAssessment = SelfAssessment(
     utr,
     LocalDate.parse("2014-01-01"),
     Seq(
@@ -58,14 +58,13 @@ class SelfAssessmentRepositorySpec extends TestSupport with BeforeAndAfterEach {
       ))
   )
 
-  override def beforeEach() {
+  override def beforeEach(): Unit = {
     await(repository.collection.drop().toFuture())
     await(repository.ensureIndexes)
   }
 
-  override def afterEach() {
+  override def afterEach(): Unit =
     await(repository.collection.drop().toFuture())
-  }
 
   /*
   "collection" should {

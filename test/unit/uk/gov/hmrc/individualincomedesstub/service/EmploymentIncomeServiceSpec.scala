@@ -19,6 +19,7 @@ package unit.uk.gov.hmrc.individualincomedesstub.service
 import org.joda.time.LocalDate.parse
 import org.mockito.ArgumentMatchers._
 import org.mockito.MockitoSugar
+import org.mockito.stubbing.ScalaOngoingStubbing
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
@@ -31,6 +32,7 @@ import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentIncomeService
 import uk.gov.hmrc.individualincomedesstub.util.Dates.toInterval
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
 import scala.language.postfixOps
@@ -41,16 +43,19 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
   private val employmentRepository = mock[EmploymentRepository]
   private val apiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
   private val employmentIncomeService = new EmploymentIncomeService(employmentRepository, apiPlatformTestUserConnector)
-  implicit val hc = HeaderCarrier()
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  override protected def beforeEach() = reset(employmentRepository, apiPlatformTestUserConnector)
+  override protected def beforeEach(): Unit = reset(employmentRepository, apiPlatformTestUserConnector)
 
   "Employment income service employments function" should {
 
-    def mockEmploymentRepositoryFindByNino(nino: Nino, eventualEmployments: Future[Seq[Employment]]) =
+    def mockEmploymentRepositoryFindByNino(
+      nino: Nino,
+      eventualEmployments: Future[Seq[Employment]]): ScalaOngoingStubbing[Future[Seq[Employment]]] =
       when(employmentRepository.findBy(nino)).thenReturn(eventualEmployments)
 
-    def mockTestUserConnectorGetOrganisationByEmpRef(eventualOrganisation: Future[Option[TestOrganisation]]) =
+    def mockTestUserConnectorGetOrganisationByEmpRef(
+      eventualOrganisation: Future[Option[TestOrganisation]]): ScalaOngoingStubbing[Future[Option[TestOrganisation]]] =
       when(apiPlatformTestUserConnector.getOrganisationByEmpRef(any[EmpRef])(any[HeaderCarrier]))
         .thenReturn(eventualOrganisation)
 
@@ -60,15 +65,15 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
     }
 
     "return a populated filtered sequence when corresponding employments with payments exist" in new TableDrivenPropertyChecks {
-      val employmentWithPaymentAtEndOfMar =
+      private val employmentWithPaymentAtEndOfMar =
         Employment(EmpRef("101", "AB10001"), nino, None, None, Seq(payment("2017-03-31")), None, None)
-      val employmentWithPaymentAtEndOfJun =
+      private val employmentWithPaymentAtEndOfJun =
         Employment(EmpRef("102", "AB10002"), nino, None, None, Seq(payment("2017-06-30")), None, None)
-      val employmentWithPaymentAtEndOfSep =
+      private val employmentWithPaymentAtEndOfSep =
         Employment(EmpRef("103", "AB10003"), nino, None, None, Seq(payment("2017-09-30")), None, None)
-      val employmentWithPaymentAtEndOfDec =
+      private val employmentWithPaymentAtEndOfDec =
         Employment(EmpRef("104", "AB10004"), nino, None, None, Seq(payment("2017-12-31")), None, None)
-      val employments = Seq(
+      private val employments = Seq(
         employmentWithPaymentAtEndOfMar,
         employmentWithPaymentAtEndOfJun,
         employmentWithPaymentAtEndOfSep,
@@ -77,7 +82,7 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
       mockEmploymentRepositoryFindByNino(nino, successful(employments))
       mockTestUserConnectorGetOrganisationByEmpRef(Future.successful(None))
 
-      val fixtures = Table(
+      private val fixtures = Table(
         ("interval", "employments"),
         (toInterval(parse("2016-01-01"), parse("2016-12-31")), Seq.empty),
         (toInterval(parse("2017-01-01"), parse("2017-03-31")), Seq(employmentWithPaymentAtEndOfMar)),
@@ -98,13 +103,12 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
       )
 
       forAll(fixtures) { (exampleInterval, expectedResult) =>
-        await(employmentIncomeService.employments(nino, exampleInterval)) shouldBe (expectedResult map (incomeResponse(
-          _)))
+        await(employmentIncomeService.employments(nino, exampleInterval)) shouldBe (expectedResult map incomeResponse)
       }
     }
 
     "return a populated filtered sequence when corresponding employments with payments outside the given interval exist" in new TableDrivenPropertyChecks {
-      val employment = Employment(
+      private val employment = Employment(
         EmpRef("101", "AB10001"),
         nino,
         Some("2017-02-01"),
@@ -117,7 +121,7 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
       mockEmploymentRepositoryFindByNino(nino, successful(Seq(employment)))
       mockTestUserConnectorGetOrganisationByEmpRef(Future.successful(None))
 
-      val fixtures = Table(
+      private val fixtures = Table(
         ("interval", "employments"),
         (toInterval(parse("2017-01-01"), parse("2017-02-15")), Seq(employment.copy(payments = Seq.empty))),
         (toInterval(parse("2017-04-01"), parse("2017-05-28")), Seq.empty),
@@ -128,21 +132,20 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
       )
 
       forAll(fixtures) { (exampleInterval, expectedResult) =>
-        await(employmentIncomeService.employments(nino, exampleInterval)) shouldBe (expectedResult map (incomeResponse(
-          _)))
+        await(employmentIncomeService.employments(nino, exampleInterval)) shouldBe (expectedResult map incomeResponse)
       }
     }
 
     "return a populated filtered sequence when corresponding employments without payments exist" in new TableDrivenPropertyChecks {
-      val employmentFinishingEndOfMar =
+      private val employmentFinishingEndOfMar =
         Employment(EmpRef("101", "AB10001"), nino, Some("2017-01-01"), Some("2017-03-31"), Seq.empty, None, None)
-      val employmentFinishingEndOfJun =
+      private val employmentFinishingEndOfJun =
         Employment(EmpRef("102", "AB10002"), nino, Some("2017-04-01"), Some("2017-06-30"), Seq.empty, None, None)
-      val employmentFinishingEndOfSep =
+      private val employmentFinishingEndOfSep =
         Employment(EmpRef("103", "AB10003"), nino, Some("2017-07-01"), Some("2017-09-30"), Seq.empty, None, None)
-      val employmentFinishingEndOfDec =
+      private val employmentFinishingEndOfDec =
         Employment(EmpRef("104", "AB10004"), nino, Some("2017-10-01"), Some("2017-12-31"), Seq.empty, None, None)
-      val employments = Seq(
+      private val employments = Seq(
         employmentFinishingEndOfMar,
         employmentFinishingEndOfJun,
         employmentFinishingEndOfSep,
@@ -151,7 +154,7 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
       mockEmploymentRepositoryFindByNino(nino, successful(employments))
       mockTestUserConnectorGetOrganisationByEmpRef(Future.successful(None))
 
-      val fixtures = Table(
+      private val fixtures = Table(
         ("interval", "employments"),
         (toInterval(parse("2016-01-01"), parse("2016-12-31")), Seq.empty),
         (toInterval(parse("2017-01-01"), parse("2017-03-31")), Seq(employmentFinishingEndOfMar)),
@@ -172,13 +175,12 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
       )
 
       forAll(fixtures) { (exampleInterval, expectedResult) =>
-        await(employmentIncomeService.employments(nino, exampleInterval)) shouldBe (expectedResult map (incomeResponse(
-          _)))
+        await(employmentIncomeService.employments(nino, exampleInterval)) shouldBe (expectedResult map incomeResponse)
       }
     }
   }
 
-  def payment(paymentDate: String) = HmrcPayment(paymentDate, 123.45)
+  private def payment(paymentDate: String) = HmrcPayment(paymentDate, 123.45)
 
   private def incomeResponse(employment: Employment) =
     new EmploymentIncomeResponse(
@@ -201,6 +203,6 @@ trait WordSpecWithFutures extends AnyWordSpecLike {
   import scala.concurrent.Future
   import scala.concurrent.duration._
 
-  def await[A](future: Future[A])(implicit timeout: Duration = 5 seconds) = result(future, timeout)
+  def await[A](future: Future[A])(implicit timeout: Duration = 5 seconds): A = result(future, timeout)
 
 }

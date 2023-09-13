@@ -18,7 +18,6 @@ package uk.gov.hmrc.individualincomedesstub.controller
 
 import controllers.Assets
 import play.api.Configuration
-import play.api.http.HttpErrorHandler
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.individualincomedesstub.views._
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -26,11 +25,7 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class DocumentationController @Inject()(
-  httpErrorHandler: HttpErrorHandler,
-  configuration: Configuration,
-  cc: ControllerComponents,
-  assets: Assets)
+class DocumentationController @Inject()(configuration: Configuration, cc: ControllerComponents, assets: Assets)
     extends BackendController(cc) {
 
   private lazy val whitelistedApplicationIds: Seq[String] =
@@ -39,13 +34,7 @@ class DocumentationController @Inject()(
   def definition(): Action[AnyContent] = Action {
     Ok(txt.definition(whitelistedApplicationIds)).withHeaders(CONTENT_TYPE -> JSON)
   }
-  def documentation(
-    version: String,
-    endpointName: String
-  ): Action[AnyContent] =
-    assets.at(s"/public/api/documentation/$version", s"${endpointName.replaceAll(" ", "-")}.xml")
 
-  def raml(version: String, file: String) =
+  def yaml(version: String, file: String): Action[AnyContent] =
     assets.at(s"/public/api/conf/$version", file)
-
 }
