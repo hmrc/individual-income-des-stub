@@ -28,7 +28,6 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
 
   private val nino = Nino("AB123456A")
   private val utr = SaUtr("2432552635")
-  private val taxYear = TaxYear("2014-15")
 
   Feature("Retrieve DES stubbed self assessment income") {
 

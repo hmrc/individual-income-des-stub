@@ -63,9 +63,8 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
     configureFor(stubHost, stubPort)
   }
 
-  override def afterEach(): Unit = {
+  override def afterEach(): Unit =
     wireMockServer.stop()
-  }
 
   "get organisation by empRef" should {
 

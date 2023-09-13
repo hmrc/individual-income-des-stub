@@ -49,9 +49,8 @@ class EmploymentRepositorySpec extends TestSupport with Matchers with BeforeAndA
     await(employmentRepository.ensureIndexes)
   }
 
-  override def afterEach(): Unit = {
+  override def afterEach(): Unit =
     await(employmentRepository.collection.drop().toFuture())
-  }
 
   "create" should {
     "create an employment" in {

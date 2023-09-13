@@ -49,10 +49,13 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
 
   "Employment income service employments function" should {
 
-    def mockEmploymentRepositoryFindByNino(nino: Nino, eventualEmployments: Future[Seq[Employment]]): ScalaOngoingStubbing[Future[Seq[Employment]]] =
+    def mockEmploymentRepositoryFindByNino(
+      nino: Nino,
+      eventualEmployments: Future[Seq[Employment]]): ScalaOngoingStubbing[Future[Seq[Employment]]] =
       when(employmentRepository.findBy(nino)).thenReturn(eventualEmployments)
 
-    def mockTestUserConnectorGetOrganisationByEmpRef(eventualOrganisation: Future[Option[TestOrganisation]]): ScalaOngoingStubbing[Future[Option[TestOrganisation]]] =
+    def mockTestUserConnectorGetOrganisationByEmpRef(
+      eventualOrganisation: Future[Option[TestOrganisation]]): ScalaOngoingStubbing[Future[Option[TestOrganisation]]] =
       when(apiPlatformTestUserConnector.getOrganisationByEmpRef(any[EmpRef])(any[HeaderCarrier]))
         .thenReturn(eventualOrganisation)
 

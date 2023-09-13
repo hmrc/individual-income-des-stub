@@ -49,7 +49,8 @@ class EmploymentIncomeControllerSpec extends TestSupport with Results with Mocki
     val nino = Nino("AB123456C")
     val interval = toInterval(parse("2017-01-01"), parse("2017-06-30"))
 
-    def mockEmploymentIncomeService(eventualEmploymentResponses: Future[Seq[EmploymentIncomeResponse]]): ScalaOngoingStubbing[Future[Seq[EmploymentIncomeResponse]]] =
+    def mockEmploymentIncomeService(eventualEmploymentResponses: Future[Seq[EmploymentIncomeResponse]])
+      : ScalaOngoingStubbing[Future[Seq[EmploymentIncomeResponse]]] =
       when(employmentIncomeService.employments(ArgumentMatchers.eq(nino), any(classOf[Interval]))(any[HeaderCarrier]))
         .thenReturn(eventualEmploymentResponses)
 

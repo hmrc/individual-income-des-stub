@@ -47,7 +47,8 @@ class EmploymentSpec extends AnyFreeSpec with Matchers {
 
   "An employment should determine whether it contains a payment within a given time interval" in new TableDrivenPropertyChecks {
     private val payment = HmrcPayment("2017-01-10", 123.45)
-    private val employment = Employment(EmpRef("123", "AB12345"), Nino("AB123456C"), None, None, Seq(payment), None, None)
+    private val employment =
+      Employment(EmpRef("123", "AB12345"), Nino("AB123456C"), None, None, Seq(payment), None, None)
 
     private val fixtures = Table(
       ("interval example", "expected result"),

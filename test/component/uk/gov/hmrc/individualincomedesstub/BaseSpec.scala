@@ -53,7 +53,8 @@ trait BaseSpec
   val selfAssessmentRepository: SelfAssessmentRepository = app.injector.instanceOf[SelfAssessmentRepository]
   val mocks: Seq[ApiPlatformTestUserStub.type] = Seq(ApiPlatformTestUserStub)
 
-  val repositories: Seq[PlayMongoRepository[_ >: Employment with SelfAssessment <: Product]] = Seq(employmentRepository, selfAssessmentRepository)
+  val repositories: Seq[PlayMongoRepository[_ >: Employment with SelfAssessment <: Product]] =
+    Seq(employmentRepository, selfAssessmentRepository)
 
   override protected def beforeEach(): Unit = {
     repositories.foreach(r => result(r.collection.drop().toFuture(), timeout))

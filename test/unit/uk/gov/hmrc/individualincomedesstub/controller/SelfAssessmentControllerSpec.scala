@@ -96,7 +96,8 @@ class SelfAssessmentControllerSpec extends TestSupport with MockitoSugar with Sc
     }
 
     "return a 400 (BadRequest) when the taxYear is invalid" in new Setup {
-      private val result = await(underTest.create(utr)(fakeRequest.withBody(requestWithTaxReturnField("taxYear", "201516"))))
+      private val result =
+        await(underTest.create(utr)(fakeRequest.withBody(requestWithTaxReturnField("taxYear", "201516"))))
 
       status(result) shouldBe BAD_REQUEST
       jsonBodyOf(result) shouldBe Json.obj("code" -> "INVALID_REQUEST", "message" -> "taxYear: invalid tax year format")

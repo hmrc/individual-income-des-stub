@@ -59,7 +59,8 @@ class EmploymentControllerSpec extends TestSupport with ScalaFutures with Mockit
       when(mockEmploymentService.create(employerPayeReference, nino, request))
         .thenReturn(successful(employment))
 
-      private val result = await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.toJson(request))))
+      private val result =
+        await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.toJson(request))))
 
       status(result) shouldBe CREATED
       bodyOf(result) shouldBe Json.toJson(employment).toString
@@ -73,7 +74,8 @@ class EmploymentControllerSpec extends TestSupport with ScalaFutures with Mockit
       when(mockEmploymentService.create(employerPayeReference, nino, request))
         .thenReturn(successful(employment))
 
-      private val result = await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.toJson(request))))
+      private val result =
+        await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.toJson(request))))
 
       status(result) shouldBe CREATED
       bodyOf(result) shouldBe Json.toJson(employment).toString
@@ -86,7 +88,8 @@ class EmploymentControllerSpec extends TestSupport with ScalaFutures with Mockit
       when(mockEmploymentService.create(employerPayeReference, nino, request))
         .thenReturn(successful(employment))
 
-      private val result = await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.toJson(request))))
+      private val result =
+        await(underTest.create(employerPayeReference, nino)(fakeRequest.withBody(Json.toJson(request))))
 
       status(result) shouldBe CREATED
       bodyOf(result) shouldBe Json.toJson(employment).toString
