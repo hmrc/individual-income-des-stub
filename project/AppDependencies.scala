@@ -11,9 +11,7 @@ object AppDependencies {
   val compile: Seq[ModuleID] = Seq(
     ws,
     hmrc                %% "bootstrap-backend-play-28" % "7.14.0",
-    hmrc                %% "auth-client"               % "6.0.0-play-28",
     hmrc                %% "domain"                    % "8.1.0-play-28",
-    hmrc                %% "play-hmrc-api"             % "7.1.0-play-28",
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"        % "1.1.0",
     "com.typesafe.play" %% "play-json-joda"            % "2.9.1"
   )
