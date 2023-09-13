@@ -74,7 +74,7 @@ abstract class CommonController(controllerComponents: ControllerComponents)
         Future.successful(ErrorInvalidRequest("Unable to process request").toHttpResponse)
     }
 
-  private def fieldName(errs: Seq[(JsPath, Seq[JsonValidationError])]) =
+  private def fieldName(errs: scala.collection.Seq[(JsPath, scala.collection.Seq[JsonValidationError])]) =
     errs.head._1.toString().substring(1)
 
   private[controller] def recovery: PartialFunction[Throwable, Result] = {

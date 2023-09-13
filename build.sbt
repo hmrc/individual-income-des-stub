@@ -12,7 +12,7 @@ lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(
-    scalaVersion := "2.12.13",
+    scalaVersion := "2.13.11",
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test(),
     scalacOptions += "-Wconf:src=routes/.*:s",
     scalacOptions += "-Wconf:cat=unused-imports&src=views/.*:s",
@@ -37,3 +37,5 @@ def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
   tests.map { test =>
     new Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
   }
+
+libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
