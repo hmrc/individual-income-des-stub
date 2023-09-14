@@ -28,7 +28,8 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SelfAssessmentRepository @Inject()(mongo: MongoComponent)(implicit ec: ExecutionContext)
+class SelfAssessmentRepository @Inject()(mongo: MongoComponent)(
+    implicit ec: ExecutionContext)
     extends PlayMongoRepository[SelfAssessment](
       mongoComponent = mongo,
       collectionName = "selfAssessment",
@@ -45,7 +46,8 @@ class SelfAssessmentRepository @Inject()(mongo: MongoComponent)(implicit ec: Exe
     collection
       .insertOne(selfAssessment)
       .recover {
-        case _: MongoWriteException => throw new DuplicateSelfAssessmentException
+        case _: MongoWriteException =>
+          throw new DuplicateSelfAssessmentException
       }
       .head
       .map(_ => selfAssessment)
