@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
   title: Individuals Income Test Support
   description: >-
@@ -19,6 +19,8 @@ paths:
       description: >
         <p>This resource is used to create an employment</p>
       operationId: Createanemployment
+      security:
+      - applicationRestricted: [ ]
       parameters:
       - name: empRef
         in: path
@@ -133,6 +135,8 @@ paths:
       description: >
         <p>This resource is used to create a self assessment</p>
       operationId: Createaselfassessment
+      security:
+        - applicationRestricted: [ ]
       parameters:
       - name: utr
         in: path

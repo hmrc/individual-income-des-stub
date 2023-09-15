@@ -25,14 +25,19 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class DocumentationController @Inject()(configuration: Configuration, cc: ControllerComponents, assets: Assets)
+class DocumentationController @Inject()(configuration: Configuration,
+                                        cc: ControllerComponents,
+                                        assets: Assets)
     extends BackendController(cc) {
 
   private lazy val whitelistedApplicationIds: Seq[String] =
-    configuration.underlying.getStringList("api.access.version-1.0.whitelistedApplicationIds").toArray(Array[String]())
+    configuration.underlying
+      .getStringList("api.access.version-1.0.whitelistedApplicationIds")
+      .toArray(Array[String]())
 
   def definition(): Action[AnyContent] = Action {
-    Ok(txt.definition(whitelistedApplicationIds)).withHeaders(CONTENT_TYPE -> JSON)
+    Ok(txt.definition(whitelistedApplicationIds))
+      .withHeaders(CONTENT_TYPE -> JSON)
   }
 
   def yaml(version: String, file: String): Action[AnyContent] =

@@ -40,7 +40,8 @@ class SelfAssessmentIncomeServiceSpec extends TestSupport with MockitoSugar {
   trait Setup {
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val apiPlatformTestUserConnector: ApiPlatformTestUserConnector = mock[ApiPlatformTestUserConnector]
+    val apiPlatformTestUserConnector: ApiPlatformTestUserConnector =
+      mock[ApiPlatformTestUserConnector]
     val repository: SelfAssessmentRepository = mock[SelfAssessmentRepository]
 
     val underTest =

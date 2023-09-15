@@ -21,14 +21,23 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.domain.{EmpRef, Nino}
-import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, EmploymentPayFrequency, HmrcPayment}
+import uk.gov.hmrc.individualincomedesstub.domain.{
+  CreateEmploymentRequest,
+  Employment,
+  EmploymentPayFrequency,
+  HmrcPayment
+}
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
-class EmploymentRepositorySpec extends TestSupport with Matchers with BeforeAndAfterEach {
+class EmploymentRepositorySpec
+    extends TestSupport
+    with Matchers
+    with BeforeAndAfterEach {
 
   override lazy val fakeApplication: Application = buildFakeApplication(
-    Configuration("mongodb.uri" -> "mongodb://localhost:27017/individual-income-des-stub"))
+    Configuration(
+      "mongodb.uri" -> "mongodb://localhost:27017/individual-income-des-stub"))
 
   private val employmentRepository =
     fakeApplication.injector.instanceOf[EmploymentRepository]
@@ -67,7 +76,8 @@ class EmploymentRepositorySpec extends TestSupport with Matchers with BeforeAndA
       await(
         employmentRepository
           .create(employerReference, nino, aCreateEmploymentRequest))
-      val result = await(employmentRepository.collection.find(Filters.empty()).toFuture())
+      val result =
+        await(employmentRepository.collection.find(Filters.empty()).toFuture())
       result.size shouldBe 2
     }
   }
@@ -82,9 +92,13 @@ class EmploymentRepositorySpec extends TestSupport with Matchers with BeforeAndA
       await(
         employmentRepository
           .create(EmpRef("321", "EI45678"), nino, aCreateEmploymentRequest))
-      await(employmentRepository.create(employerReference, Nino("AA123456C"), aCreateEmploymentRequest))
+      await(
+        employmentRepository.create(employerReference,
+                                    Nino("AA123456C"),
+                                    aCreateEmploymentRequest))
 
-      val result = await(employmentRepository.findByReferenceAndNino(employerReference, nino))
+      val result = await(
+        employmentRepository.findByReferenceAndNino(employerReference, nino))
 
       result shouldBe Seq(employment)
     }
@@ -94,7 +108,9 @@ class EmploymentRepositorySpec extends TestSupport with Matchers with BeforeAndA
         employmentRepository
           .create(employerReference, nino, aCreateEmploymentRequest))
 
-      val result = await(employmentRepository.findByReferenceAndNino(EmpRef("321", "EI45678"), nino))
+      val result = await(
+        employmentRepository.findByReferenceAndNino(EmpRef("321", "EI45678"),
+                                                    nino))
 
       result.isEmpty shouldBe true
     }

@@ -21,7 +21,10 @@ import uk.gov.hmrc.individualincomedesstub.util._
 package object individualincomedesstub {
 
   implicit val ninoBinder: NinoPathStringBinder = new NinoPathStringBinder
-  implicit val employerReferenceBinder: EmployerReferenceStringBinder = new EmployerReferenceStringBinder
-  implicit val intervalQueryStringBinder: IntervalQueryStringBinder = new IntervalQueryStringBinder
-  implicit val saUtrPathStringBinder: SaUtrPathStringBinder = new SaUtrPathStringBinder
+  implicit val employerReferenceBinder: EmployerReferenceStringBinder =
+    new EmployerReferenceStringBinder
+  implicit val intervalQueryStringBinder: IntervalQueryStringBinder =
+    new IntervalQueryStringBinder
+  implicit val saUtrPathStringBinder: SaUtrPathStringBinder =
+    new SaUtrPathStringBinder
 }
