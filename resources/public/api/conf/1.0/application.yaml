@@ -20,7 +20,7 @@ paths:
         <p>This resource is used to create an employment</p>
       operationId: Createanemployment
       security:
-      - applicationRestricted: [ ]
+      - appScheme: [ ]
       parameters:
       - name: empRef
         in: path
@@ -136,7 +136,7 @@ paths:
         <p>This resource is used to create a self assessment</p>
       operationId: Createaselfassessment
       security:
-        - applicationRestricted: [ ]
+        - appScheme: [ ]
       parameters:
       - name: utr
         in: path
@@ -502,14 +502,6 @@ components:
       type: string
       description: A value representing the frequency of payment for an employment
   securitySchemes:
-    userScheme:
-      type: oauth2
-      description: HMRC supports OAuth 2.0 for authenticating User-restricted API requests
-      flows:
-        authorizationCode:
-          authorizationUrl: https://api.service.hmrc.gov.uk/oauth/authorize
-          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
-          refreshUrl: https://api.service.hmrc.gov.uk/oauth/refresh
     appScheme:
       type: oauth2
       description: HMRC supports OAuth 2.0 for authenticating app-restricted API requests
