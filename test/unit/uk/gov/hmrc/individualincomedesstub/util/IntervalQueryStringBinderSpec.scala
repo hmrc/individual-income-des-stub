@@ -22,33 +22,25 @@ import org.scalatest.EitherValues
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
-import uk.gov.hmrc.individualincomedesstub.util.{
-  Dates,
-  IntervalQueryStringBinder
-}
+import uk.gov.hmrc.individualincomedesstub.util.{Dates, IntervalQueryStringBinder}
 
-class IntervalQueryStringBinderSpec
-    extends AnyFlatSpec
-    with Matchers
-    with EitherValues {
+class IntervalQueryStringBinderSpec extends AnyFlatSpec with Matchers with EitherValues {
 
   private val intervalQueryStringBinder = new IntervalQueryStringBinder
 
   "Interval query string binder" should "fail to bind a missing or malformed from or a malformed to parameter" in new TableDrivenPropertyChecks {
     private val fixtures = Table(
       ("parameters", "response"),
-      (Map[String, Seq[String]]().empty,
-       """{"code":"INVALID_REQUEST","message":"from is required"}"""),
-      (Map("from" -> Seq.empty[String]),
-       """{"code":"INVALID_REQUEST","message":"from is required"}"""),
-      (Map("from" -> Seq("")),
-       """{"code":"INVALID_REQUEST","message":"from: invalid date format"}"""),
-      (Map("from" -> Seq("20200131")),
-       """{"code":"INVALID_REQUEST","message":"from: invalid date format"}"""),
-      (Map("from" -> Seq("2020-01-31"), "to" -> Seq("")),
-       """{"code":"INVALID_REQUEST","message":"to: invalid date format"}"""),
-      (Map("from" -> Seq("2020-01-31"), "to" -> Seq("20201231")),
-       """{"code":"INVALID_REQUEST","message":"to: invalid date format"}""")
+      (Map[String, Seq[String]]().empty, """{"code":"INVALID_REQUEST","message":"from is required"}"""),
+      (Map("from" -> Seq.empty[String]), """{"code":"INVALID_REQUEST","message":"from is required"}"""),
+      (Map("from" -> Seq("")), """{"code":"INVALID_REQUEST","message":"from: invalid date format"}"""),
+      (Map("from" -> Seq("20200131")), """{"code":"INVALID_REQUEST","message":"from: invalid date format"}"""),
+      (
+        Map("from" -> Seq("2020-01-31"), "to" -> Seq("")),
+        """{"code":"INVALID_REQUEST","message":"to: invalid date format"}"""),
+      (
+        Map("from" -> Seq("2020-01-31"), "to" -> Seq("20201231")),
+        """{"code":"INVALID_REQUEST","message":"to: invalid date format"}""")
     )
 
     fixtures foreach {
@@ -75,8 +67,7 @@ class IntervalQueryStringBinderSpec
     val maybeEither = intervalQueryStringBinder.bind("", parameters)
     maybeEither.isDefined shouldBe true
     maybeEither.get.isRight shouldBe true
-    maybeEither.get.value shouldBe toInterval("2020-01-31T00:00:00.000",
-                                              "2020-12-31T00:00:00.001")
+    maybeEither.get.value shouldBe toInterval("2020-01-31T00:00:00.000", "2020-12-31T00:00:00.001")
   }
 
   it should "fail to bind an interval from an invalid date range" in {

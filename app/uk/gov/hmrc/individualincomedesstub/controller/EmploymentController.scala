@@ -27,16 +27,14 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class EmploymentController @Inject()(
-    employmentService: EmploymentService,
-    controllerComponents: ControllerComponents)(implicit ec: ExecutionContext)
+class EmploymentController @Inject()(employmentService: EmploymentService, controllerComponents: ControllerComponents)(
+  implicit ec: ExecutionContext)
     extends CommonController(controllerComponents) {
 
   def create(employerReference: EmpRef, nino: Nino): Action[JsValue] =
     Action.async(parse.json) { implicit request =>
       withJsonBody[CreateEmploymentRequest] { createEmployment =>
-        employmentService.create(employerReference, nino, createEmployment) map (
-            e => Created(Json.toJson(e)))
+        employmentService.create(employerReference, nino, createEmployment) map (e => Created(Json.toJson(e)))
       } recover recovery
     }
 }

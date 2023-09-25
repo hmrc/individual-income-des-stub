@@ -18,16 +18,15 @@ lazy val microservice = Project(appName, file("."))
     scalacOptions += "-Wconf:cat=unused-imports&src=views/.*:s",
     routesImport ++= Seq("uk.gov.hmrc.individualincomedesstub._")
   )
+  .settings(Compile / unmanagedResourceDirectories += baseDirectory.value / "resources")
   .configs(IntegrationTest)
   .settings(integrationTestSettings() *)
   .configs(ComponentTest)
   .settings(inConfig(ComponentTest)(Defaults.testSettings) *)
   .settings(
     ComponentTest / testOptions := Seq(Tests.Filter(componentFilter)),
-    ComponentTest / unmanagedSourceDirectories := (ComponentTest / baseDirectory)(
-      base => Seq(base / "test")).value,
-    ComponentTest / testGrouping := oneForkedJvmPerTest(
-      (ComponentTest / definedTests).value),
+    ComponentTest / unmanagedSourceDirectories := (ComponentTest / baseDirectory)(base => Seq(base / "test")).value,
+    ComponentTest / testGrouping := oneForkedJvmPerTest((ComponentTest / definedTests).value),
     ComponentTest / parallelExecution := false
   )
   .settings(PlayKeys.playDefaultPort := 9631)
@@ -37,11 +36,7 @@ lazy val microservice = Project(appName, file("."))
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
   tests.map { test =>
-    new Group(
-      test.name,
-      Seq(test),
-      SubProcess(
-        ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
+    new Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
   }
 
 libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always

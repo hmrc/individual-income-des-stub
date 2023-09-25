@@ -27,10 +27,7 @@ import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import uk.gov.hmrc.individualincomedesstub.domain.{Employment, SelfAssessment}
-import uk.gov.hmrc.individualincomedesstub.repository.{
-  EmploymentRepository,
-  SelfAssessmentRepository
-}
+import uk.gov.hmrc.individualincomedesstub.repository.{EmploymentRepository, SelfAssessmentRepository}
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import java.util.concurrent.TimeUnit
@@ -38,19 +35,15 @@ import scala.concurrent.Await.result
 import scala.concurrent.duration.{Duration, FiniteDuration}
 
 trait BaseSpec
-    extends AnyFeatureSpec
-    with BeforeAndAfterAll
-    with BeforeAndAfterEach
-    with Matchers
-    with GuiceOneServerPerSuite
+    extends AnyFeatureSpec with BeforeAndAfterAll with BeforeAndAfterEach with Matchers with GuiceOneServerPerSuite
     with GivenWhenThen {
 
   implicit override lazy val app: Application = GuiceApplicationBuilder()
     .configure(
-      "auditing.enabled" -> false,
-      "auditing.traceRequests" -> false,
+      "auditing.enabled"                                  -> false,
+      "auditing.traceRequests"                            -> false,
       "microservice.services.api-platform-test-user.port" -> ApiPlatformTestUserStub.port,
-      "mongodb.uri" -> "mongodb://localhost:27017/individual-income-des-stub-component-tests"
+      "mongodb.uri"                                       -> "mongodb://localhost:27017/individual-income-des-stub-component-tests"
     )
     .build()
 
@@ -62,8 +55,7 @@ trait BaseSpec
     app.injector.instanceOf[SelfAssessmentRepository]
   val mocks: Seq[ApiPlatformTestUserStub.type] = Seq(ApiPlatformTestUserStub)
 
-  val repositories
-    : Seq[PlayMongoRepository[_ >: Employment with SelfAssessment <: Product]] =
+  val repositories: Seq[PlayMongoRepository[_ >: Employment with SelfAssessment <: Product]] =
     Seq(employmentRepository, selfAssessmentRepository)
 
   override protected def beforeEach(): Unit = {
@@ -82,8 +74,7 @@ trait BaseSpec
 }
 
 case class MockHost(port: Int) {
-  val server = new WireMockServer(
-    WireMockConfiguration.wireMockConfig().port(port))
+  val server = new WireMockServer(WireMockConfiguration.wireMockConfig().port(port))
   val mock = new WireMock("localhost", port)
   val url = s"http://localhost:$port"
 }
