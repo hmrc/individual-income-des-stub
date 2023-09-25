@@ -27,8 +27,7 @@ import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 class SelfAssessmentRepositorySpec extends TestSupport with BeforeAndAfterEach {
 
   override lazy val fakeApplication: Application = buildFakeApplication(
-    Configuration(
-      "mongodb.uri" -> "mongodb://localhost:27017/individual-income-des-stub"))
+    Configuration("mongodb.uri" -> "mongodb://localhost:27017/individual-income-des-stub"))
 
   private val repository =
     fakeApplication.injector.instanceOf[SelfAssessmentRepository]
@@ -92,8 +91,7 @@ class SelfAssessmentRepositorySpec extends TestSupport with BeforeAndAfterEach {
     "fail to create a duplicate self assessment" in {
       await(repository.create(selfAssessment))
 
-      intercept[DuplicateSelfAssessmentException](
-        await(repository.create(selfAssessment)))
+      intercept[DuplicateSelfAssessmentException](await(repository.create(selfAssessment)))
     }
   }
 

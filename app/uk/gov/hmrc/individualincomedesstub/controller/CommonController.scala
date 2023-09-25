@@ -32,16 +32,12 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 class CustomErrorHandler @Inject()(
-    configuration: Configuration,
-    auditConnector: AuditConnector,
-    httpAuditEvent: HttpAuditEvent)(implicit ec: ExecutionContext)
-    extends JsonErrorHandler(auditConnector,
-                             httpAuditEvent,
-                             configuration = configuration) {
+  configuration: Configuration,
+  auditConnector: AuditConnector,
+  httpAuditEvent: HttpAuditEvent)(implicit ec: ExecutionContext)
+    extends JsonErrorHandler(auditConnector, httpAuditEvent, configuration = configuration) {
 
-  override def onClientError(request: RequestHeader,
-                             statusCode: Int,
-                             message: String): Future[Result] = {
+  override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
 
     val newMessage = Try {
       Json.parse(message).\\("message").mkString(",").replaceAll("\"", "")
@@ -53,18 +49,11 @@ class CustomErrorHandler @Inject()(
     statusCode match {
       case NOT_FOUND =>
         Future.successful(
-          NotFound(
-            Json.toJson(
-              ErrorResponse(NOT_FOUND,
-                            "URI not found",
-                            requested = Some(request.path)))))
+          NotFound(Json.toJson(ErrorResponse(NOT_FOUND, "URI not found", requested = Some(request.path)))))
       case BAD_REQUEST =>
-        Future.successful(
-          BadRequest(Json.toJson(ErrorResponse(BAD_REQUEST, newMessage))))
+        Future.successful(BadRequest(Json.toJson(ErrorResponse(BAD_REQUEST, newMessage))))
       case _ =>
-        Future.successful(
-          Status(statusCode)(
-            Json.toJson(ErrorResponse(statusCode, newMessage))))
+        Future.successful(Status(statusCode)(Json.toJson(ErrorResponse(statusCode, newMessage))))
     }
   }
 
@@ -73,25 +62,19 @@ class CustomErrorHandler @Inject()(
 abstract class CommonController(controllerComponents: ControllerComponents)
     extends BackendController(controllerComponents) {
 
-  override protected def withJsonBody[T](f: T => Future[Result])(
-      implicit request: Request[JsValue],
-      m: Manifest[T],
-      reads: Reads[T]): Future[Result] =
+  override protected def withJsonBody[T](
+    f: T => Future[Result])(implicit request: Request[JsValue], m: Manifest[T], reads: Reads[T]): Future[Result] =
     Try(request.body.validate[T]) match {
       case Success(JsSuccess(payload, _)) => f(payload)
       case Success(JsError(errs)) =>
-        Future.successful(
-          ErrorInvalidRequest(s"${fieldName(errs)} is required").toHttpResponse)
+        Future.successful(ErrorInvalidRequest(s"${fieldName(errs)} is required").toHttpResponse)
       case Failure(e) if e.isInstanceOf[ValidationException] =>
         Future.successful(ErrorInvalidRequest(e.getMessage).toHttpResponse)
       case Failure(_) =>
-        Future.successful(
-          ErrorInvalidRequest("Unable to process request").toHttpResponse)
+        Future.successful(ErrorInvalidRequest("Unable to process request").toHttpResponse)
     }
 
-  private def fieldName(
-      errs: scala.collection.Seq[(JsPath,
-                                  scala.collection.Seq[JsonValidationError])]) =
+  private def fieldName(errs: scala.collection.Seq[(JsPath, scala.collection.Seq[JsonValidationError])]) =
     errs.head._1.toString().substring(1)
 
   private[controller] def recovery: PartialFunction[Throwable, Result] = {

@@ -24,10 +24,8 @@ lazy val microservice = Project(appName, file("."))
   .settings(inConfig(ComponentTest)(Defaults.testSettings) *)
   .settings(
     ComponentTest / testOptions := Seq(Tests.Filter(componentFilter)),
-    ComponentTest / unmanagedSourceDirectories := (ComponentTest / baseDirectory)(
-      base => Seq(base / "test")).value,
-    ComponentTest / testGrouping := oneForkedJvmPerTest(
-      (ComponentTest / definedTests).value),
+    ComponentTest / unmanagedSourceDirectories := (ComponentTest / baseDirectory)(base => Seq(base / "test")).value,
+    ComponentTest / testGrouping := oneForkedJvmPerTest((ComponentTest / definedTests).value),
     ComponentTest / parallelExecution := false
   )
   .settings(PlayKeys.playDefaultPort := 9631)
@@ -37,11 +35,7 @@ lazy val microservice = Project(appName, file("."))
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
   tests.map { test =>
-    new Group(
-      test.name,
-      Seq(test),
-      SubProcess(
-        ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
+    new Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
   }
 
 libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always

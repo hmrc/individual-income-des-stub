@@ -33,13 +33,11 @@ object JsonFormatters {
   }
   implicit val hmrcPaymentFormat: OFormat[HmrcPayment] =
     Json.format[HmrcPayment]
-  implicit val desEmploymentPayFrequencyJsonFormat
-    : Format[DesEmploymentPayFrequency.Value] =
+  implicit val desEmploymentPayFrequencyJsonFormat: Format[DesEmploymentPayFrequency.Value] =
     EnumJson.enumFormat(DesEmploymentPayFrequency)
   implicit val desPaymentFormat: OFormat[DesPayment] = Json.format[DesPayment]
   implicit val desAddressFormat: OFormat[DesAddress] = Json.format[DesAddress]
-  implicit val employmentPayFrequencyJsonFormat
-    : Format[EmploymentPayFrequency.Value] =
+  implicit val employmentPayFrequencyJsonFormat: Format[EmploymentPayFrequency.Value] =
     EnumJson.enumFormat(EmploymentPayFrequency)
   implicit val employmentFormat: OFormat[Employment] = Json.format[Employment]
 
@@ -54,8 +52,7 @@ object JsonFormatters {
 
   implicit val createEmploymentRequestFormat: OFormat[CreateEmploymentRequest] =
     Json.format[CreateEmploymentRequest]
-  implicit val employmentIncomeResponseFormat
-    : OFormat[EmploymentIncomeResponse] = Json.format[EmploymentIncomeResponse]
+  implicit val employmentIncomeResponseFormat: OFormat[EmploymentIncomeResponse] = Json.format[EmploymentIncomeResponse]
 
   implicit val taxYearFormat: Format[TaxYear] = new Format[TaxYear] {
     override def reads(json: JsValue): JsResult[TaxYear] =
@@ -68,8 +65,7 @@ object JsonFormatters {
     Json.format[SelfAssessmentTaxReturn]
   implicit val selfAssessmentFormat: OFormat[SelfAssessment] =
     Json.format[SelfAssessment]
-  implicit val selfAssessmentCreateRequestFormat
-    : OFormat[SelfAssessmentCreateRequest] =
+  implicit val selfAssessmentCreateRequestFormat: OFormat[SelfAssessmentCreateRequest] =
     Json.format[SelfAssessmentCreateRequest]
   implicit val selfAssessmentResponseFormat: OFormat[SelfAssessmentResponse] =
     Json.format[SelfAssessmentResponse]
@@ -85,8 +81,7 @@ object JsonFormatters {
     }
 
   implicit val errorResponseWrites: Writes[ErrorResponse] =
-    (e: ErrorResponse) =>
-      Json.obj("code" -> e.errorCode, "message" -> e.message)
+    (e: ErrorResponse) => Json.obj("code" -> e.errorCode, "message" -> e.message)
 }
 
 object EnumJson {
@@ -108,5 +103,4 @@ object EnumJson {
 }
 
 class InvalidEnumException(className: String, input: String)
-    extends RuntimeException(
-      s"Enumeration expected of type: '$className', but it does not contain '$input'")
+    extends RuntimeException(s"Enumeration expected of type: '$className', but it does not contain '$input'")

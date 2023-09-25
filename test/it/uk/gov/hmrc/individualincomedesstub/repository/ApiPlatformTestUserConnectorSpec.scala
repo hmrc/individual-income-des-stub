@@ -31,9 +31,7 @@ import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class ApiPlatformTestUserConnectorSpec
-    extends TestSupport
-    with BeforeAndAfterEach {
+class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEach {
 
   private val stubPort = sys.env.getOrElse("WIREMOCK", "11121").toInt
   val stubHost = "localhost"
@@ -41,9 +39,7 @@ class ApiPlatformTestUserConnectorSpec
   private val empRef = EmpRef("123", "AI45678")
   private val testOrganisation = TestOrganisation(
     Some(empRef),
-    TestOrganisationDetails(
-      "Disney Inc",
-      TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
+    TestOrganisationDetails("Disney Inc", TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
 
   private val nino = Nino("AB123456A")
   private val utr = SaUtr("2432552635")
@@ -112,8 +108,7 @@ class ApiPlatformTestUserConnectorSpec
         get(urlEqualTo(s"/organisations/empref/${empRef.encodedValue}"))
           .willReturn(aResponse().withStatus(BAD_REQUEST)))
 
-      intercept[BadRequestException](
-        await(underTest.getOrganisationByEmpRef(empRef)))
+      intercept[BadRequestException](await(underTest.getOrganisationByEmpRef(empRef)))
     }
   }
 
@@ -147,8 +142,7 @@ class ApiPlatformTestUserConnectorSpec
         get(urlEqualTo(s"/individuals/nino/$nino"))
           .willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR)))
 
-      intercept[BadRequestException](
-        await(underTest.getOrganisationByEmpRef(empRef)))
+      intercept[BadRequestException](await(underTest.getOrganisationByEmpRef(empRef)))
     }
 
   }

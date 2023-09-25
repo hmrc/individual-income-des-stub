@@ -39,18 +39,14 @@ class EmploymentIncomeSpec extends BaseSpec {
   )
   private val employer = TestOrganisation(
     Some(empRef),
-    TestOrganisationDetails(
-      "Disney Inc",
-      TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
+    TestOrganisationDetails("Disney Inc", TestAddress("Capital Tower", "Aberdeen", "SW1 4DQ")))
 
   Feature("Employment Income returns a DES Stubbed response") {
 
-    Scenario(
-      "Fetch Employment Income when there are payments and employer details") {
+    Scenario("Fetch Employment Income when there are payments and employer details") {
 
       Given("An employer can be found for a given empRef")
-      ApiPlatformTestUserStub.getByEmpRefReturnsTestOrganisation(empRef,
-                                                                 employer)
+      ApiPlatformTestUserStub.getByEmpRefReturnsTestOrganisation(empRef, employer)
 
       And("An employment")
       result(employmentRepository.create(empRef, nino, employment), timeout)
@@ -92,8 +88,7 @@ class EmploymentIncomeSpec extends BaseSpec {
       )
     }
 
-    Scenario(
-      "Fetch Employment Income when there are payments but no employer details") {
+    Scenario("Fetch Employment Income when there are payments but no employer details") {
 
       Given("An employer cannot be found for a given empRef")
       ApiPlatformTestUserStub.getByEmpRefReturnsNoTestOrganisation(empRef)
@@ -134,6 +129,5 @@ class EmploymentIncomeSpec extends BaseSpec {
   }
 
   private def fetchEmploymentIncome(nino: String, fromDate: String) =
-    Http(
-      s"$serviceUrl/individuals/nino/$nino/employments/income?from=$fromDate").asString
+    Http(s"$serviceUrl/individuals/nino/$nino/employments/income?from=$fromDate").asString
 }
