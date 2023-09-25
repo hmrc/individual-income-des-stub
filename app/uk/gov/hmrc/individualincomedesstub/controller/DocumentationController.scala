@@ -16,18 +16,21 @@
 
 package uk.gov.hmrc.individualincomedesstub.controller
 
+import akka.stream.Materializer
 import controllers.Assets
 import play.api.Configuration
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.filters.cors.CORSActionBuilder
 import uk.gov.hmrc.individualincomedesstub.views._
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class DocumentationController @Inject()(configuration: Configuration,
-                                        cc: ControllerComponents,
-                                        assets: Assets)
+class DocumentationController @Inject()(configuration: Configuration, cc: ControllerComponents, assets: Assets)(
+  implicit materializer: Materializer,
+  executionContext: ExecutionContext)
     extends BackendController(cc) {
 
   private lazy val whitelistedApplicationIds: Seq[String] =
@@ -41,5 +44,7 @@ class DocumentationController @Inject()(configuration: Configuration,
   }
 
   def yaml(version: String, file: String): Action[AnyContent] =
-    assets.at(s"/public/api/conf/$version", file)
+    CORSActionBuilder(configuration).async { implicit request =>
+      assets.at(s"/public/api/conf/$version", file)(request)
+    }
 }

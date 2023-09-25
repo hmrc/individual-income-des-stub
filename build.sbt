@@ -18,6 +18,7 @@ lazy val microservice = Project(appName, file("."))
     scalacOptions += "-Wconf:cat=unused-imports&src=views/.*:s",
     routesImport ++= Seq("uk.gov.hmrc.individualincomedesstub._")
   )
+  .settings(Compile / unmanagedResourceDirectories += baseDirectory.value / "resources")
   .configs(IntegrationTest)
   .settings(integrationTestSettings() *)
   .configs(ComponentTest)
