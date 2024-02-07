@@ -57,9 +57,8 @@ class IntervalQueryStringBinderSpec extends AnyFlatSpec with Matchers with Eithe
     val maybeEither = intervalQueryStringBinder.bind("", parameters)
     maybeEither.isDefined shouldBe true
     maybeEither.get.isRight shouldBe true
-    maybeEither.get.value shouldBe toInterval(
-      "2017-01-31T00:00:00.000",
-      LocalDateTime.now().withTime(0, 0, 0, 1).toString())
+    maybeEither.get shouldBe Right(
+      toInterval("2017-01-31T00:00:00.000", LocalDateTime.now().withTime(0, 0, 0, 1).toString()))
   }
 
   it should "succeed in binding an interval from well formed from and to parameters" in {
@@ -67,7 +66,7 @@ class IntervalQueryStringBinderSpec extends AnyFlatSpec with Matchers with Eithe
     val maybeEither = intervalQueryStringBinder.bind("", parameters)
     maybeEither.isDefined shouldBe true
     maybeEither.get.isRight shouldBe true
-    maybeEither.get.value shouldBe toInterval("2020-01-31T00:00:00.000", "2020-12-31T00:00:00.001")
+    maybeEither.get shouldBe Right(toInterval("2020-01-31T00:00:00.000", "2020-12-31T00:00:00.001"))
   }
 
   it should "fail to bind an interval from an invalid date range" in {
@@ -85,5 +84,4 @@ class IntervalQueryStringBinderSpec extends AnyFlatSpec with Matchers with Eithe
 
   private def toInterval(from: String, to: String): Interval =
     Dates.toInterval(parse(from).toLocalDate, parse(to).toLocalDate)
-
 }
