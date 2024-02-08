@@ -60,7 +60,7 @@ trait BaseSpec
 
   override protected def beforeEach(): Unit = {
     repositories.foreach(r => result(r.collection.drop().toFuture(), timeout))
-    repositories.foreach(r => result(r.ensureIndexes, timeout))
+    repositories.foreach(r => result(r.ensureIndexes(), timeout))
     mocks.foreach(m => if (!m.server.isRunning) m.server.start())
   }
 

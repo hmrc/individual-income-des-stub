@@ -48,7 +48,7 @@ class SelfAssessmentRepository @Inject()(mongo: MongoComponent)(implicit ec: Exe
         case _: MongoWriteException =>
           throw new DuplicateSelfAssessmentException
       }
-      .head
+      .head()
       .map(_ => selfAssessment)
 
   def findByUtr(saUtr: SaUtr): Future[Option[SelfAssessment]] =

@@ -46,7 +46,7 @@ class EmploymentRepositorySpec extends TestSupport with Matchers with BeforeAndA
 
   override def beforeEach(): Unit = {
     await(employmentRepository.collection.drop().toFuture())
-    await(employmentRepository.ensureIndexes)
+    await(employmentRepository.ensureIndexes())
   }
 
   override def afterEach(): Unit =

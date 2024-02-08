@@ -32,11 +32,8 @@ class DocumentationController @Inject()(configuration: Configuration, cc: Contro
   implicit materializer: Materializer,
   executionContext: ExecutionContext)
     extends BackendController(cc) {
-
   private lazy val whitelistedApplicationIds: Seq[String] =
-    configuration.underlying
-      .getStringList("api.access.version-1.0.whitelistedApplicationIds")
-      .toArray(Array[String]())
+    configuration.get[Seq[String]]("api.access.version-1.0.whitelistedApplicationIds")
 
   def definition(): Action[AnyContent] = Action {
     Ok(txt.definition(whitelistedApplicationIds))
