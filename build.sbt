@@ -1,4 +1,7 @@
-import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
+import uk.gov.hmrc.DefaultBuildSettings
+
+ThisBuild / majorVersion := 0
+ThisBuild / scalaVersion := "2.13.11"
 
 lazy val ComponentTest = config("component") extend Test
 
@@ -6,7 +9,6 @@ lazy val microservice = Project("individual-income-des-stub", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(
-    scalaVersion := "2.13.11",
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test(),
     scalacOptions += "-Wconf:src=routes/.*:s",
     scalacOptions += "-Wconf:cat=unused-imports&src=views/.*:s",
@@ -28,22 +30,6 @@ lazy val microservice = Project("individual-income-des-stub", file("."))
       "target/test-reports/html-report"))
   .settings(onLoadMessage := "")
   .settings(Compile / unmanagedResourceDirectories += baseDirectory.value / "resources")
-  .configs(IntegrationTest)
-  .settings(integrationTestSettings() *)
-  .settings(
-    IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory)(base => Seq(base / "test")).value,
-    IntegrationTest / testOptions := Seq(Tests.Filter(_ startsWith "it")),
-    // Disable default sbt Test options (might change with new versions of bootstrap)
-    IntegrationTest / testOptions -= Tests
-      .Argument("-o", "-u", "target/int-test-reports", "-h", "target/int-test-reports/html-report"),
-    IntegrationTest / testOptions += Tests.Argument(
-      TestFrameworks.ScalaTest,
-      "-oNCHPQR",
-      "-u",
-      "target/int-test-reports",
-      "-h",
-      "target/int-test-reports/html-report")
-  )
   .configs(ComponentTest)
   .settings(inConfig(ComponentTest)(Defaults.testSettings) *)
   .settings(
@@ -61,8 +47,24 @@ lazy val microservice = Project("individual-income-des-stub", file("."))
       "target/component-test-reports/html-report")
   )
   .settings(PlayKeys.playDefaultPort := 9631)
-  .settings(majorVersion := 0)
   .settings(scalafmtOnCompile := true)
   .settings(CodeCoverageSettings.settings *)
 
-libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
+lazy val it = project
+  .enablePlugins(PlayScala)
+  .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
+  .settings(DefaultBuildSettings.itSettings())
+  .settings(
+    // Disable default sbt Test options (might change with new versions of bootstrap)
+    testOptions -= Tests
+      .Argument("-o", "-u", "target/int-test-reports", "-h", "target/int-test-reports/html-report"),
+    testOptions += Tests.Argument(
+      TestFrameworks.ScalaTest,
+      "-oNCHPQR",
+      "-u",
+      "target/int-test-reports",
+      "-h",
+      "target/int-test-reports/html-report")
+  )
+
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always

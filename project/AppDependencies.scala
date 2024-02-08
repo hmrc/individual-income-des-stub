@@ -14,7 +14,7 @@ object AppDependencies {
     "com.typesafe.play" %% "play-json-joda"                  % "2.9.4"
   )
 
-  def test(scope: String = "test, it"): Seq[ModuleID] = Seq(
+  def test(scope: Configuration = Test): Seq[ModuleID] = Seq(
     hmrc          %% s"bootstrap-test-$playVersion" % hmrcBootstrapVersion % scope,
     "org.mockito" %% "mockito-scala"                % "1.17.12"            % scope,
     "org.scalaj"  %% "scalaj-http"                  % "2.4.2"              % scope
