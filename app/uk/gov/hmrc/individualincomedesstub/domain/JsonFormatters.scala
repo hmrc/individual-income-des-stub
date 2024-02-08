@@ -85,12 +85,11 @@ object JsonFormatters {
 }
 
 object EnumJson {
-
-  private def enumReads[E <: Enumeration](enum: E): Reads[E#Value] = {
+  private def enumReads[E <: Enumeration](`enum`: E): Reads[E#Value] = {
     case JsString(s) =>
-      Try(JsSuccess(enum.withName(s))) recoverWith {
+      Try(JsSuccess(`enum`.withName(s))) recoverWith {
         case _: NoSuchElementException =>
-          Failure(new InvalidEnumException(enum.getClass.getSimpleName, s))
+          Failure(new InvalidEnumException(`enum`.getClass.getSimpleName, s))
       } get
     case _ => JsError("String value expected")
   }
@@ -98,8 +97,8 @@ object EnumJson {
   implicit def enumWrites[E <: Enumeration]: Writes[E#Value] =
     (v: E#Value) => JsString(v.toString)
 
-  implicit def enumFormat[E <: Enumeration](enum: E): Format[E#Value] =
-    Format(enumReads(enum), enumWrites)
+  implicit def enumFormat[E <: Enumeration](`enum`: E): Format[E#Value] =
+    Format(enumReads(`enum`), enumWrites)
 }
 
 class InvalidEnumException(className: String, input: String)

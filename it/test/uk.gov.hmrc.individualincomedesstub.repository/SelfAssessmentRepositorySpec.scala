@@ -61,7 +61,7 @@ class SelfAssessmentRepositorySpec extends TestSupport with BeforeAndAfterEach {
 
   override def beforeEach(): Unit = {
     await(repository.collection.drop().toFuture())
-    await(repository.ensureIndexes)
+    await(repository.ensureIndexes())
   }
 
   override def afterEach(): Unit =
