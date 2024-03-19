@@ -24,7 +24,7 @@ import scala.util.Try
 
 class IntervalQueryStringBinder extends AbstractQueryStringBindable[Interval] {
 
-  private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+  private val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
   override def bind(
       key: String,
@@ -43,12 +43,12 @@ class IntervalQueryStringBinder extends AbstractQueryStringBindable[Interval] {
       default: Option[LocalDate] = None): Either[String, LocalDate] =
     params.get(paramName) match {
       case Some(date :: _) =>
-        Try(LocalDate.parse(date, dateTimeFormatter)).toEither.left.map(_ =>
+        Try(LocalDate.parse(date, format)).toEither.left.map(_ =>
           errorResponse(s"$paramName: invalid date format"))
       case _ => default.toRight(errorResponse(s"$paramName is required"))
     }
 
   override def unbind(key: String, dateRange: Interval): String =
-    s"from=${dateRange.getStart.format(dateTimeFormatter)}&to=${dateRange.getEnd.format(dateTimeFormatter)}"
+    s"from=${dateRange.getStart.format(format)}&to=${dateRange.getEnd.format(format)}"
 
 }
