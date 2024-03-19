@@ -40,11 +40,14 @@ object Validators {
 
   def validInterval(startDate: String,
                     endDate: String,
-                    errorMessage: String): Unit =
-    valid(Try(
-            Interval(LocalDate.parse(startDate).atStartOfDay(),
-                     LocalDate.parse(endDate).atStartOfDay())).isSuccess,
-          errorMessage)
+                    errorMessage: String): Unit = {
+    try {
+      if (!(LocalDate.parse(startDate) isBefore LocalDate.parse(endDate)))
+        throw new ValidationException(errorMessage)
+    } catch {
+      case _: Exception => throw new ValidationException(errorMessage)
+    }
+  }
 
   def validPayFrequency(string: String, errorMessage: String): Unit =
     valid(Try(EmploymentPayFrequency.withName(string)).isSuccess, errorMessage)
