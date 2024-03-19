@@ -16,7 +16,7 @@
 
 package unit.uk.gov.hmrc.individualincomedesstub.controller
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import java.time.LocalDate.parse
 import org.mockito.ArgumentMatchers.{any, eq => refEq}
 import org.mockito.BDDMockito.given

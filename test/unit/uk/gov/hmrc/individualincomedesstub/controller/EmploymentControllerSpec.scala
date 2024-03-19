@@ -16,7 +16,7 @@
 
 package unit.uk.gov.hmrc.individualincomedesstub.controller
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import org.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.{BAD_REQUEST, CREATED}
