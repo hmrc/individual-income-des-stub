@@ -20,7 +20,11 @@ import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import play.api.libs.json.Format
 import uk.gov.hmrc.domain.{EmpRef, Nino}
-import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, JsonFormatters}
+import uk.gov.hmrc.individualincomedesstub.domain.{
+  CreateEmploymentRequest,
+  Employment,
+  JsonFormatters
+}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.{Codecs, PlayMongoRepository}
 
@@ -28,7 +32,8 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EmploymentRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: ExecutionContext)
+class EmploymentRepository @Inject()(mongoComponent: MongoComponent)(
+    implicit ec: ExecutionContext)
     extends PlayMongoRepository[Employment](
       collectionName = "employment",
       mongoComponent = mongoComponent,
@@ -48,7 +53,9 @@ class EmploymentRepository @Inject()(mongoComponent: MongoComponent)(implicit ec
       )
     ) {
 
-  def create(employerPayeReference: EmpRef, nino: Nino, request: CreateEmploymentRequest): Future[Employment] = {
+  def create(employerPayeReference: EmpRef,
+             nino: Nino,
+             request: CreateEmploymentRequest): Future[Employment] = {
     val employment = Employment(
       employerPayeReference,
       nino,
@@ -62,7 +69,8 @@ class EmploymentRepository @Inject()(mongoComponent: MongoComponent)(implicit ec
     collection.insertOne(employment).toFuture().map(_ => employment)
   }
 
-  def findByReferenceAndNino(employerPayeReference: EmpRef, nino: Nino): Future[Seq[Employment]] =
+  def findByReferenceAndNino(employerPayeReference: EmpRef,
+                             nino: Nino): Future[Seq[Employment]] =
     collection
       .find(
         and(

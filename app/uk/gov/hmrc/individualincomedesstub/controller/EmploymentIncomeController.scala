@@ -28,18 +28,19 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class EmploymentIncomeController @Inject()(
-  employmentIncomeService: EmploymentIncomeService,
-  controllerComponents: ControllerComponents)(implicit ec: ExecutionContext)
+    employmentIncomeService: EmploymentIncomeService,
+    controllerComponents: ControllerComponents)(implicit ec: ExecutionContext)
     extends CommonController(controllerComponents) {
 
   def employments(nino: Nino, interval: Interval): Action[AnyContent] =
     Action.async { implicit request =>
-      employmentIncomeService.employments(nino, interval) map { employmentIncomeResponses =>
-        if (employmentIncomeResponses.nonEmpty) {
-          Ok(obj("employments" -> toJson(employmentIncomeResponses)))
-        } else {
-          NotFound
-        }
+      employmentIncomeService.employments(nino, interval) map {
+        employmentIncomeResponses =>
+          if (employmentIncomeResponses.nonEmpty) {
+            Ok(obj("employments" -> toJson(employmentIncomeResponses)))
+          } else {
+            NotFound
+          }
       } recover recovery
     }
 }

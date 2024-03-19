@@ -28,12 +28,15 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class DocumentationController @Inject()(configuration: Configuration, cc: ControllerComponents, assets: Assets)(
-  implicit materializer: Materializer,
-  executionContext: ExecutionContext)
+class DocumentationController @Inject()(configuration: Configuration,
+                                        cc: ControllerComponents,
+                                        assets: Assets)(
+    implicit materializer: Materializer,
+    executionContext: ExecutionContext)
     extends BackendController(cc) {
   private lazy val whitelistedApplicationIds: Seq[String] =
-    configuration.get[Seq[String]]("api.access.version-1.0.whitelistedApplicationIds")
+    configuration.get[Seq[String]](
+      "api.access.version-1.0.whitelistedApplicationIds")
 
   def definition(): Action[AnyContent] = Action {
     Ok(txt.definition(whitelistedApplicationIds))

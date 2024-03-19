@@ -25,7 +25,11 @@ import play.api.libs.json.{JsValue, Json}
 import scalaj.http.Http
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.selfAssessmentFormat
-import uk.gov.hmrc.individualincomedesstub.domain.{SelfAssessment, SelfAssessmentTaxReturn, TaxYear}
+import uk.gov.hmrc.individualincomedesstub.domain.{
+  SelfAssessment,
+  SelfAssessmentTaxReturn,
+  TaxYear
+}
 
 import scala.concurrent.Await.result
 
@@ -144,13 +148,16 @@ class SelfAssessmentSpec extends BaseSpec {
       Then("The response code should be 201 (Created)")
       response.code shouldBe CREATED
 
-      And("The self assessment is created and returned with default income values")
-      Json.parse(response.body) shouldBe Json.toJson(selfAssessment.copy(taxReturns = Seq(expectedReturn)))
+      And(
+        "The self assessment is created and returned with default income values")
+      Json.parse(response.body) shouldBe Json.toJson(
+        selfAssessment.copy(taxReturns = Seq(expectedReturn)))
 
       And("The self assessment is stored in mongo")
       val storedEmployment =
         result(selfAssessmentRepository.findByUtr(utr), timeout)
-      storedEmployment shouldBe Some(selfAssessment.copy(taxReturns = Seq(expectedReturn)))
+      storedEmployment shouldBe Some(
+        selfAssessment.copy(taxReturns = Seq(expectedReturn)))
     }
   }
 

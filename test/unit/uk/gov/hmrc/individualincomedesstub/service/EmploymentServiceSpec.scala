@@ -18,7 +18,12 @@ package unit.uk.gov.hmrc.individualincomedesstub.service
 
 import org.mockito.MockitoSugar
 import uk.gov.hmrc.domain.{EmpRef, Nino}
-import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, EmploymentPayFrequency, HmrcPayment}
+import uk.gov.hmrc.individualincomedesstub.domain.{
+  CreateEmploymentRequest,
+  Employment,
+  EmploymentPayFrequency,
+  HmrcPayment
+}
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
@@ -38,9 +43,8 @@ class EmploymentServiceSpec extends TestSupport with MockitoSugar {
   private val aCreateEmploymentRequest = CreateEmploymentRequest(
     Some("2016-01-01"),
     Some("2017-01-30"),
-    Seq(
-      HmrcPayment("2016-01-28", 1000.55, monthPayNumber = Some(10)),
-      HmrcPayment("2016-02-28", 1200.44, monthPayNumber = Some(10))),
+    Seq(HmrcPayment("2016-01-28", 1000.55, monthPayNumber = Some(10)),
+        HmrcPayment("2016-02-28", 1200.44, monthPayNumber = Some(10))),
     None,
     None,
     Some(EmploymentPayFrequency.CALENDAR_MONTHLY.toString)
@@ -65,7 +69,8 @@ class EmploymentServiceSpec extends TestSupport with MockitoSugar {
       when(mockEmploymentRepository.create(employerReference, nino, request))
         .thenThrow(new RuntimeException("failed"))
 
-      intercept[RuntimeException](await(underTest.create(employerReference, nino, request)))
+      intercept[RuntimeException](
+        await(underTest.create(employerReference, nino, request)))
     }
   }
 
@@ -74,9 +79,8 @@ class EmploymentServiceSpec extends TestSupport with MockitoSugar {
     nino,
     Some("2016-01-01"),
     Some("2017-01-30"),
-    Seq(
-      HmrcPayment("2016-01-28", 1000.55, monthPayNumber = Some(10)),
-      HmrcPayment("2016-02-28", 1200.44, monthPayNumber = Some(10))),
+    Seq(HmrcPayment("2016-01-28", 1000.55, monthPayNumber = Some(10)),
+        HmrcPayment("2016-02-28", 1200.44, monthPayNumber = Some(10))),
     None,
     None,
     Some(EmploymentPayFrequency.CALENDAR_MONTHLY.toString)

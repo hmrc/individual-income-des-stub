@@ -19,7 +19,10 @@ package uk.gov.hmrc.individualincomedesstub.service
 import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualincomedesstub.connector.ApiPlatformTestUserConnector
-import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, SelfAssessmentResponse}
+import uk.gov.hmrc.individualincomedesstub.domain.{
+  RecordNotFoundException,
+  SelfAssessmentResponse
+}
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
 
 import javax.inject.{Inject, Singleton}
@@ -27,13 +30,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SelfAssessmentIncomeService @Inject()(
-  apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
-  selfAssessmentRepository: SelfAssessmentRepository)(implicit ec: ExecutionContext) {
+    apiPlatformTestUserConnector: ApiPlatformTestUserConnector,
+    selfAssessmentRepository: SelfAssessmentRepository)(
+    implicit ec: ExecutionContext) {
 
   def income(nino: Nino, startYear: Int, endYear: Int)(
-    implicit hc: HeaderCarrier): Future[Seq[SelfAssessmentResponse]] = {
+      implicit hc: HeaderCarrier): Future[Seq[SelfAssessmentResponse]] = {
 
-    def selfAssessmentReturnsForPeriod(saUtr: SaUtr): Future[Seq[SelfAssessmentResponse]] =
+    def selfAssessmentReturnsForPeriod(
+        saUtr: SaUtr): Future[Seq[SelfAssessmentResponse]] =
       selfAssessmentRepository.findByUtr(saUtr) map {
         case Some(selfAssessment) =>
           selfAssessment.taxReturns.filter(_.isIn(startYear, endYear)) map (SelfAssessmentResponse(
