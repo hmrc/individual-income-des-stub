@@ -16,31 +16,38 @@
 
 package uk.gov.hmrc.individualincomedesstub.service
 
-import org.joda.time.Interval
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualincomedesstub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualincomedesstub.domain.Employment.overlap
-import uk.gov.hmrc.individualincomedesstub.domain.{EmploymentIncomeResponse, TestOrganisation}
+import uk.gov.hmrc.individualincomedesstub.domain.{
+  EmploymentIncomeResponse,
+  TestOrganisation
+}
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
+import uk.gov.hmrc.individualincomedesstub.util.Interval
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EmploymentIncomeService @Inject()(
-  employmentRepository: EmploymentRepository,
-  apiPlatformTestUserConnector: ApiPlatformTestUserConnector)(implicit ec: ExecutionContext) {
+    employmentRepository: EmploymentRepository,
+    apiPlatformTestUserConnector: ApiPlatformTestUserConnector)(
+    implicit ec: ExecutionContext) {
 
-  private def getEmployers(empRefs: Seq[EmpRef])(implicit hc: HeaderCarrier): Future[Seq[TestOrganisation]] = {
+  private def getEmployers(empRefs: Seq[EmpRef])(
+      implicit hc: HeaderCarrier): Future[Seq[TestOrganisation]] = {
     val futures =
       empRefs.map(apiPlatformTestUserConnector.getOrganisationByEmpRef)
     Future.sequence(futures).map(_.flatten.toSeq)
   }
 
-  def employments(nino: Nino, interval: Interval)(implicit hc: HeaderCarrier): Future[Seq[EmploymentIncomeResponse]] =
+  def employments(nino: Nino, interval: Interval)(
+      implicit hc: HeaderCarrier): Future[Seq[EmploymentIncomeResponse]] =
     for {
-      employments <- employmentRepository.findBy(nino) map (_ filter overlap(interval))
+      employments <- employmentRepository.findBy(nino) map (_ filter overlap(
+        interval))
       employerPayeReferences = employments map (_.employerPayeReference)
       employers <- getEmployers(employerPayeReferences)
       maybeEmployers = employments map (employment =>
@@ -50,6 +57,8 @@ class EmploymentIncomeService @Inject()(
         case (employment, employer) =>
           val paymentsWithinInterval =
             employment.payments.filter(_.isPaidWithin(interval))
-          EmploymentIncomeResponse(employment.copy(payments = paymentsWithinInterval), employer)
+          EmploymentIncomeResponse(
+            employment.copy(payments = paymentsWithinInterval),
+            employer)
       }
 }

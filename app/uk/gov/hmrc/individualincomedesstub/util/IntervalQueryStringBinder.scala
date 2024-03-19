@@ -16,40 +16,39 @@
 
 package uk.gov.hmrc.individualincomedesstub.util
 
-import org.joda.time.format.DateTimeFormat
-import org.joda.time.{Interval, LocalDate}
 import uk.gov.hmrc.individualincomedesstub.util.Dates.toInterval
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import scala.util.Try
 
 class IntervalQueryStringBinder extends AbstractQueryStringBindable[Interval] {
 
-  private val dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd")
+  private val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-  override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, Interval]] =
-    (getParam(params, "from"), getParam(params, "to", Some(LocalDate.now()))) match {
-      case (Right(from), Right(to)) => Some(interval(from, to))
-      case (_, Left(msg))           => Some(Left(msg))
-      case (Left(msg), _)           => Some(Left(msg))
-    }
-
-  private def interval(from: LocalDate, to: LocalDate): Either[String, Interval] =
-    Try(Right(toInterval(from, to))) getOrElse Left(errorResponse("Invalid time period requested"))
+  override def bind(
+      key: String,
+      params: Map[String, Seq[String]]): Option[Either[String, Interval]] =
+    Some(for {
+      from <- getParam(params, "from")
+      to <- getParam(params, "to", Some(LocalDate.now()))
+      result <- Either.cond(from isBefore to,
+                            toInterval(from, to),
+                            errorResponse("Invalid time period requested"))
+    } yield result)
 
   private def getParam(
-    params: Map[String, Seq[String]],
-    paramName: String,
-    default: Option[LocalDate] = None): Either[String, LocalDate] =
-    Try(params.get(paramName).flatMap(_.headOption) match {
-      case Some(date) => Right(dateTimeFormatter.parseLocalDate(date))
-      case None =>
-        default
-          .map(Right(_))
-          .getOrElse(Left(errorResponse(s"$paramName is required")))
-    }) getOrElse Left(errorResponse(s"$paramName: invalid date format"))
+      params: Map[String, Seq[String]],
+      paramName: String,
+      default: Option[LocalDate] = None): Either[String, LocalDate] =
+    params.get(paramName) match {
+      case Some(date :: _) =>
+        Try(LocalDate.parse(date, format)).toEither.left.map(_ =>
+          errorResponse(s"$paramName: invalid date format"))
+      case _ => default.toRight(errorResponse(s"$paramName is required"))
+    }
 
   override def unbind(key: String, dateRange: Interval): String =
-    s"from=${dateTimeFormatter.print(dateRange.getStart.toLocalDate)}&to=${dateTimeFormatter
-      .print(dateRange.getEnd.toLocalDate)}"
+    s"from=${dateRange.fromDate.format(format)}&to=${dateRange.toDate.format(format)}"
 
 }

@@ -16,7 +16,7 @@
 
 package it.uk.gov.hmrc.individualincomedesstub.repository
 
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import org.scalatest.BeforeAndAfterEach
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.domain.SaUtr
