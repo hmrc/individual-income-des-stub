@@ -41,13 +41,12 @@ class IntervalQueryStringBinder extends AbstractQueryStringBindable[Interval] {
       params: Map[String, Seq[String]],
       paramName: String,
       default: Option[LocalDate] = None): Either[String, LocalDate] =
-    Try(params.get(paramName).flatMap(_.headOption) match {
-      case Some(date) => Right(LocalDate.parse(date, dateTimeFormatter))
-      case None =>
-        default
-          .map(Right(_))
-          .getOrElse(Left(errorResponse(s"$paramName is required")))
-    }) getOrElse Left(errorResponse(s"$paramName: invalid date format"))
+    params.get(paramName) match {
+      case Some(date :: _) =>
+        Try(LocalDate.parse(date, dateTimeFormatter)).toEither.left.map(_ =>
+          errorResponse(s"$paramName: invalid date format"))
+      case _ => default.toRight(errorResponse(s"$paramName is required"))
+    }
 
   override def unbind(key: String, dateRange: Interval): String =
     s"from=${dateRange.getStart.format(dateTimeFormatter)}&to=${dateRange.getEnd.format(dateTimeFormatter)}"
