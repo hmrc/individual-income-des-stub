@@ -49,6 +49,6 @@ class IntervalQueryStringBinder extends AbstractQueryStringBindable[Interval] {
     }
 
   override def unbind(key: String, dateRange: Interval): String =
-    s"from=${dateRange.getStart.format(format)}&to=${dateRange.getEnd.format(format)}"
+    s"from=${dateRange.fromDate.format(format)}&to=${dateRange.toDate.format(format)}"
 
 }

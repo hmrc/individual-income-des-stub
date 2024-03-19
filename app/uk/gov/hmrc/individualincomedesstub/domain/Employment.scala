@@ -85,7 +85,7 @@ case class Employment(employerPayeReference: EmpRef,
       case (Some(start), None) =>
         interval.overlaps(toInterval(parse(start), LocalDate.now))
       case (None, Some(end)) =>
-        interval.getStart
+        interval.fromDate
           .minusDays(1)
           .isBefore(parse(end).atStartOfDay())
       case _ => false
