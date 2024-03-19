@@ -16,8 +16,6 @@
 
 package unit.uk.gov.hmrc.individualincomedesstub.domain
 
-import org.joda.time.LocalDateTime.parse
-import org.joda.time.{Interval, LocalDate, LocalDateTime}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
@@ -25,6 +23,10 @@ import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.domain.DesEmploymentPayFrequency._
 import uk.gov.hmrc.individualincomedesstub.domain.EmploymentPayFrequency._
 import uk.gov.hmrc.individualincomedesstub.domain._
+import uk.gov.hmrc.individualincomedesstub.util.Interval
+
+import java.time.LocalDate
+import java.time.LocalDateTime.parse
 
 class EmploymentSpec extends AnyFreeSpec with Matchers {
 
@@ -33,17 +35,17 @@ class EmploymentSpec extends AnyFreeSpec with Matchers {
 
     private val fixtures = Table(
       ("exampleinterval", "expected result"),
-      (toInterval(parse("2017-01-08T00:00:00.000"),
-                  parse("2017-01-09T00:00:00.001")),
+      (Interval(parse("2017-01-08T00:00:00.000"),
+                parse("2017-01-09T00:00:00.001")),
        false),
-      (toInterval(parse("2017-01-09T00:00:00.000"),
-                  parse("2017-01-10T00:00:00.001")),
+      (Interval(parse("2017-01-09T00:00:00.000"),
+                parse("2017-01-10T00:00:00.001")),
        true),
-      (toInterval(parse("2017-01-10T00:00:00.000"),
-                  parse("2017-01-11T00:00:00.001")),
+      (Interval(parse("2017-01-10T00:00:00.000"),
+                parse("2017-01-11T00:00:00.001")),
        true),
-      (toInterval(parse("2017-01-11T00:00:00.000"),
-                  parse("2017-01-12T00:00:00.001")),
+      (Interval(parse("2017-01-11T00:00:00.000"),
+                parse("2017-01-12T00:00:00.001")),
        false)
     )
 
@@ -66,14 +68,14 @@ class EmploymentSpec extends AnyFreeSpec with Matchers {
 
     private val fixtures = Table(
       ("interval example", "expected result"),
-      (toInterval(parse("2017-01-09T00:00:00.000"),
-                  parse("2017-01-09T23:59:59.999")),
+      (Interval(parse("2017-01-09T00:00:00.000"),
+                parse("2017-01-09T23:59:59.999")),
        false),
-      (toInterval(parse("2017-01-10T00:00:00.000"),
-                  parse("2017-01-10T23:59:59.999")),
+      (Interval(parse("2017-01-10T00:00:00.000"),
+                parse("2017-01-10T23:59:59.999")),
        true),
-      (toInterval(parse("2017-01-11T00:00:00.000"),
-                  parse("2017-01-11T23:59:59.999")),
+      (Interval(parse("2017-01-11T00:00:00.000"),
+                parse("2017-01-11T23:59:59.999")),
        false)
     )
 
@@ -93,20 +95,20 @@ class EmploymentSpec extends AnyFreeSpec with Matchers {
 
     private val fixtures = Table(
       ("interval example", "expected result"),
-      (toInterval(parse("2017-01-09T00:00:00.000"),
-                  parse("2017-01-31T23:59:59.999")),
+      (Interval(parse("2017-01-09T00:00:00.000"),
+                parse("2017-01-31T23:59:59.999")),
        false),
-      (toInterval(parse("2017-02-28T00:00:00.000"),
-                  parse("2017-03-02T23:59:59.999")),
+      (Interval(parse("2017-02-28T00:00:00.000"),
+                parse("2017-03-02T23:59:59.999")),
        false),
-      (toInterval(parse("2017-01-01T00:00:00.000"),
-                  parse("2017-02-01T00:00:00.001")),
+      (Interval(parse("2017-01-01T00:00:00.000"),
+                parse("2017-02-01T00:00:00.001")),
        true),
-      (toInterval(parse("2017-02-10T00:00:00.000"),
-                  parse("2017-02-15T23:59:59.999")),
+      (Interval(parse("2017-02-10T00:00:00.000"),
+                parse("2017-02-15T23:59:59.999")),
        true),
-      (toInterval(parse("2017-02-27T00:00:00.000"),
-                  parse("2017-03-01T23:59:59.999")),
+      (Interval(parse("2017-02-27T00:00:00.000"),
+                parse("2017-03-01T23:59:59.999")),
        true)
     )
 
@@ -127,17 +129,17 @@ class EmploymentSpec extends AnyFreeSpec with Matchers {
 
     private val fixtures = Table(
       ("interval example", "expected result"),
-      (toInterval(parse("2016-12-01T00:00:00.000"),
-                  parse("2017-01-31T23:59:59.999")),
+      (Interval(parse("2016-12-01T00:00:00.000"),
+                parse("2017-01-31T23:59:59.999")),
        false),
-      (toInterval(parse("2017-03-01T00:00:00.000"),
-                  parse("2017-05-31T23:59:59.999")),
+      (Interval(parse("2017-03-01T00:00:00.000"),
+                parse("2017-05-31T23:59:59.999")),
        true),
-      (toInterval(parse("2017-02-01T00:00:00.000"),
-                  parse("2017-03-02T23:59:59.999")),
+      (Interval(parse("2017-02-01T00:00:00.000"),
+                parse("2017-03-02T23:59:59.999")),
        true),
-      (toInterval(parse("2017-01-01T00:00:00.000"),
-                  parse("2017-02-01T00:00:00.001")),
+      (Interval(parse("2017-01-01T00:00:00.000"),
+                parse("2017-02-01T00:00:00.001")),
        true)
     )
 
@@ -158,17 +160,17 @@ class EmploymentSpec extends AnyFreeSpec with Matchers {
 
     private val fixtures = Table(
       ("interval example", "expected result"),
-      (toInterval(parse("2017-02-02T00:00:00.000"),
-                  parse("2017-05-31T23:59:59.999")),
+      (Interval(parse("2017-02-02T00:00:00.000"),
+                parse("2017-05-31T23:59:59.999")),
        false),
-      (toInterval(parse("2017-02-01T00:00:00.000"),
-                  parse("2017-03-02T23:59:59.999")),
+      (Interval(parse("2017-02-01T00:00:00.000"),
+                parse("2017-03-02T23:59:59.999")),
        true),
-      (toInterval(parse("2016-12-01T00:00:00.000"),
-                  parse("2017-02-01T23:59:59.999")),
+      (Interval(parse("2016-12-01T00:00:00.000"),
+                parse("2017-02-01T23:59:59.999")),
        true),
-      (toInterval(parse("2017-01-01T00:00:00.000"),
-                  parse("2017-01-31T00:00:00.001")),
+      (Interval(parse("2017-01-01T00:00:00.000"),
+                parse("2017-01-31T00:00:00.001")),
        true)
     )
 
@@ -263,9 +265,6 @@ class EmploymentSpec extends AnyFreeSpec with Matchers {
       DesEmploymentPayFrequency.from(empFrequency.toString) shouldBe expectedDesEmpFrequency
     }
   }
-
-  private def toInterval(from: LocalDateTime, to: LocalDateTime): Interval =
-    new Interval(from.toDate.getTime, to.toDate.getTime)
 
   private def toLocalDate(maybeString: Option[String]) =
     LocalDate.parse(maybeString.get)

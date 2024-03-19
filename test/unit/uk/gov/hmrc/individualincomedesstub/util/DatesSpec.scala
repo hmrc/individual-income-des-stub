@@ -16,7 +16,7 @@
 
 package unit.uk.gov.hmrc.individualincomedesstub.util
 
-import org.joda.time.LocalDate.parse
+import java.time.LocalDate.parse
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import uk.gov.hmrc.individualincomedesstub.util.Dates

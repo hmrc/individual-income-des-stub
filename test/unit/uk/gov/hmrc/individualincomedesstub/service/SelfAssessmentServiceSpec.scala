@@ -16,7 +16,7 @@
 
 package unit.uk.gov.hmrc.individualincomedesstub.service
 
-import org.joda.time.LocalDate
+import java.time.LocalDate
 import org.mockito.ArgumentMatchers.any
 import org.mockito.IdiomaticMockito
 import uk.gov.hmrc.domain.SaUtr

@@ -16,8 +16,8 @@
 
 package component.uk.gov.hmrc.individualincomedesstub
 
-import org.joda.time.LocalDate
-import org.joda.time.LocalDate.parse
+import java.time.LocalDate
+import java.time.LocalDate.parse
 import play.api.http.HeaderNames._
 import play.api.http.MimeTypes._
 import play.api.http.Status._

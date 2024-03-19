@@ -16,16 +16,18 @@
 
 package unit.uk.gov.hmrc.individualincomedesstub.util
 
-import org.joda.time.LocalDateTime.parse
-import org.joda.time.{Interval, LocalDateTime}
 import org.scalatest.EitherValues
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import uk.gov.hmrc.individualincomedesstub.util.{
   Dates,
+  Interval,
   IntervalQueryStringBinder
 }
+
+import java.time.LocalDate
+import java.time.LocalDateTime.parse
 
 class IntervalQueryStringBinderSpec
     extends AnyFlatSpec
@@ -67,7 +69,7 @@ class IntervalQueryStringBinderSpec
     maybeEither.get.isRight shouldBe true
     maybeEither.get shouldBe Right(
       toInterval("2017-01-31T00:00:00.000",
-                 LocalDateTime.now().withTime(0, 0, 0, 1).toString()))
+                 LocalDate.now().atStartOfDay().plusNanos(1000000).toString))
   }
 
   it should "succeed in binding an interval from well formed from and to parameters" in {
@@ -88,7 +90,7 @@ class IntervalQueryStringBinderSpec
   }
 
   it should "unbind intervals to query parameters" in {
-    val interval = toInterval("2020-01-31", "2020-12-31")
+    val interval = toInterval("2020-01-31T00:00:00", "2020-12-31T00:00:00")
     intervalQueryStringBinder.unbind("", interval) shouldBe "from=2020-01-31&to=2020-12-31"
   }
 

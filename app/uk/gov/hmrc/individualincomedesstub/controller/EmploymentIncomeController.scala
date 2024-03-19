@@ -16,12 +16,12 @@
 
 package uk.gov.hmrc.individualincomedesstub.controller
 
-import org.joda.time.Interval
 import play.api.libs.json.Json.{obj, toJson}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.employmentIncomeResponseFormat
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentIncomeService
+import uk.gov.hmrc.individualincomedesstub.util.Interval
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext

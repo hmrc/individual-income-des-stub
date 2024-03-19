@@ -16,10 +16,8 @@
 
 package uk.gov.hmrc.individualincomedesstub.domain
 
-import org.joda.time.LocalDate
-import org.joda.time.LocalDate.parse
-import play.api.libs.json.JodaReads._
-import play.api.libs.json.JodaWrites._
+import java.time.LocalDate
+import java.time.LocalDate.parse
 import play.api.libs.json._
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.util.Validators.{

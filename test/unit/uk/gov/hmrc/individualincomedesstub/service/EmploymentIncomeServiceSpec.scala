@@ -16,7 +16,7 @@
 
 package unit.uk.gov.hmrc.individualincomedesstub.service
 
-import org.joda.time.LocalDate.parse
+import java.time.LocalDate.parse
 import org.mockito.ArgumentMatchers._
 import org.mockito.MockitoSugar
 import org.mockito.stubbing.ScalaOngoingStubbing

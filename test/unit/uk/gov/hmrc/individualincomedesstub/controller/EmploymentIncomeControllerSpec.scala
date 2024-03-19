@@ -16,8 +16,8 @@
 
 package unit.uk.gov.hmrc.individualincomedesstub.controller
 
-import org.joda.time.LocalDate.parse
-import org.joda.time.{Interval, LocalDate}
+import java.time.LocalDate.parse
+import java.time.LocalDate
 import org.mockito.ArgumentMatchers.any
 import org.mockito.stubbing.ScalaOngoingStubbing
 import org.mockito.{ArgumentMatchers, MockitoSugar}
@@ -34,6 +34,7 @@ import uk.gov.hmrc.individualincomedesstub.domain.{
   EmploymentIncomeResponse
 }
 import uk.gov.hmrc.individualincomedesstub.service.EmploymentIncomeService
+import uk.gov.hmrc.individualincomedesstub.util.Interval
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -119,6 +120,6 @@ class EmploymentIncomeControllerSpec
   }
 
   private def toInterval(from: LocalDate, to: LocalDate): Interval =
-    new Interval(from.toDate.getTime, to.toDate.getTime)
+    new Interval(from.atStartOfDay(), to.atStartOfDay())
 
 }

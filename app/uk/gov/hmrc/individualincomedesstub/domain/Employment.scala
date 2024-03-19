@@ -16,10 +16,11 @@
 
 package uk.gov.hmrc.individualincomedesstub.domain
 
-import org.joda.time.LocalDate.parse
-import org.joda.time.{Interval, LocalDate}
+import java.time.LocalDate.parse
+import java.time.LocalDate
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.util.Dates.toInterval
+import uk.gov.hmrc.individualincomedesstub.util.Interval
 import uk.gov.hmrc.individualincomedesstub.util.Validators._
 
 case class HmrcPayment(paymentDate: String,
@@ -29,7 +30,7 @@ case class HmrcPayment(paymentDate: String,
   validDate("paymentDate", paymentDate)
 
   def isPaidWithin(interval: Interval): Boolean =
-    interval.contains(parse(paymentDate).toDateTimeAtStartOfDay)
+    interval.contains(parse(paymentDate).atStartOfDay())
 
 }
 
@@ -86,7 +87,7 @@ case class Employment(employerPayeReference: EmpRef,
       case (None, Some(end)) =>
         interval.getStart
           .minusDays(1)
-          .isBefore(parse(end).toDateTimeAtStartOfDay)
+          .isBefore(parse(end).atStartOfDay())
       case _ => false
     }
 
@@ -137,7 +138,7 @@ case class EmploymentIncomeResponse(
 
 object EmploymentIncomeResponse {
 
-  import org.joda.time.LocalDate.parse
+  import java.time.LocalDate.parse
 
   def apply(
       employment: Employment,

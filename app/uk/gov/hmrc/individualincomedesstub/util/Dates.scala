@@ -16,7 +16,21 @@
 
 package uk.gov.hmrc.individualincomedesstub.util
 
-import org.joda.time.{Interval, LocalDate}
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, LocalDateTime}
+
+case class Interval(fromDate: LocalDateTime, toDate: LocalDateTime) {
+  def getStart: LocalDateTime = fromDate
+  def getEnd: LocalDateTime = toDate
+  def contains(date: LocalDateTime): Boolean =
+    !date.isBefore(fromDate) && !date.isAfter(toDate)
+  def overlaps(other: Interval): Boolean =
+    !other.fromDate.isAfter(toDate) & !other.toDate.isBefore(fromDate)
+  override def toString: String = {
+    val format = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    s"${fromDate.format(format)}/${toDate.format(format)}"
+  }
+}
 
 object Dates {
 
@@ -26,6 +40,5 @@ object Dates {
     toInterval(asDate(from), asDate(to))
 
   def toInterval(from: LocalDate, to: LocalDate): Interval =
-    new Interval(from.toDate.getTime,
-                 to.toDateTimeAtStartOfDay.plusMillis(1).toDate.getTime)
+    Interval(from.atStartOfDay(), to.atStartOfDay().plusNanos(1000000))
 }

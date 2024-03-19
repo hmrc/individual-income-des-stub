@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.individualincomedesstub.service
 
-import org.joda.time.Interval
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualincomedesstub.connector.ApiPlatformTestUserConnector
@@ -26,6 +25,7 @@ import uk.gov.hmrc.individualincomedesstub.domain.{
   TestOrganisation
 }
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository
+import uk.gov.hmrc.individualincomedesstub.util.Interval
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
