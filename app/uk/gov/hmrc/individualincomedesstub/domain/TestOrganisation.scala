@@ -22,7 +22,6 @@ case class TestAddress(line1: String, line2: String, postcode: String)
 
 case class TestOrganisationDetails(name: String, address: TestAddress)
 
-case class TestOrganisation(empRef: Option[EmpRef],
-                            organisationDetails: TestOrganisationDetails)
+case class TestOrganisation(empRef: Option[EmpRef], organisationDetails: TestOrganisationDetails)
 
 case class TestIndividual(saUtr: Option[SaUtr])

@@ -119,7 +119,8 @@ class SelfAssessmentIncomeServiceSpec extends TestSupport with MockitoSugar {
                 baseAddressEffectiveDate = None,
                 addressTypeIndicator = None
               )
-            ))
+            )
+          )
         )
       )
     }

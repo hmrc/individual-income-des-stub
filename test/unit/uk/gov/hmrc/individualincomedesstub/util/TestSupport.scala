@@ -34,7 +34,8 @@ class TestSupport extends UnitSpec with BeforeAndAfterAll {
               | metrics.jvm = false
               |""".stripMargin
           )
-        ).withFallback(extraConfig))
+        ).withFallback(extraConfig)
+      )
       .build()
 
   lazy val fakeApplication: Application = buildFakeApplication(additionalConfig)

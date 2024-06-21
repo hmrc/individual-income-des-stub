@@ -22,12 +22,7 @@ import play.api.http.Status._
 import play.api.libs.json.Json
 import scalaj.http.Http
 import uk.gov.hmrc.domain.{Nino, SaUtr}
-import uk.gov.hmrc.individualincomedesstub.domain.{
-  SelfAssessment,
-  SelfAssessmentTaxReturn,
-  TaxYear,
-  TestIndividual
-}
+import uk.gov.hmrc.individualincomedesstub.domain.{SelfAssessment, SelfAssessmentTaxReturn, TaxYear, TestIndividual}
 
 class SelfAssessmentIncomeSpec extends BaseSpec {
 
@@ -36,13 +31,10 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
 
   Feature("Retrieve DES stubbed self assessment income") {
 
-    ignore(
-      "Fetch self assessment income when there is income associated to a given tax year range") {
+    ignore("Fetch self assessment income when there is income associated to a given tax year range") {
 
       Given("A test individual")
-      ApiPlatformTestUserStub.getByNinoReturnsTestIndividual(
-        nino,
-        TestIndividual(Some(utr)))
+      ApiPlatformTestUserStub.getByNinoReturnsTestIndividual(nino, TestIndividual(Some(utr)))
 
       And("Self assessment income exist for a given period")
       selfAssessmentRepository.create(
@@ -91,7 +83,8 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
               address = None
             )
           )
-        ))
+        )
+      )
 
       When("I fetch self assessment income for that period")
       val response = fetchSelfAssessmentIncome(nino, "2013", "2014")
@@ -100,8 +93,7 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
       response.code shouldBe OK
 
       And("The self assessment income is returned in the response body")
-      Json.parse(response.body) shouldBe Json.parse(
-        """
+      Json.parse(response.body) shouldBe Json.parse("""
           [
               {
                   "taxYear": "2014",
@@ -131,13 +123,10 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
         """)
     }
 
-    Scenario(
-      "Fetch self assessment income when there is no income associated to a given tax year range") {
+    Scenario("Fetch self assessment income when there is no income associated to a given tax year range") {
 
       Given("A test individual")
-      ApiPlatformTestUserStub.getByNinoReturnsTestIndividual(
-        nino,
-        TestIndividual(Some(utr)))
+      ApiPlatformTestUserStub.getByNinoReturnsTestIndividual(nino, TestIndividual(Some(utr)))
 
       When("I fetch self assessment income for a period with no income")
       val response = fetchSelfAssessmentIncome(nino, "2014", "2015")
@@ -149,35 +138,28 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
     Scenario("Request fails for missing start year") {
 
       When("I attempt to fetch self assessment without a start year")
-      val response = Http(
-        s"$serviceUrl/individuals/nino/$nino/self-assessment/income?endYear=2014").asString
+      val response = Http(s"$serviceUrl/individuals/nino/$nino/self-assessment/income?endYear=2014").asString
 
       Then("The response code should be 400 (Bad Request)")
       response.code shouldBe BAD_REQUEST
 
       And("The correct error message in the response body")
-      Json.parse(response.body) shouldBe Json.parse(
-        """{"statusCode":400,"message":"Invalid Request"}""")
+      Json.parse(response.body) shouldBe Json.parse("""{"statusCode":400,"message":"Invalid Request"}""")
     }
 
     Scenario("Request fails for missing end year") {
 
       When("I attempt to fetch self assessment without an end year")
-      val response = Http(
-        s"$serviceUrl/individuals/nino/$nino/self-assessment/income?startYear=2014").asString
+      val response = Http(s"$serviceUrl/individuals/nino/$nino/self-assessment/income?startYear=2014").asString
 
       Then("The response code should be 400 (Bad Request)")
       response.code shouldBe BAD_REQUEST
 
       And("The correct error message in the response body")
-      Json.parse(response.body) shouldBe Json.parse(
-        """{"statusCode":400,"message":"Invalid Request"}""")
+      Json.parse(response.body) shouldBe Json.parse("""{"statusCode":400,"message":"Invalid Request"}""")
     }
   }
 
-  private def fetchSelfAssessmentIncome(nino: Nino,
-                                        startYear: String,
-                                        endYear: String) =
-    Http(
-      s"$serviceUrl/individuals/nino/$nino/self-assessment/income?startYear=$startYear&endYear=$endYear").asString
+  private def fetchSelfAssessmentIncome(nino: Nino, startYear: String, endYear: String) =
+    Http(s"$serviceUrl/individuals/nino/$nino/self-assessment/income?startYear=$startYear&endYear=$endYear").asString
 }

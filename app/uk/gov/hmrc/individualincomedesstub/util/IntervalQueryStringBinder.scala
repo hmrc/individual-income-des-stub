@@ -26,25 +26,21 @@ class IntervalQueryStringBinder extends AbstractQueryStringBindable[Interval] {
 
   private val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-  override def bind(
-      key: String,
-      params: Map[String, Seq[String]]): Option[Either[String, Interval]] =
+  override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, Interval]] =
     Some(for {
-      from <- getParam(params, "from")
-      to <- getParam(params, "to", Some(LocalDate.now()))
-      result <- Either.cond(from isBefore to,
-                            toInterval(from, to),
-                            errorResponse("Invalid time period requested"))
+      from   <- getParam(params, "from")
+      to     <- getParam(params, "to", Some(LocalDate.now()))
+      result <- Either.cond(from isBefore to, toInterval(from, to), errorResponse("Invalid time period requested"))
     } yield result)
 
   private def getParam(
-      params: Map[String, Seq[String]],
-      paramName: String,
-      default: Option[LocalDate] = None): Either[String, LocalDate] =
+    params: Map[String, Seq[String]],
+    paramName: String,
+    default: Option[LocalDate] = None
+  ): Either[String, LocalDate] =
     params.get(paramName) match {
       case Some(date :: _) =>
-        Try(LocalDate.parse(date, format)).toEither.left.map(_ =>
-          errorResponse(s"$paramName: invalid date format"))
+        Try(LocalDate.parse(date, format)).toEither.left.map(_ => errorResponse(s"$paramName: invalid date format"))
       case _ => default.toRight(errorResponse(s"$paramName is required"))
     }
 
