@@ -17,11 +17,7 @@
 package uk.gov.hmrc.individualincomedesstub.util
 
 import java.time.LocalDate
-import uk.gov.hmrc.individualincomedesstub.domain.{
-  EmploymentPayFrequency,
-  TaxYear,
-  ValidationException
-}
+import uk.gov.hmrc.individualincomedesstub.domain.{EmploymentPayFrequency, TaxYear, ValidationException}
 
 import java.time.format.DateTimeFormatter
 import scala.util.Try
@@ -36,18 +32,16 @@ object Validators {
   def validDate(fieldName: String, value: String): Unit =
     valid(
       Try(LocalDate.parse(value, DateTimeFormatter.ofPattern("yyyy-MM-dd"))).isSuccess,
-      s"$fieldName: invalid date format")
+      s"$fieldName: invalid date format"
+    )
 
-  def validInterval(startDate: String,
-                    endDate: String,
-                    errorMessage: String): Unit = {
-    try {
+  def validInterval(startDate: String, endDate: String, errorMessage: String): Unit =
+    try
       if (!(LocalDate.parse(startDate) isBefore LocalDate.parse(endDate)))
         throw new ValidationException(errorMessage)
-    } catch {
+    catch {
       case _: Exception => throw new ValidationException(errorMessage)
     }
-  }
 
   def validPayFrequency(string: String, errorMessage: String): Unit =
     valid(Try(EmploymentPayFrequency.withName(string)).isSuccess, errorMessage)

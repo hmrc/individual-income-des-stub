@@ -27,18 +27,18 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class SelfAssessmentIncomeController @Inject()(
-    selfAssessmentIncomeService: SelfAssessmentIncomeService,
-    controllerComponents: ControllerComponents)(implicit ec: ExecutionContext)
+class SelfAssessmentIncomeController @Inject() (
+  selfAssessmentIncomeService: SelfAssessmentIncomeService,
+  controllerComponents: ControllerComponents
+)(implicit ec: ExecutionContext)
     extends CommonController(controllerComponents) {
 
   def income(nino: Nino, startYear: Int, endYear: Int): Action[AnyContent] =
     Action.async { implicit request =>
-      selfAssessmentIncomeService.income(nino, startYear, endYear) map {
-        saReturns =>
-          Ok(Json.toJson(saReturns))
-      } recover {
-        case _: RecordNotFoundException => NotFound
+      selfAssessmentIncomeService.income(nino, startYear, endYear) map { saReturns =>
+        Ok(Json.toJson(saReturns))
+      } recover { case _: RecordNotFoundException =>
+        NotFound
       }
     }
 }

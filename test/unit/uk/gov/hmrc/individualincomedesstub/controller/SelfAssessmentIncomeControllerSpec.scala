@@ -30,22 +30,14 @@ import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualincomedesstub.controller.SelfAssessmentIncomeController
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.selfAssessmentResponseFormat
-import uk.gov.hmrc.individualincomedesstub.domain.{
-  RecordNotFoundException,
-  SaAddress,
-  SelfAssessmentResponse,
-  SelfAssessmentResponseReturn
-}
+import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, SaAddress, SelfAssessmentResponse, SelfAssessmentResponseReturn}
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentIncomeService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.{failed, successful}
 
-class SelfAssessmentIncomeControllerSpec
-    extends TestSupport
-    with MockitoSugar
-    with ScalaFutures {
+class SelfAssessmentIncomeControllerSpec extends TestSupport with MockitoSugar with ScalaFutures {
 
   implicit lazy val materializer: Materializer = fakeApplication.materializer
   private val controllerComponents: ControllerComponents =
@@ -58,9 +50,7 @@ class SelfAssessmentIncomeControllerSpec
     val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
     val selfAssessmentIncomeService: SelfAssessmentIncomeService =
       mock[SelfAssessmentIncomeService]
-    val underTest = new SelfAssessmentIncomeController(
-      selfAssessmentIncomeService,
-      controllerComponents)
+    val underTest = new SelfAssessmentIncomeController(selfAssessmentIncomeService, controllerComponents)
   }
 
   private val selfAssessmentResponse = SelfAssessmentResponse(
@@ -95,15 +85,13 @@ class SelfAssessmentIncomeControllerSpec
           baseAddressEffectiveDate = None,
           addressTypeIndicator = None
         )
-      ))
+      )
+    )
   )
 
   "fetch self assessment income" should {
     "retrieve self assessment income for a given period" in new Setup {
-      given(
-        selfAssessmentIncomeService.income(refEq(nino),
-                                           refEq(2015),
-                                           refEq(2016))(any[HeaderCarrier]))
+      given(selfAssessmentIncomeService.income(refEq(nino), refEq(2015), refEq(2016))(any[HeaderCarrier]))
         .willReturn(successful(Seq(selfAssessmentResponse)))
 
       private val result =
@@ -114,10 +102,7 @@ class SelfAssessmentIncomeControllerSpec
     }
 
     "return 404 (Not Found) if there is no self assessment income for a given period" in new Setup {
-      given(
-        selfAssessmentIncomeService.income(refEq(nino),
-                                           refEq(2015),
-                                           refEq(2016))(any[HeaderCarrier]))
+      given(selfAssessmentIncomeService.income(refEq(nino), refEq(2015), refEq(2016))(any[HeaderCarrier]))
         .willReturn(failed(new RecordNotFoundException()))
 
       private val result =

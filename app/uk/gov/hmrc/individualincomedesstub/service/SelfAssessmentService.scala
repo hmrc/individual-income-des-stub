@@ -24,10 +24,8 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class SelfAssessmentService @Inject()(
-    selfAssessmentRepository: SelfAssessmentRepository) {
+class SelfAssessmentService @Inject() (selfAssessmentRepository: SelfAssessmentRepository) {
 
-  def create(utr: SaUtr,
-             request: SelfAssessmentCreateRequest): Future[SelfAssessment] =
+  def create(utr: SaUtr, request: SelfAssessmentCreateRequest): Future[SelfAssessment] =
     selfAssessmentRepository.create(SelfAssessment(utr, request))
 }
