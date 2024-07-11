@@ -24,6 +24,7 @@ import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, Test
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.{Inject, Singleton}
+import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ApiPlatformTestUserConnector @Inject() (http: HttpClient, servicesConfig: ServicesConfig)(implicit
@@ -32,13 +33,14 @@ class ApiPlatformTestUserConnector @Inject() (http: HttpClient, servicesConfig: 
 
   val serviceUrl: String = servicesConfig.baseUrl("api-platform-test-user")
 
+  @nowarn // silence deprecation warning - we should use uk.gov.hmrc.http.HttpReads.Implicits._ - however using this breaks a test
   def getOrganisationByEmpRef(empRef: EmpRef)(implicit hc: HeaderCarrier): Future[Option[TestOrganisation]] = {
     http.GET[TestOrganisation](s"$serviceUrl/organisations/empref/${empRef.encodedValue}") map (Some(_))
   } recover { case e: NotFoundException =>
     logger.warn(s"unable to retrieve employer with empRef: ${empRef.value}. ${e.getMessage}")
     None
   }
-
+  @nowarn // silence deprecation warning - we should use uk.gov.hmrc.http.HttpReads.Implicits._ - however using this breaks a test
   def getIndividualByNino(nino: Nino)(implicit hc: HeaderCarrier): Future[TestIndividual] = {
     http.GET[TestIndividual](s"$serviceUrl/individuals/nino/${nino.value}")
   } recover { case e: NotFoundException =>
