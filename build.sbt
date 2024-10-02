@@ -1,9 +1,10 @@
-import uk.gov.hmrc.DefaultBuildSettings
+import uk.gov.hmrc.DefaultBuildSettings.addTestReportOption
 
 ThisBuild / majorVersion := 0
 ThisBuild / scalaVersion := "2.13.12"
 
 lazy val ComponentTest = config("component") extend Test
+lazy val ItTest = config("it") extend Test
 
 lazy val microservice = Project("individual-income-des-stub", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
@@ -35,6 +36,23 @@ lazy val microservice = Project("individual-income-des-stub", file("."))
   .settings(onLoadMessage := "")
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources")
+  .configs(ItTest)
+  .settings(inConfig(ItTest)(Defaults.testSettings) *)
+  .settings(
+    ItTest / unmanagedSourceDirectories := (ItTest / baseDirectory)(base => Seq(base / "test")).value,
+    ItTest / testOptions := Seq(Tests.Filter((name: String) => name startsWith "it")),
+    addTestReportOption(ItTest, "int-test-reports"),
+    // Disable default sbt Test options (might change with new versions of bootstrap)
+    ItTest / testOptions -= Tests
+      .Argument("-o", "-u", "target/int-test-reports", "-h", "target/int-test-reports/html-report"),
+    ItTest / testOptions += Tests.Argument(
+      TestFrameworks.ScalaTest,
+      "-oNCHPQR",
+      "-u",
+      "target/int-test-reports",
+      "-h",
+      "target/int-test-reports/html-report")
+  )
   .configs(ComponentTest)
   .settings(inConfig(ComponentTest)(Defaults.testSettings) *)
   .settings(
@@ -59,25 +77,5 @@ lazy val microservice = Project("individual-income-des-stub", file("."))
   .settings(PlayKeys.playDefaultPort := 9631)
   .settings(scalafmtOnCompile := true)
   .settings(CodeCoverageSettings.settings *)
-
-lazy val it = project
-  .enablePlugins(PlayScala)
-  .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
-  .settings(DefaultBuildSettings.itSettings())
-  .settings(
-    // Disable default sbt Test options (might change with new versions of bootstrap)
-    testOptions -= Tests
-      .Argument("-o",
-                "-u",
-                "target/int-test-reports",
-                "-h",
-                "target/int-test-reports/html-report"),
-    testOptions += Tests.Argument(TestFrameworks.ScalaTest,
-                                  "-oNCHPQR",
-                                  "-u",
-                                  "target/int-test-reports",
-                                  "-h",
-                                  "target/int-test-reports/html-report")
-  )
 
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
