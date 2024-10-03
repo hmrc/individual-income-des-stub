@@ -1,8 +1,6 @@
 @import play.api.libs.json.Json
 @(whitelistedApplicationIds: Seq[String])
 {
-  "scopes" : [
-  ],
   "api" : {
     "name" : "Individuals Income Test Support",
     "description" : "Allows you to create employment and income test data, for PAYE and for SA. This is only for the Individuals Employments API and the Individuals Income API",
