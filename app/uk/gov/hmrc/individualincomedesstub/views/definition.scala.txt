@@ -11,8 +11,7 @@
         "version" : "1.0",
         "status" : "PROTOTYPED",
         "access" : {
-          "type" : "PRIVATE",
-          "whitelistedApplicationIds" : @Json.toJson(whitelistedApplicationIds)
+          "type" : "PRIVATE"
         }
       }
     ]
