@@ -9,10 +9,9 @@
     "versions" : [
       {
         "version" : "1.0",
-        "status" : "PROTOTYPED",
+        "status" : "BETA",
         "access" : {
-          "type" : "PRIVATE",
-          "whitelistedApplicationIds" : @Json.toJson(whitelistedApplicationIds)
+          "type" : "PRIVATE"
         }
       }
     ]
