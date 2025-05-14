@@ -2,7 +2,7 @@ import play.sbt.PlayImport.ws
 import sbt.*
 
 object AppDependencies {
-  val hmrcBootstrapVersion = "8.4.0"
+  val hmrcBootstrapVersion = "9.11.0"
   val playVersion = "play-30"
   val hmrc = "uk.gov.hmrc"
 
