@@ -10,7 +10,7 @@ object AppDependencies {
     ws,
     hmrc           %% s"bootstrap-backend-$playVersion" % hmrcBootstrapVersion,
     hmrc           %% s"domain-$playVersion"            % "9.0.0",
-    s"$hmrc.mongo" %% s"hmrc-mongo-$playVersion"        % "1.7.0",
+    s"$hmrc.mongo" %% s"hmrc-mongo-$playVersion"        % "2.6.0",
   )
 
   def test(scope: Configuration = Test): Seq[ModuleID] = Seq(
