@@ -20,7 +20,7 @@ import org.apache.pekko.stream.Materializer
 import java.time.LocalDate.parse
 import org.mockito.ArgumentMatchers.{any, eq => refEq}
 import org.mockito.BDDMockito.given
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status._
 import play.api.libs.json.Json.toJson

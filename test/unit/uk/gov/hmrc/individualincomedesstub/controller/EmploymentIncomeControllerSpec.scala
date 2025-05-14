@@ -16,11 +16,10 @@
 
 package unit.uk.gov.hmrc.individualincomedesstub.controller
 
-import java.time.LocalDate.parse
-import java.time.LocalDate
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.stubbing.ScalaOngoingStubbing
-import org.mockito.{ArgumentMatchers, MockitoSugar}
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json.toJson
 import play.api.mvc._
 import play.api.test.Helpers._
@@ -34,6 +33,8 @@ import uk.gov.hmrc.individualincomedesstub.service.EmploymentIncomeService
 import uk.gov.hmrc.individualincomedesstub.util.Interval
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
+import java.time.LocalDate
+import java.time.LocalDate.parse
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -52,7 +53,7 @@ class EmploymentIncomeControllerSpec extends TestSupport with Results with Mocki
 
     def mockEmploymentIncomeService(
       eventualEmploymentResponses: Future[Seq[EmploymentIncomeResponse]]
-    ): ScalaOngoingStubbing[Future[Seq[EmploymentIncomeResponse]]] =
+    ): Unit =
       when(employmentIncomeService.employments(ArgumentMatchers.eq(nino), any(classOf[Interval]))(any[HeaderCarrier]))
         .thenReturn(eventualEmploymentResponses)
 
@@ -60,7 +61,8 @@ class EmploymentIncomeControllerSpec extends TestSupport with Results with Mocki
       EmploymentIncomeResponse(employment, None)
 
     "return a http 404 (Not Found) response when service does not return any employments" in {
-      mockEmploymentIncomeService(successful(Seq.empty))
+      when(employmentIncomeService.employments(ArgumentMatchers.eq(nino), any(classOf[Interval]))(any[HeaderCarrier]))
+        .thenReturn(successful(Seq.empty))
       val eventualResult =
         employmentIncomeController.employments(nino, interval)(FakeRequest())
       status(eventualResult) shouldBe NOT_FOUND
@@ -89,6 +91,6 @@ class EmploymentIncomeControllerSpec extends TestSupport with Results with Mocki
   }
 
   private def toInterval(from: LocalDate, to: LocalDate): Interval =
-    new Interval(from.atStartOfDay(), to.atStartOfDay())
+    Interval(from.atStartOfDay(), to.atStartOfDay())
 
 }

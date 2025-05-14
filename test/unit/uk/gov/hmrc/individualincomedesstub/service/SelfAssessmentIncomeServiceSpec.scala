@@ -19,7 +19,8 @@ package unit.uk.gov.hmrc.individualincomedesstub.service
 import java.time.LocalDate
 import java.time.LocalDate.parse
 import org.mockito.BDDMockito.given
-import org.mockito.MockitoSugar
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualincomedesstub.connector.ApiPlatformTestUserConnector

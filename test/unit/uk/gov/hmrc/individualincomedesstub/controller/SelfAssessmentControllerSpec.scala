@@ -18,7 +18,7 @@ package unit.uk.gov.hmrc.individualincomedesstub.controller
 
 import org.apache.pekko.stream.Materializer
 import org.mockito.BDDMockito.given
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status._
 import play.api.libs.json.Json.toJson
