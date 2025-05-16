@@ -16,19 +16,18 @@
 
 package unit.uk.gov.hmrc.individualincomedesstub.service
 
-import java.time.LocalDate
-import java.time.LocalDate.parse
-import org.mockito.BDDMockito.given
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.individualincomedesstub.connector.ApiPlatformTestUserConnector
-import uk.gov.hmrc.individualincomedesstub.domain._
+import uk.gov.hmrc.individualincomedesstub.domain.*
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentIncomeService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
+import java.time.LocalDate
+import java.time.LocalDate.parse
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.Future.successful
@@ -80,10 +79,10 @@ class SelfAssessmentIncomeServiceSpec extends TestSupport with MockitoSugar {
 
     "retrieve an individuals self assessment income for a given period" in new Setup {
 
-      given(apiPlatformTestUserConnector.getIndividualByNino(nino))
-        .willReturn(successful(TestIndividual(Some(utr))))
-      given(repository.findByUtr(utr))
-        .willReturn(successful(Some(selfAssessment)))
+      when(apiPlatformTestUserConnector.getIndividualByNino(nino))
+        .thenReturn(successful(TestIndividual(Some(utr))))
+      when(repository.findByUtr(utr))
+        .thenReturn(successful(Some(selfAssessment)))
 
       private val result = await(underTest.income(nino, 2014, 2015))
 
@@ -127,8 +126,8 @@ class SelfAssessmentIncomeServiceSpec extends TestSupport with MockitoSugar {
     }
 
     "fail with RecordNotFoundException when there is no individual matching the nino" in new Setup {
-      given(apiPlatformTestUserConnector.getIndividualByNino(nino))
-        .willReturn(Future.failed(new RecordNotFoundException()))
+      when(apiPlatformTestUserConnector.getIndividualByNino(nino))
+        .thenReturn(Future.failed(new RecordNotFoundException()))
 
       intercept[RecordNotFoundException] {
         await(underTest.income(nino, 2014, 2015))
@@ -136,8 +135,8 @@ class SelfAssessmentIncomeServiceSpec extends TestSupport with MockitoSugar {
     }
 
     "fail with RecordNotFoundException when there is the individual does not have a UTR" in new Setup {
-      given(apiPlatformTestUserConnector.getIndividualByNino(nino))
-        .willReturn(successful(TestIndividual(None)))
+      when(apiPlatformTestUserConnector.getIndividualByNino(nino))
+        .thenReturn(successful(TestIndividual(None)))
 
       intercept[RecordNotFoundException] {
         await(underTest.income(nino, 2014, 2015))
@@ -145,9 +144,9 @@ class SelfAssessmentIncomeServiceSpec extends TestSupport with MockitoSugar {
     }
 
     "fail with RecordNotFoundException when there is no self-assessment for the individual" in new Setup {
-      given(apiPlatformTestUserConnector.getIndividualByNino(nino))
-        .willReturn(successful(TestIndividual(Some(utr))))
-      given(repository.findByUtr(utr)).willReturn(successful(None))
+      when(apiPlatformTestUserConnector.getIndividualByNino(nino))
+        .thenReturn(successful(TestIndividual(Some(utr))))
+      when(repository.findByUtr(utr)).thenReturn(successful(None))
 
       intercept[RecordNotFoundException] {
         await(underTest.income(nino, 2014, 2015))
@@ -155,10 +154,10 @@ class SelfAssessmentIncomeServiceSpec extends TestSupport with MockitoSugar {
     }
 
     "fail with RecordNotFoundException when there is no self-assessment returns for the individual for the given period" in new Setup {
-      given(apiPlatformTestUserConnector.getIndividualByNino(nino))
-        .willReturn(successful(TestIndividual(Some(utr))))
-      given(repository.findByUtr(utr))
-        .willReturn(successful(Some(selfAssessment)))
+      when(apiPlatformTestUserConnector.getIndividualByNino(nino))
+        .thenReturn(successful(TestIndividual(Some(utr))))
+      when(repository.findByUtr(utr))
+        .thenReturn(successful(Some(selfAssessment)))
 
       intercept[RecordNotFoundException] {
         await(underTest.income(nino, 2013, 2014))

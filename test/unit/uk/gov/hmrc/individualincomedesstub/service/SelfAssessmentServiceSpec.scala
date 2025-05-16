@@ -20,7 +20,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.individualincomedesstub.domain._
+import uk.gov.hmrc.individualincomedesstub.domain.*
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
@@ -57,10 +57,7 @@ class SelfAssessmentServiceSpec extends TestSupport with MockitoSugar {
   trait Setup {
     val repository: SelfAssessmentRepository = mock[SelfAssessmentRepository]
     val underTest = new SelfAssessmentService(repository)
-    when(repository.create(any())).thenAnswer { invocation =>
-      if (invocation.getArguments.nonEmpty)
-        Future.successful(invocation.getArgument(0))
-    }
+
   }
 
   "create" should {
@@ -92,6 +89,8 @@ class SelfAssessmentServiceSpec extends TestSupport with MockitoSugar {
         )
       )
 
+      when(repository.create(any())).thenReturn(Future.successful(SelfAssessment(utr, request)))
+
       private val result = await(underTest.create(utr, request))
 
       result shouldBe expectedSelfAssessment
@@ -115,8 +114,10 @@ class SelfAssessmentServiceSpec extends TestSupport with MockitoSugar {
         pensionsAndStateBenefitsIncome = None,
         otherIncome = None
       )
-      private val requestWithoutAmounts =
-        request.copy(taxReturns = Seq(taxReturnWithoutAmounts))
+
+      private val requestWithoutAmounts = request.copy(taxReturns = Seq(taxReturnWithoutAmounts))
+
+      when(repository.create(any())).thenReturn(Future.successful(SelfAssessment(utr, requestWithoutAmounts)))
 
       private val result = await(underTest.create(utr, requestWithoutAmounts))
 

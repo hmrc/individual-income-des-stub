@@ -31,7 +31,7 @@ class SelfAssessmentIncomeSpec extends BaseSpec {
 
   Feature("Retrieve DES stubbed self assessment income") {
 
-    ignore("Fetch self assessment income when there is income associated to a given tax year range") {
+    Scenario("Fetch self assessment income when there is income associated to a given tax year range") {
 
       Given("A test individual")
       ApiPlatformTestUserStub.getByNinoReturnsTestIndividual(nino, TestIndividual(Some(utr)))

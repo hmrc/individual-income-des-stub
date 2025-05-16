@@ -17,12 +17,11 @@
 package unit.uk.gov.hmrc.individualincomedesstub.controller
 
 import org.apache.pekko.stream.Materializer
-import java.time.LocalDate.parse
-import org.mockito.ArgumentMatchers.{any, eq => refEq}
-import org.mockito.BDDMockito.given
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.ArgumentMatchers.{any, eq as refEq}
+import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
-import play.api.http.Status._
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.http.Status.*
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents}
 import play.api.test.FakeRequest
@@ -34,6 +33,7 @@ import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, SaAd
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentIncomeService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
+import java.time.LocalDate.parse
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future.{failed, successful}
 
@@ -91,8 +91,8 @@ class SelfAssessmentIncomeControllerSpec extends TestSupport with MockitoSugar w
 
   "fetch self assessment income" should {
     "retrieve self assessment income for a given period" in new Setup {
-      given(selfAssessmentIncomeService.income(refEq(nino), refEq(2015), refEq(2016))(any[HeaderCarrier]))
-        .willReturn(successful(Seq(selfAssessmentResponse)))
+      when(selfAssessmentIncomeService.income(refEq(nino), refEq(2015), refEq(2016))(any[HeaderCarrier]))
+        .thenReturn(successful(Seq(selfAssessmentResponse)))
 
       private val result =
         await(underTest.income(nino, 2015, 2016)(fakeRequest))
@@ -102,8 +102,8 @@ class SelfAssessmentIncomeControllerSpec extends TestSupport with MockitoSugar w
     }
 
     "return 404 (Not Found) if there is no self assessment income for a given period" in new Setup {
-      given(selfAssessmentIncomeService.income(refEq(nino), refEq(2015), refEq(2016))(any[HeaderCarrier]))
-        .willReturn(failed(new RecordNotFoundException()))
+      when(selfAssessmentIncomeService.income(refEq(nino), refEq(2015), refEq(2016))(any[HeaderCarrier]))
+        .thenReturn(failed(new RecordNotFoundException()))
 
       private val result =
         await(underTest.income(nino, 2015, 2016)(fakeRequest))

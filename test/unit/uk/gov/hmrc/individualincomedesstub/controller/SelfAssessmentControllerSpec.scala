@@ -17,18 +17,18 @@
 package unit.uk.gov.hmrc.individualincomedesstub.controller
 
 import org.apache.pekko.stream.Materializer
-import org.mockito.BDDMockito.given
-import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
-import play.api.http.Status._
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.http.Status.*
 import play.api.libs.json.Json.toJson
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.individualincomedesstub.controller.SelfAssessmentController
-import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
-import uk.gov.hmrc.individualincomedesstub.domain._
+import uk.gov.hmrc.individualincomedesstub.domain.*
+import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters.*
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
@@ -77,8 +77,8 @@ class SelfAssessmentControllerSpec extends TestSupport with MockitoSugar with Sc
   "create self assessment" should {
 
     "return a 201 (Created) when self assessment data is created successfully" in new Setup {
-      given(selfAssessmentService.create(utr, request))
-        .willReturn(successful(selfAssessment))
+      when(selfAssessmentService.create(utr, request))
+        .thenReturn(successful(selfAssessment))
 
       private val result =
         await(underTest.create(utr)(fakeRequest.withBody(toJson(request))))
@@ -114,8 +114,8 @@ class SelfAssessmentControllerSpec extends TestSupport with MockitoSugar with Sc
     }
 
     "return a 429 (Conflict) when a self-assessment already exists for the utr" in new Setup {
-      given(selfAssessmentService.create(utr, request))
-        .willReturn(failed(new DuplicateSelfAssessmentException()))
+      when(selfAssessmentService.create(utr, request))
+        .thenReturn(failed(new DuplicateSelfAssessmentException()))
 
       private val result =
         await(underTest.create(utr)(fakeRequest.withBody(toJson(request))))

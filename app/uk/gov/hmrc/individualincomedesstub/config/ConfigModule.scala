@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,10 @@
 package uk.gov.hmrc.individualincomedesstub.config
 
 import com.google.inject.AbstractModule
-import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.bootstrap.http.HttpClientV2Provider
 
-class ConfigModule(environment: Environment, configuration: Configuration) extends AbstractModule {
+class ConfigModule extends AbstractModule {
   override def configure(): Unit =
     bind(classOf[HttpClientV2]).toProvider(classOf[HttpClientV2Provider])
 }

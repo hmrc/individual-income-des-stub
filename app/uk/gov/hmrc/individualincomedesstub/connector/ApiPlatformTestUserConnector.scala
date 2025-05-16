@@ -23,6 +23,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException, StringContextOps}
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
 import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, TestIndividual, TestOrganisation}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,7 +35,8 @@ class ApiPlatformTestUserConnector @Inject() (http: HttpClientV2, servicesConfig
   val serviceUrl: String = servicesConfig.baseUrl("api-platform-test-user")
 
   def getOrganisationByEmpRef(empRef: EmpRef)(implicit hc: HeaderCarrier): Future[Option[TestOrganisation]] = {
-    http.get(url"$serviceUrl/organisations/empref/${empRef.encodedValue}").execute[Option[TestOrganisation]]
+    val getOrgUrl = s"$serviceUrl/organisations/empref/${empRef.encodedValue}"
+    http.get(url"$getOrgUrl").execute[Option[TestOrganisation]]
   } recover { case e: NotFoundException =>
     logger.warn(s"unable to retrieve employer with empRef: ${empRef.value}. ${e.getMessage}")
     None
