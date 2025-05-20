@@ -16,18 +16,19 @@
 
 package unit.uk.gov.hmrc.individualincomedesstub.service
 
-import java.time.LocalDate
 import org.mockito.ArgumentMatchers.any
-import org.mockito.IdiomaticMockito
+import org.mockito.Mockito.{times, verify, when}
+import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.individualincomedesstub.domain._
+import uk.gov.hmrc.individualincomedesstub.domain.*
 import uk.gov.hmrc.individualincomedesstub.repository.SelfAssessmentRepository
 import uk.gov.hmrc.individualincomedesstub.service.SelfAssessmentService
 import unit.uk.gov.hmrc.individualincomedesstub.util.TestSupport
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
-class SelfAssessmentServiceSpec extends TestSupport with IdiomaticMockito {
+class SelfAssessmentServiceSpec extends TestSupport with MockitoSugar {
 
   private val utr = SaUtr("2432552635")
   private val taxReturn = SelfAssessmentTaxReturnData(
@@ -57,7 +58,6 @@ class SelfAssessmentServiceSpec extends TestSupport with IdiomaticMockito {
     val repository: SelfAssessmentRepository = mock[SelfAssessmentRepository]
     val underTest = new SelfAssessmentService(repository)
 
-    repository.create(any()) answers ((sa: SelfAssessment) => Future.successful(sa))
   }
 
   "create" should {
@@ -89,10 +89,12 @@ class SelfAssessmentServiceSpec extends TestSupport with IdiomaticMockito {
         )
       )
 
+      when(repository.create(any())).thenReturn(Future.successful(SelfAssessment(utr, request)))
+
       private val result = await(underTest.create(utr, request))
 
       result shouldBe expectedSelfAssessment
-      repository.create(expectedSelfAssessment) was called
+      verify(repository, times(1)).create(expectedSelfAssessment)
     }
 
     "defaults the amounts to zero when they are no set" in new Setup {
@@ -112,8 +114,10 @@ class SelfAssessmentServiceSpec extends TestSupport with IdiomaticMockito {
         pensionsAndStateBenefitsIncome = None,
         otherIncome = None
       )
-      private val requestWithoutAmounts =
-        request.copy(taxReturns = Seq(taxReturnWithoutAmounts))
+
+      private val requestWithoutAmounts = request.copy(taxReturns = Seq(taxReturnWithoutAmounts))
+
+      when(repository.create(any())).thenReturn(Future.successful(SelfAssessment(utr, requestWithoutAmounts)))
 
       private val result = await(underTest.create(utr, requestWithoutAmounts))
 
@@ -142,7 +146,7 @@ class SelfAssessmentServiceSpec extends TestSupport with IdiomaticMockito {
     }
 
     "propagate exceptions when a self assessment cannot be created" in new Setup {
-      repository.create(any()) throws new RuntimeException("failed")
+      when(repository.create(any())).thenThrow(new RuntimeException("failed"))
       intercept[RuntimeException](await(underTest.create(utr, request)))
     }
   }

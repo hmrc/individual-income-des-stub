@@ -16,20 +16,21 @@
 
 package uk.gov.hmrc.individualincomedesstub.domain
 
-import play.api.libs.json._
+import play.api.libs.json.*
 
 import scala.language.{implicitConversions, postfixOps}
-import scala.util.{Failure, Try}
 
 object JsonFormatters {
   implicit val hmrcPaymentFormat: OFormat[HmrcPayment] =
     Json.format[HmrcPayment]
   implicit val desEmploymentPayFrequencyJsonFormat: Format[DesEmploymentPayFrequency.Value] =
-    EnumJson.enumFormat(DesEmploymentPayFrequency)
+    Json.formatEnum(DesEmploymentPayFrequency)
+  // EnumJson.enumFormat(DesEmploymentPayFrequency)
   implicit val desPaymentFormat: OFormat[DesPayment] = Json.format[DesPayment]
   implicit val desAddressFormat: OFormat[DesAddress] = Json.format[DesAddress]
   implicit val employmentPayFrequencyJsonFormat: Format[EmploymentPayFrequency.Value] =
-    EnumJson.enumFormat(EmploymentPayFrequency)
+    Json.formatEnum(EmploymentPayFrequency)
+  // EnumJson.enumFormat(EmploymentPayFrequency)
   implicit val employmentFormat: OFormat[Employment] = Json.format[Employment]
 
   implicit val testAddressFormat: OFormat[TestAddress] =
@@ -75,8 +76,8 @@ object JsonFormatters {
     (e: ErrorResponse) => Json.obj("code" -> e.errorCode, "message" -> e.message)
 }
 
-object EnumJson {
-  private def enumReads[E <: Enumeration](`enum`: E): Reads[E#Value] = {
+/*object EnumJson {
+  private def enumReads[E <: Enumeration](`enum`: E): Reads[`enum`.Value] = {
     case JsString(s) =>
       Try(JsSuccess(`enum`.withName(s))) recoverWith { case _: NoSuchElementException =>
         Failure(new InvalidEnumException(`enum`.getClass.getSimpleName, s))
@@ -87,9 +88,9 @@ object EnumJson {
   implicit def enumWrites[E <: Enumeration]: Writes[E#Value] =
     (v: E#Value) => JsString(v.toString)
 
-  implicit def enumFormat[E <: Enumeration](`enum`: E): Format[E#Value] =
+  implicit def enumFormat[E <: Enumeration](`enum`: E): Format[`enum`.Value] =
     Format(enumReads(`enum`), enumWrites)
-}
+}*/
 
 class InvalidEnumException(className: String, input: String)
     extends RuntimeException(s"Enumeration expected of type: '$className', but it does not contain '$input'")

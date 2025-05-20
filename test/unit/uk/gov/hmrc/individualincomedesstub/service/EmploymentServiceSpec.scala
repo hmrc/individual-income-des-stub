@@ -16,7 +16,8 @@
 
 package unit.uk.gov.hmrc.individualincomedesstub.service
 
-import org.mockito.MockitoSugar
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.domain.{EmpRef, Nino}
 import uk.gov.hmrc.individualincomedesstub.domain.{CreateEmploymentRequest, Employment, EmploymentPayFrequency, HmrcPayment}
 import uk.gov.hmrc.individualincomedesstub.repository.EmploymentRepository

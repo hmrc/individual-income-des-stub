@@ -1,7 +1,7 @@
 import uk.gov.hmrc.DefaultBuildSettings.addTestReportOption
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / scalaVersion := "3.3.5"
 
 lazy val ComponentTest = config("component") extend Test
 lazy val ItTest = config("it") extend Test
@@ -11,8 +11,10 @@ lazy val microservice = Project("individual-income-des-stub", file("."))
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test(),
-    scalacOptions += "-Wconf:src=routes/.*:s",
-    scalacOptions += "-Wconf:cat=unused-imports&src=views/.*:s",
+    scalacOptions += "-Wconf:src=routes/.*:s,src=txt/.*:s",
+    scalacOptions ~= { options =>
+      options.distinct
+    },
     routesImport ++= Seq("uk.gov.hmrc.individualincomedesstub._"),
     Test / testOptions := Seq(Tests.Filter(_ startsWith "unit"))
   )

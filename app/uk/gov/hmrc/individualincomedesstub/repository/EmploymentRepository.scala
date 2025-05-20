@@ -26,6 +26,8 @@ import uk.gov.hmrc.mongo.play.json.{Codecs, PlayMongoRepository}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import org.mongodb.scala.SingleObservableFuture
+import org.mongodb.scala.ObservableFuture
 
 @Singleton
 class EmploymentRepository @Inject() (mongoComponent: MongoComponent)(implicit ec: ExecutionContext)

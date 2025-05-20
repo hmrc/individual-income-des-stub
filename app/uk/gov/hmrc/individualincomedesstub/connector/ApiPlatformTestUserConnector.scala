@@ -18,29 +18,32 @@ package uk.gov.hmrc.individualincomedesstub.connector
 
 import play.api.Logging
 import uk.gov.hmrc.domain.{EmpRef, Nino}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, NotFoundException}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException, StringContextOps}
 import uk.gov.hmrc.individualincomedesstub.domain.JsonFormatters._
 import uk.gov.hmrc.individualincomedesstub.domain.{RecordNotFoundException, TestIndividual, TestOrganisation}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 @Singleton
-class ApiPlatformTestUserConnector @Inject() (http: HttpClient, servicesConfig: ServicesConfig)(implicit
+class ApiPlatformTestUserConnector @Inject() (http: HttpClientV2, servicesConfig: ServicesConfig)(implicit
   ec: ExecutionContext
 ) extends Logging {
 
   val serviceUrl: String = servicesConfig.baseUrl("api-platform-test-user")
 
   def getOrganisationByEmpRef(empRef: EmpRef)(implicit hc: HeaderCarrier): Future[Option[TestOrganisation]] = {
-    http.GET[TestOrganisation](s"$serviceUrl/organisations/empref/${empRef.encodedValue}") map (Some(_))
+    val getOrgUrl = s"$serviceUrl/organisations/empref/${empRef.encodedValue}"
+    http.get(url"$getOrgUrl").execute[Option[TestOrganisation]]
   } recover { case e: NotFoundException =>
     logger.warn(s"unable to retrieve employer with empRef: ${empRef.value}. ${e.getMessage}")
     None
   }
 
   def getIndividualByNino(nino: Nino)(implicit hc: HeaderCarrier): Future[TestIndividual] = {
-    http.GET[TestIndividual](s"$serviceUrl/individuals/nino/${nino.value}")
+    http.get(url"$serviceUrl/individuals/nino/${nino.value}").execute[TestIndividual]
   } recover { case e: NotFoundException =>
     logger.warn(s"unable to retrieve individual with nino: ${nino.value}. ${e.getMessage}")
     throw new RecordNotFoundException()

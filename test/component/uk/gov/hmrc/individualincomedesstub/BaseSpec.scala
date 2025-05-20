@@ -33,6 +33,7 @@ import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import java.util.concurrent.TimeUnit
 import scala.concurrent.Await.result
 import scala.concurrent.duration.{Duration, FiniteDuration}
+import org.mongodb.scala.SingleObservableFuture
 
 trait BaseSpec
     extends AnyFeatureSpec with BeforeAndAfterAll with BeforeAndAfterEach with Matchers with GuiceOneServerPerSuite

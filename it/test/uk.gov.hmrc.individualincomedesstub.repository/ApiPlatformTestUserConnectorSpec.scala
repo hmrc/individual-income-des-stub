@@ -23,7 +23,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.Configuration
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import uk.gov.hmrc.domain.{EmpRef, Nino, SaUtr}
-import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{BadRequestException, HeaderCarrier, HttpClientV2}
 import uk.gov.hmrc.individualincomedesstub.connector.ApiPlatformTestUserConnector
 import uk.gov.hmrc.individualincomedesstub.domain._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -44,7 +44,7 @@ class ApiPlatformTestUserConnectorSpec extends TestSupport with BeforeAndAfterEa
   private val nino = Nino("AB123456A")
   private val utr = SaUtr("2432552635")
 
-  val http: HttpClient = fakeApplication.injector.instanceOf[HttpClient]
+  val http: HttpClient = fakeApplication.injector.instanceOf[HttpClientV2]
   val config: Configuration = fakeApplication.injector.instanceOf[Configuration]
   val serviceConfig: ServicesConfig =
     fakeApplication.injector.instanceOf[ServicesConfig]
