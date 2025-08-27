@@ -1,7 +1,7 @@
 import uk.gov.hmrc.DefaultBuildSettings.addTestReportOption
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "3.3.5"
+ThisBuild / scalaVersion := "3.7.1"
 
 lazy val ComponentTest = config("component") extend Test
 lazy val ItTest = config("it") extend Test

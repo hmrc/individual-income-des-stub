@@ -37,7 +37,7 @@ object Validators {
 
   def validInterval(startDate: String, endDate: String, errorMessage: String): Unit =
     try
-      if (!(LocalDate.parse(startDate) isBefore LocalDate.parse(endDate)))
+      if (!(LocalDate.parse(startDate) `isBefore` LocalDate.parse(endDate)))
         throw new ValidationException(errorMessage)
     catch {
       case _: Exception => throw new ValidationException(errorMessage)

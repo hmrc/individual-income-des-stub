@@ -57,7 +57,7 @@ class EmploymentIncomeServiceSpec extends WordSpecWithFutures with Matchers with
       def mockTestUserConnectorGetOrganisationByEmpRef(
         eventualOrganisation: Future[Option[TestOrganisation]]
       ): Unit =
-        when(apiPlatformTestUserConnector.getOrganisationByEmpRef(any[EmpRef])(any[HeaderCarrier]))
+        when(apiPlatformTestUserConnector.getOrganisationByEmpRef(any[EmpRef])(using any[HeaderCarrier]))
           .thenReturn(eventualOrganisation)
 
       "return an empty sequence when a corresponding employment does not exist" in {
