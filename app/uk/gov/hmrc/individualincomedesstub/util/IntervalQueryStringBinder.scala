@@ -30,7 +30,7 @@ class IntervalQueryStringBinder extends AbstractQueryStringBindable[Interval] {
     Some(for {
       from   <- getParam(params, "from")
       to     <- getParam(params, "to", Some(LocalDate.now()))
-      result <- Either.cond(from isBefore to, toInterval(from, to), errorResponse("Invalid time period requested"))
+      result <- Either.cond(from `isBefore` to, toInterval(from, to), errorResponse("Invalid time period requested"))
     } yield result)
 
   private def getParam(

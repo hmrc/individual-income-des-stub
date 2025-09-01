@@ -91,7 +91,7 @@ class SelfAssessmentIncomeControllerSpec extends TestSupport with MockitoSugar w
 
   "fetch self assessment income" should {
     "retrieve self assessment income for a given period" in new Setup {
-      when(selfAssessmentIncomeService.income(refEq(nino), refEq(2015), refEq(2016))(any[HeaderCarrier]))
+      when(selfAssessmentIncomeService.income(refEq(nino), refEq(2015), refEq(2016))(using any[HeaderCarrier]))
         .thenReturn(successful(Seq(selfAssessmentResponse)))
 
       private val result =
@@ -102,7 +102,7 @@ class SelfAssessmentIncomeControllerSpec extends TestSupport with MockitoSugar w
     }
 
     "return 404 (Not Found) if there is no self assessment income for a given period" in new Setup {
-      when(selfAssessmentIncomeService.income(refEq(nino), refEq(2015), refEq(2016))(any[HeaderCarrier]))
+      when(selfAssessmentIncomeService.income(refEq(nino), refEq(2015), refEq(2016))(using any[HeaderCarrier]))
         .thenReturn(failed(new RecordNotFoundException()))
 
       private val result =

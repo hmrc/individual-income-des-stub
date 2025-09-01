@@ -54,14 +54,18 @@ class EmploymentIncomeControllerSpec extends TestSupport with Results with Mocki
     def mockEmploymentIncomeService(
       eventualEmploymentResponses: Future[Seq[EmploymentIncomeResponse]]
     ): Unit =
-      when(employmentIncomeService.employments(ArgumentMatchers.eq(nino), any(classOf[Interval]))(any[HeaderCarrier]))
+      when(
+        employmentIncomeService.employments(ArgumentMatchers.eq(nino), any(classOf[Interval]))(using any[HeaderCarrier])
+      )
         .thenReturn(eventualEmploymentResponses)
 
     def asEmploymentResponse(employment: Employment): EmploymentIncomeResponse =
       EmploymentIncomeResponse(employment, None)
 
     "return a http 404 (Not Found) response when service does not return any employments" in {
-      when(employmentIncomeService.employments(ArgumentMatchers.eq(nino), any(classOf[Interval]))(any[HeaderCarrier]))
+      when(
+        employmentIncomeService.employments(ArgumentMatchers.eq(nino), any(classOf[Interval]))(using any[HeaderCarrier])
+      )
         .thenReturn(successful(Seq.empty))
       val eventualResult =
         employmentIncomeController.employments(nino, interval)(FakeRequest())
