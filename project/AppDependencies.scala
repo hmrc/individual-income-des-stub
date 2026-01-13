@@ -2,7 +2,7 @@ import play.sbt.PlayImport.ws
 import sbt.*
 
 object AppDependencies {
-  val hmrcBootstrapVersion = "10.1.0"
+  val hmrcBootstrapVersion = "10.5.0"
   val playVersion = "play-30"
   val hmrc = "uk.gov.hmrc"
 
@@ -10,7 +10,7 @@ object AppDependencies {
     ws,
     hmrc           %% s"bootstrap-backend-$playVersion" % hmrcBootstrapVersion,
     hmrc           %% s"domain-$playVersion"            % "13.0.0",
-    s"$hmrc.mongo" %% s"hmrc-mongo-$playVersion"        % "2.7.0",
+    s"$hmrc.mongo" %% s"hmrc-mongo-$playVersion"        % "2.11.0",
   )
 
   def test(scope: Configuration = Test): Seq[ModuleID] = Seq(
