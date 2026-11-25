@@ -6,7 +6,7 @@ ThisBuild / scalaVersion := "3.7.1"
 lazy val ComponentTest = config("component") extend Test
 lazy val ItTest = config("it") extend Test
 
-lazy val microservice = Project("individual-income-des-stub", file("."))
+lazy val microservice = Project("individual-income-ip-stub", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(
@@ -15,7 +15,7 @@ lazy val microservice = Project("individual-income-des-stub", file("."))
     scalacOptions ~= { options =>
       options.distinct
     },
-    routesImport ++= Seq("uk.gov.hmrc.individualincomedesstub._"),
+    routesImport ++= Seq("uk.gov.hmrc.individualincomeipstub._"),
     Test / testOptions := Seq(Tests.Filter(_ startsWith "unit"))
   )
   // Disable default sbt Test options (might change with new versions of bootstrap)

@@ -1,2 +1,2 @@
-GET    /api/definition                              uk.gov.hmrc.individualincomedesstub.controller.DocumentationController.definition()
-GET    /api/conf/:version/*file                     uk.gov.hmrc.individualincomedesstub.controller.DocumentationController.yaml(version, file)
+GET    /api/definition                              uk.gov.hmrc.individualincomeipstub.controller.DocumentationController.definition()
+GET    /api/conf/:version/*file                     uk.gov.hmrc.individualincomeipstub.controller.DocumentationController.yaml(version, file)
